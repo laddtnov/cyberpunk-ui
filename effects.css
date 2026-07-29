@@ -1,0 +1,80 @@
+/*! @laddtnov/cyberpunk-ui — effects.css | MIT */
+
+/* ── 1. Box glow ──────────────────────────────────────────────── */
+.cy-glow         { box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb),   0.5), 0 0 30px rgba(var(--cy-cyan-rgb),   0.25); }
+.cy-glow--pink   { box-shadow: 0 0 12px rgba(var(--cy-pink-rgb),   0.5), 0 0 30px rgba(var(--cy-pink-rgb),   0.25); }
+.cy-glow--purple { box-shadow: 0 0 12px rgba(var(--cy-purple-rgb), 0.5), 0 0 30px rgba(var(--cy-purple-rgb), 0.25); }
+
+/* ── 2. Text glow ─────────────────────────────────────────────── */
+.cy-text-glow       { text-shadow: 0 0 10px var(--cy-neon-cyan), 0 0 24px rgba(var(--cy-cyan-rgb), 0.5); }
+.cy-text-glow--pink { text-shadow: 0 0 10px var(--cy-neon-pink), 0 0 24px rgba(var(--cy-pink-rgb), 0.5); }
+
+/* ── 3. Glitch text (RGB split) ───────────────────────────────── */
+.cy-glitch {
+  color: var(--cy-neon-cyan);
+  text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4);
+  animation: cy-glitch 2.5s infinite;
+}
+
+@keyframes cy-glitch {
+  0%, 90%, 100% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4); }
+  92% { text-shadow: -3px 0 var(--cy-neon-pink), 3px 0 var(--cy-neon-purple); }
+  94% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4); }
+  96% { text-shadow:  3px 0 var(--cy-neon-pink), -3px 0 var(--cy-neon-purple); }
+}
+
+/* ── 4. Scanlines overlay ─────────────────────────────────────────
+   Apply to any element; a CRT scanline veil is painted on top via
+   ::after without intercepting clicks. */
+.cy-scanlines { position: relative; }
+.cy-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0)    0,
+    rgba(0, 0, 0, 0)    2px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0)    4px
+  );
+}
+
+/* ── 5. Animated grid backdrop ────────────────────────────────────
+   Animates via background-position so it can sit on any element
+   without hijacking its transform. */
+.cy-grid-bg {
+  background-image:
+    linear-gradient(rgba(var(--cy-cyan-rgb), 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--cy-cyan-rgb), 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: cy-grid-move 20s linear infinite;
+}
+
+@keyframes cy-grid-move {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 50px; }
+}
+
+/* ── 6. Blinking terminal cursor ──────────────────────────────────
+   Renders a blinking "_" after the element. */
+.cy-cursor {
+  display: inline-block;
+  color: var(--cy-neon-cyan);
+  animation: cy-cursor-blink 1s step-end infinite;
+}
+.cy-cursor::after { content: "_"; }
+
+@keyframes cy-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ── WCAG: honour reduced-motion ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cy-glitch,
+  .cy-grid-bg,
+  .cy-cursor { animation: none; }
+}
