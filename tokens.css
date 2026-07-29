@@ -1,0 +1,51 @@
+/*! @laddtnov/cyberpunk-ui — tokens.css | MIT */
+
+:root {
+  /* ── Neon accents ─────────────────────────────────────────── */
+  --cy-neon-cyan:   #00f2ff;
+  --cy-neon-pink:   #ff00ff;
+  --cy-neon-purple: #9d00ff;
+
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --cy-bg:      #0a0a0c;
+  --cy-surface: #151518;
+
+  /* ── Text ─────────────────────────────────────────────────── */
+  --cy-text:    #d1d1d1;
+  --cy-heading: #ffffff;
+
+  /* ── Glow channels ────────────────────────────────────────────
+     Raw RGB triplets so glows can be built with rgba(var(--x), a)
+     and still track the active theme. */
+  --cy-cyan-rgb:   0, 242, 255;
+  --cy-pink-rgb:   255, 0, 255;
+  --cy-purple-rgb: 157, 0, 255;
+
+  /* ── Type ─────────────────────────────────────────────────────
+     Load these fonts yourself (Google Fonts / self-hosted); the kit
+     degrades to system fonts if they're absent. */
+  --cy-font-display: 'Orbitron', system-ui, sans-serif;
+  --cy-font-body:    'Rajdhani', system-ui, sans-serif;
+  --cy-font-mono:    'Share Tech Mono', ui-monospace, monospace;
+
+  /* ── Motion ───────────────────────────────────────────────── */
+  --cy-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Light theme ──────────────────────────────────────────────
+   The bright neon hues fail WCAG contrast on light backgrounds
+   (cyan is ~1.2:1 on white), so cyan/pink are dimmed here. Purple
+   already passes (~5.5:1) and is left untouched. Toggle by setting
+   data-theme="light" on the <html> element. */
+:root[data-theme="light"] {
+  --cy-neon-cyan: #008099;
+  --cy-neon-pink: #b3009e;
+
+  --cy-bg:      #f0f0f5;
+  --cy-surface: #ffffff;
+  --cy-text:    #3a3a45;
+  --cy-heading: #16161d;
+
+  --cy-cyan-rgb: 0, 128, 153;
+  --cy-pink-rgb: 179, 0, 158;
+}

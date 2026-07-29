@@ -1,0 +1,64 @@
+/*! @laddtnov/cyberpunk-ui — components.css | MIT */
+
+/* ── Neon button ──────────────────────────────────────────────── */
+.cy-btn {
+  display: inline-block;
+  font-family: var(--cy-font-mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  padding: 0.65em 1.8em;
+  color: var(--cy-neon-cyan);
+  background: transparent;
+  border: 1px solid var(--cy-neon-cyan);
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.25s, background 0.25s, box-shadow 0.25s, transform 0.2s;
+}
+
+.cy-btn:hover,
+.cy-btn:focus-visible {
+  color: #000;
+  background: var(--cy-neon-cyan);
+  box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px rgba(var(--cy-cyan-rgb), 0.5);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.cy-btn--pink {
+  color: var(--cy-neon-pink);
+  border-color: var(--cy-neon-pink);
+}
+
+.cy-btn--pink:hover,
+.cy-btn--pink:focus-visible {
+  background: var(--cy-neon-pink);
+  box-shadow: 0 0 14px var(--cy-neon-pink), 0 0 30px rgba(var(--cy-pink-rgb), 0.5);
+}
+
+/* ── Holo card (glassmorphism + edge glow) ────────────────────── */
+.cy-card {
+  background: rgba(var(--cy-cyan-rgb), 0.03);
+  border: 1px solid rgba(var(--cy-cyan-rgb), 0.25);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--cy-text);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 24px rgba(var(--cy-cyan-rgb), 0.12);
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+.cy-card:hover {
+  border-color: rgba(var(--cy-cyan-rgb), 0.6);
+  box-shadow: 0 0 32px rgba(var(--cy-cyan-rgb), 0.3);
+  transform: translateY(-2px);
+}
+
+/* ── WCAG: honour reduced-motion ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cy-btn,
+  .cy-card { transition: none; }
+  .cy-btn:hover,
+  .cy-card:hover { transform: none; }
+}

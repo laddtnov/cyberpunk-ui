@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@laddtnov/cyberpunk-ui — demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../cyberpunk-ui.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--cy-bg);
+      color: var(--cy-text);
+      font-family: var(--cy-font-body);
+      padding: 3rem 1.5rem;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 2.5rem; }
+    h1 { font-family: var(--cy-font-display); font-size: clamp(2rem, 7vw, 4rem); letter-spacing: 0.14em; margin: 0; }
+    h2 { font-family: var(--cy-font-mono); color: var(--cy-neon-pink); font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 0 1rem; }
+    .row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    .hero { padding: 3rem 2rem; border-radius: 12px; }
+    .mono { font-family: var(--cy-font-mono); }
+    .theme-toggle { position: fixed; top: 1rem; right: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <button class="cy-btn theme-toggle" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'">TOGGLE THEME</button>
+
+    <section class="hero cy-grid-bg cy-scanlines">
+      <h1 class="cy-glitch">CYBERPUNK-UI</h1>
+      <p class="mono">deep space observatory <span class="cy-cursor"></span></p>
+    </section>
+
+    <section>
+      <h2>Buttons</h2>
+      <div class="row">
+        <a href="#" class="cy-btn cy-glow">&gt;_ ENTER</a>
+        <a href="#" class="cy-btn cy-btn--pink cy-glow--pink">ABORT</a>
+        <a href="#" class="cy-btn">GHOST</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>Text glow</h2>
+      <div class="row">
+        <span class="cy-text-glow mono" style="font-size:1.4rem">NEON CYAN</span>
+        <span class="cy-text-glow--pink mono" style="font-size:1.4rem">NEON PINK</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Holo cards</h2>
+      <div class="row" style="align-items:stretch">
+        <div class="cy-card" style="flex:1; min-width:220px">
+          <h3 style="margin:0 0 .5rem; color:var(--cy-heading)">Galaxy Map</h3>
+          <p style="margin:0">Click-to-travel navigation across a spinning canvas universe.</p>
+        </div>
+        <div class="cy-card cy-glow--purple" style="flex:1; min-width:220px">
+          <h3 style="margin:0 0 .5rem; color:var(--cy-heading)">Void Sector</h3>
+          <p style="margin:0">Black holes, supermassive stars, and cosmic voids.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
