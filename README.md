@@ -110,4 +110,4 @@ Flip to the accessible light theme by setting an attribute on `<html>`:
 
 ## License
 
-MIT © [Vladislav Novytskiy](https://laddtnov.xyz)
+MIT © [Vladyslav Novytskyi](https://laddtnov.xyz)
