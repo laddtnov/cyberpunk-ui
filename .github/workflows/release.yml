@@ -15,6 +15,7 @@ on:
 permissions:
   contents: write   # create the GitHub Release
   id-token: write   # REQUIRED for npm provenance (OIDC signing)
+  packages: write   # mirror the tarball to GitHub Packages
 
 jobs:
   release:
@@ -51,6 +52,20 @@ jobs:
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Mirror to GitHub Packages purely so the package shows up in the repo's
+      # and profile's Packages section. This is NOT a usable install channel:
+      # GitHub Packages demands authentication even for public packages, so
+      # npmjs.org remains the canonical registry (and the only one that carries
+      # the provenance attestation).
+      #
+      # continue-on-error: a hiccup mirroring must never fail a release whose
+      # real publish already succeeded.
+      - name: Mirror to GitHub Packages
+        continue-on-error: true
+        run: npm publish --registry=https://npm.pkg.github.com
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create the GitHub Release
         env:
