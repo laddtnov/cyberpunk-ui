@@ -6,11 +6,11 @@
   font-family: var(--cy-font-mono);
   font-size: 0.95rem;
   letter-spacing: 0.1em;
-  padding: 0.65em 1.8em;
+  padding: var(--cy-space-sm) var(--cy-space-xl);
   color: var(--cy-neon-cyan);
   background: transparent;
-  border: 1px solid var(--cy-neon-cyan);
-  border-radius: 4px;
+  border: var(--cy-border-width) solid var(--cy-neon-cyan);
+  border-radius: var(--cy-radius);
   cursor: pointer;
   text-decoration: none;
   transition: color 0.25s, background 0.25s, box-shadow 0.25s, transform 0.2s;
@@ -21,7 +21,8 @@
   color: #000;
   background: var(--cy-neon-cyan);
   box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px rgba(var(--cy-cyan-rgb), 0.5);
-  outline: none;
+  outline: var(--cy-focus-width) solid var(--cy-focus-color);
+  outline-offset: var(--cy-focus-offset);
   transform: translateY(-1px);
 }
 
@@ -39,9 +40,9 @@
 /* ── Holo card (glassmorphism + edge glow) ────────────────────── */
 .cy-card {
   background: rgba(var(--cy-cyan-rgb), 0.03);
-  border: 1px solid rgba(var(--cy-cyan-rgb), 0.25);
-  border-radius: 8px;
-  padding: 1.5rem;
+  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  border-radius: var(--cy-radius-lg);
+  padding: var(--cy-space-xl);
   color: var(--cy-text);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -61,4 +62,59 @@
   .cy-card { transition: none; }
   .cy-btn:hover,
   .cy-card:hover { transform: none; }
+}
+
+/* ── Button variants ──────────────────────────────────────────── */
+
+/* Secondary: a quieter outline. Deliberately not an alias of --pink,
+   which stays a distinct brand accent. */
+.cy-btn--secondary {
+  color: var(--cy-text);
+  border-color: var(--cy-text);
+}
+
+.cy-btn--secondary:hover,
+.cy-btn--secondary:focus-visible {
+  color: var(--cy-bg);
+  background: var(--cy-text);
+  box-shadow: none;
+}
+
+.cy-btn--danger {
+  color: var(--cy-danger);
+  border-color: var(--cy-danger);
+}
+
+.cy-btn--danger:hover,
+.cy-btn--danger:focus-visible {
+  color: var(--cy-bg);
+  background: var(--cy-danger);
+  box-shadow: 0 0 14px var(--cy-danger),
+              0 0 30px rgba(var(--cy-danger-rgb), 0.5);
+}
+
+/* ── Button sizes ─────────────────────────────────────────────── */
+.cy-btn--sm {
+  font-size: 0.8rem;
+  padding: var(--cy-space-xs) var(--cy-space-md);
+}
+
+.cy-btn--lg {
+  font-size: 1.05rem;
+  padding: var(--cy-space-md) var(--cy-space-xl);
+}
+
+/* ── Disabled ─────────────────────────────────────────────────── */
+.cy-btn:disabled,
+.cy-btn[aria-disabled="true"] {
+  opacity: var(--cy-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.cy-btn:disabled:hover,
+.cy-btn[aria-disabled="true"]:hover {
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
