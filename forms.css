@@ -133,13 +133,17 @@ textarea.cy-input {
   transition: transform 0.15s var(--cy-ease);
 }
 
+/* The tick is deliberately small relative to its box. Sized any larger it
+   spans nearly the full square and reads much heavier than the radio's dot,
+   so a checkbox and a radio sitting on the same line look mismatched. These
+   proportions keep the two controls at matching visual weight. */
 .cy-checkbox::after {
-  width: 0.6rem;
-  height: 0.3rem;
+  width: 0.45rem;
+  height: 0.22rem;
   border-left: 2px solid var(--cy-neon-cyan);
   border-bottom: 2px solid var(--cy-neon-cyan);
   rotate: -45deg;
-  margin-top: -0.15rem;
+  margin-top: -0.1rem;
 }
 
 .cy-radio::after {
