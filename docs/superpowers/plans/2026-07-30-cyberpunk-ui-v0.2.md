@@ -281,16 +281,53 @@ Thresholds are role-aware: 4.5 for text tokens, 3.0 for non-text UI.
 
 ---
 
-### Task 2: Button variants
+### Task 2: Button variants, and migrate existing components to the tokens
 
 **Files:**
-- Modify: `components.css` (append after the existing `.cy-btn--pink` rules)
+- Modify: `components.css` (migrate `.cy-btn` and `.cy-card`; append new variants)
 
 **Interfaces:**
-- Consumes: `--cy-danger`, `--cy-danger-rgb`, `--cy-text`, `--cy-space-*`, `--cy-radius`, `--cy-disabled-opacity` (Task 1)
-- Produces: `.cy-btn--secondary`, `.cy-btn--danger`, `.cy-btn--sm`, `.cy-btn--lg`
+- Consumes: `--cy-danger`, `--cy-danger-rgb`, `--cy-text`, `--cy-space-*`, `--cy-radius`, `--cy-radius-lg`, `--cy-border-width`, `--cy-focus-*`, `--cy-disabled-opacity` (Task 1)
+- Produces: `.cy-btn--secondary`, `.cy-btn--danger`, `.cy-btn--sm`, `.cy-btn--lg`; `.cy-btn` and `.cy-card` now consume tokens instead of hardcoded values
 
-- [ ] **Step 1: Add the variants**
+- [ ] **Step 1: Migrate the existing components onto the substrate**
+
+`.cy-btn` and `.cy-card` predate the tokens and still hardcode values that the
+substrate now owns. Leaving them creates two sources of truth in one file — the
+exact inconsistency the substrate exists to prevent — and means overriding
+`--cy-radius` would visibly miss the two oldest components.
+
+In `components.css`, replace the hardcoded values. In `.cy-btn`:
+
+```css
+  padding: var(--cy-space-sm) var(--cy-space-xl);
+  border: var(--cy-border-width) solid var(--cy-neon-cyan);
+  border-radius: var(--cy-radius);
+```
+
+In `.cy-btn:hover, .cy-btn:focus-visible`, add the shared focus ring so buttons
+match every other interactive element:
+
+```css
+  outline: var(--cy-focus-width) solid var(--cy-focus-color);
+  outline-offset: var(--cy-focus-offset);
+```
+
+In `.cy-card`:
+
+```css
+  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  border-radius: var(--cy-radius-lg);
+  padding: var(--cy-space-xl);
+```
+
+**Visual check before moving on:** `--cy-radius` is `4px` and `.cy-btn` was `4px`;
+`--cy-radius-lg` is `8px` and `.cy-card` was `8px`; `--cy-space-xl` is `1.5rem`
+and `.cy-card` padding was `1.5rem`. Only the button's padding changes
+(`0.65em 1.8em` → `0.5rem 1.5rem`), which is intentional — em-based padding
+scaled with font-size and broke the `--sm` / `--lg` modifiers added below.
+
+- [ ] **Step 2: Add the variants**
 
 Append to `components.css`:
 
@@ -351,7 +388,7 @@ Append to `components.css`:
 }
 ```
 
-- [ ] **Step 2: Verify in the browser**
+- [ ] **Step 3: Verify in the browser**
 
 Serve the repo root and open the demo:
 
@@ -371,13 +408,41 @@ Add this temporarily to `demo/index.html` inside the Buttons `.row`, then load `
 
 Expected: secondary renders grey-outlined, danger red-outlined with red glow on hover, sm/lg visibly different heights, disabled at 45% opacity with no hover response. Toggle the theme button — all five stay legible.
 
+**Also confirm the migration changed nothing visually:** the existing `.cy-btn`
+and `.cy-card` in the demo should look identical to before, apart from slightly
+tighter button padding. Verify the tokens are actually driving them:
+
+```js
+const btn = document.querySelector('.cy-btn');
+const card = document.querySelector('.cy-card');
+console.log({
+  btnRadius:  getComputedStyle(btn).borderRadius,   // "4px"
+  cardRadius: getComputedStyle(card).borderRadius,  // "8px"
+  cardPad:    getComputedStyle(card).padding,       // "24px" (1.5rem)
+});
+```
+
+Then prove they respond to the substrate — run this and watch both change:
+
+```js
+document.documentElement.style.setProperty('--cy-radius', '0px');
+document.documentElement.style.setProperty('--cy-radius-lg', '0px');
+```
+
+Expected: button and card both go square-cornered. Reload to reset. This is the
+whole point of the migration — before it, neither would have moved.
+
 Keep the markup: it becomes part of the demo in Task 5.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add components.css demo/index.html
-git commit -m "feat(buttons): add secondary, danger, size and disabled variants"
+git commit -m "feat(buttons): add secondary, danger, size and disabled variants
+
+Also migrates .cy-btn and .cy-card off hardcoded radius/padding onto the
+new token substrate, so overriding --cy-radius or --cy-space-* reaches
+every component rather than skipping the two oldest ones."
 ```
 
 ---
@@ -1000,6 +1065,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - Subpath exports `@laddtnov/cyberpunk-ui/forms` and `/feedback`.
 - `scripts/check-contrast.js` and PR CI enforcing WCAG contrast on every token.
 
+### Changed
+- `.cy-btn` and `.cy-card` now consume the token substrate instead of hardcoded
+  values, so overriding `--cy-radius` or `--cy-space-*` reaches every component.
+  Visually identical apart from slightly tighter button padding (`0.65em 1.8em`
+  → `0.5rem 1.5rem`); the old em-based padding scaled with font-size and broke
+  the new `--sm` / `--lg` modifiers.
+- `.cy-btn` gained the shared `:focus-visible` ring used by every other
+  interactive element.
+
 ### Fixed
 - **Light-theme `--cy-neon-cyan` was `#008099`, which measures 4.07 against
   `--cy-bg`** — below the 4.5 AA floor for normal text. Now `#00707f` (5.10).
@@ -1144,6 +1218,8 @@ git commit -m "chore: bump cyberpunk-ui CDN pin to 0.2.0 with new SRI hash"
 | Spinner keeps rotating under reduced motion | 4 |
 | ARIA documented in every example | 4 (demo), 5 (README) |
 | Button `--secondary`, `--danger`, sizes | 2 |
+| Cards — migrated onto the token substrate | 2 |
+| `.cy-btn` — migrated onto the token substrate | 2 |
 | `scripts/check-contrast.js` | 1 |
 | PR CI workflow | 1 |
 | CHANGELOG | 5 |
