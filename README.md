@@ -2,7 +2,7 @@
 
 # `>_ @laddtnov/cyberpunk-ui`
 
-**Zero-dependency cyberpunk neon CSS kit** — design tokens, glow / glitch / scanline effects, and holo components.
+**Zero-dependency cyberpunk neon CSS kit** — design tokens, glow / glitch / scanline effects, form controls, and feedback components.
 
 [![npm](https://img.shields.io/npm/v/@laddtnov/cyberpunk-ui?style=flat-square&color=00f2ff)](https://www.npmjs.com/package/@laddtnov/cyberpunk-ui)
 [![license](https://img.shields.io/badge/license-MIT-ff00ff?style=flat-square)](./LICENSE)
@@ -12,10 +12,17 @@
 
 ---
 
-No build step, no JavaScript, no runtime. Just CSS custom properties and a
-handful of classes, extracted from the [laddtnov.xyz](https://laddtnov.xyz)
-portfolio. Ships with a **WCAG-aware light theme** — the neon hues are dimmed
-on light backgrounds so text keeps its contrast.
+No build step, no JavaScript, no runtime. Just CSS custom properties and a set
+of classes, extracted from the [laddtnov.xyz](https://laddtnov.xyz) portfolio.
+
+Buttons, cards, inputs, checkboxes, radios, alerts, toasts, badges, a spinner
+and a progress bar — all driven by a token substrate you can override to
+reskin the whole kit.
+
+Accessibility is treated as part of the design, not a footnote: a **WCAG-aware
+light theme** dims the neon hues so text keeps its contrast, every contrast
+ratio is enforced in CI, focus rings are consistent across every control, and
+animations respect `prefers-reduced-motion`.
 
 ## Install
 
@@ -56,6 +63,23 @@ npm install @laddtnov/cyberpunk-ui
 </div>
 
 <section class="cy-grid-bg cy-scanlines"> … </section>
+```
+
+A form and a status message:
+
+```html
+<div class="cy-field">
+  <label class="cy-label" for="callsign">Callsign</label>
+  <input class="cy-input" id="callsign" aria-describedby="callsign-hint">
+  <span class="cy-hint" id="callsign-hint">Visible to other operatives.</span>
+</div>
+
+<label><input class="cy-checkbox" type="checkbox" checked> Encrypt</label>
+
+<button class="cy-btn cy-btn--danger">Purge</button>
+
+<output class="cy-alert cy-alert--success">Upload complete.</output>
+<span class="cy-badge cy-badge--warning">BETA</span>
 ```
 
 ## Reference
