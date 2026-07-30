@@ -133,15 +133,18 @@ textarea.cy-input {
   transition: transform 0.15s var(--cy-ease);
 }
 
-/* The tick is deliberately small relative to its box. Sized any larger it
-   spans nearly the full square and reads much heavier than the radio's dot,
-   so a checkbox and a radio sitting on the same line look mismatched. These
-   proportions keep the two controls at matching visual weight. */
+/* The tick is drawn in the page background colour because a checked checkbox
+   fills solid (see :checked below) — the tick is knocked out of the fill.
+   It is only ever visible when checked, since it is scale(0) otherwise.
+
+   The tick is also deliberately small relative to its box: any larger and it
+   spans nearly the full square, reading heavier than the radio's dot so the
+   two controls look mismatched side by side. */
 .cy-checkbox::after {
   width: 0.45rem;
   height: 0.22rem;
-  border-left: 2px solid var(--cy-neon-cyan);
-  border-bottom: 2px solid var(--cy-neon-cyan);
+  border-left: 2px solid var(--cy-bg);
+  border-bottom: 2px solid var(--cy-bg);
   rotate: -45deg;
   margin-top: -0.1rem;
 }
@@ -157,6 +160,15 @@ textarea.cy-input {
 .cy-radio:checked {
   border-color: var(--cy-neon-cyan);
   box-shadow: 0 0 10px rgba(var(--cy-cyan-rgb), 0.45);
+}
+
+/* A checked checkbox fills solid, matching how a checked radio fills with a
+   solid dot. Both controls then signal "selected" the same way — a filled
+   shape — instead of the checkbox being line-art beside a solid radio, which
+   reads as mismatched when the two sit on the same row. The tick is knocked
+   out in --cy-bg, so it stays legible in both themes. */
+.cy-checkbox:checked {
+  background: var(--cy-neon-cyan);
 }
 
 .cy-checkbox:checked::after,
