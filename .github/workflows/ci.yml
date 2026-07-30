@@ -1,0 +1,29 @@
+name: CI
+
+# The package had no pull-request checks at all — release.yml only runs after
+# a tag, so a contrast regression or a broken files allowlist would not surface
+# until after publish.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: WCAG contrast check
+        run: npm run check:contrast
+
+      # Catches an over-broad or over-narrow files allowlist before release.
+      - name: Inspect publish tarball
+        run: npm publish --dry-run

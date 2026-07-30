@@ -20,6 +20,9 @@
     "./effects": "./effects.css",
     "./components": "./components.css"
   },
+  "scripts": {
+    "check:contrast": "node scripts/check-contrast.js"
+  },
   "files": [
     "*.css",
     "README.md",
