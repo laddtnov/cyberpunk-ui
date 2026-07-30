@@ -25,5 +25,5 @@ jobs:
         run: npm run check:contrast
 
       # Catches an over-broad or over-narrow files allowlist before release.
-      - name: Inspect publish tarball
-        run: npm publish --dry-run
+      - name: Verify tarball contents
+        run: npm pack --dry-run

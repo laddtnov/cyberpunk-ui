@@ -258,8 +258,8 @@ jobs:
         run: npm run check:contrast
 
       # Catches an over-broad or over-narrow files allowlist before release.
-      - name: Inspect publish tarball
-        run: npm publish --dry-run
+      - name: Verify tarball contents
+        run: npm pack --dry-run
 ```
 
 - [ ] **Step 7: Commit**
@@ -1094,7 +1094,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 - [ ] **Step 7: Verify the tarball contains the new files**
 
-Run: `npm publish --dry-run`
+Run: `npm pack --dry-run`
 
 Expected: the file list includes `forms.css` and `feedback.css`, and **excludes** `scripts/`, `demo/`, `docs/`, and `CHANGELOG.md` (the `files` allowlist is `*.css`, `README.md`, `LICENSE`). Total should be 9 files.
 
