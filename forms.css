@@ -108,6 +108,15 @@ textarea.cy-input {
   margin: 0;
   display: inline-grid;
   place-content: center;
+  /* An inline-grid box derives its baseline from its in-flow content rather
+     than its border box. The checkbox's ::after tick (a rotated box with a
+     negative margin-top) and the radio's ::after dot (a plain circle) are
+     different content, so the two controls compute different baselines and
+     land at different heights when default `vertical-align: baseline` is
+     used. Aligning both to the line box's middle sidesteps the content-driven
+     baseline entirely and keeps them level regardless of ::after shape — do
+     not remove this as redundant. */
+  vertical-align: middle;
   background: var(--cy-surface);
   border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.5);
   cursor: pointer;

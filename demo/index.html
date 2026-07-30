@@ -38,6 +38,10 @@
     h1 { font-family: var(--cy-font-display); font-size: clamp(2rem, 7vw, 4rem); letter-spacing: 0.14em; margin: 0; }
     h2 { font-family: var(--cy-font-mono); color: var(--cy-neon-pink); font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 0 1rem; }
     .row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    /* Demo-only: labels are display:inline by default, so the gap between
+       control and text is just a literal space character. Lay each one out
+       as a small inline-flex so the checkbox/radio row reads consistently. */
+    .demo-check-label { display: inline-flex; align-items: center; gap: 0.4rem; }
     .hero { padding: 3rem 2rem; border-radius: 12px; }
     .mono { font-family: var(--cy-font-mono); }
 
@@ -169,9 +173,11 @@
         <label class="cy-label" for="d-msg">Message</label>
         <textarea class="cy-input" id="d-msg" placeholder="Transmission…"></textarea>
       </div>
-      <label><input class="cy-checkbox" type="checkbox" checked> Encrypt</label>
-      <label><input class="cy-radio" type="radio" name="r" checked> Primary</label>
-      <label><input class="cy-radio" type="radio" name="r"> Backup</label>
+      <div class="row">
+        <label class="demo-check-label"><input class="cy-checkbox" type="checkbox" checked> Encrypt</label>
+        <label class="demo-check-label"><input class="cy-radio" type="radio" name="r" checked> Primary</label>
+        <label class="demo-check-label"><input class="cy-radio" type="radio" name="r"> Backup</label>
+      </div>
       <input class="cy-input" disabled value="disabled">
     </section>
 
