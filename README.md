@@ -84,8 +84,67 @@ npm install @laddtnov/cyberpunk-ui
 
 | Class | Component |
 |-------|-----------|
-| `.cy-btn` · `.cy-btn--pink` | neon outline button with hover-glow |
+| `.cy-btn` · `.cy-btn--pink` · `.cy-btn--secondary` · `.cy-btn--danger` (+ `--sm`, `--lg`) | neon outline button with hover-glow |
 | `.cy-card` | glassmorphism holo card with edge glow |
+
+### Forms (`forms.css`)
+
+| Class | Element |
+|-------|---------|
+| `.cy-field` | wrapper for label + control + hint/error |
+| `.cy-label` | field label |
+| `.cy-input` | `<input>`, `<textarea>`, `<select>` (+ `--sm`, `--lg`) |
+| `.cy-checkbox` · `.cy-radio` | applied to the real input |
+| `.cy-hint` · `.cy-error` | helper and error text |
+
+```html
+<div class="cy-field">
+  <label class="cy-label" for="email">Email</label>
+  <input class="cy-input" id="email" type="email" required>
+  <span class="cy-error">Enter a valid address.</span>
+</div>
+```
+
+Invalid styling uses `:user-invalid`, so fields only turn red **after** the user
+interacts — not on page load. Drive it manually with `aria-invalid="true"`.
+
+### Feedback (`feedback.css`)
+
+| Class | Purpose |
+|-------|---------|
+| `.cy-alert` | inline message (+ `--info` `--success` `--warning` `--danger`) |
+| `.cy-toast` · `.cy-toast-container` | floating message (+ `--bottom`) |
+| `.cy-badge` | status pill (+ variants, `--outline`) |
+| `.cy-spinner` | indeterminate loader |
+| `.cy-progress` · `.cy-progress__fill` | determinate bar |
+| `.cy-sr-only` | visually-hidden text |
+
+Always give these the right ARIA — CSS cannot make a red box mean "error":
+
+```html
+<div class="cy-alert cy-alert--danger" role="alert">Breach detected.</div>
+
+<span class="cy-spinner" role="status">
+  <span class="cy-sr-only">Loading…</span>
+</span>
+
+<div class="cy-progress" role="progressbar"
+     aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
+  <div class="cy-progress__fill" style="width:66%"></div>
+</div>
+```
+
+Toasts ship as styling only — no JavaScript in this package. Show one with:
+
+```js
+const container = document.querySelector('.cy-toast-container');
+const toast = document.createElement('div');
+toast.className = 'cy-toast cy-toast--success';
+toast.setAttribute('role', 'status');
+toast.textContent = 'Package published.';
+container.append(toast);
+setTimeout(() => toast.remove(), 4000);
+```
 
 ## Theming
 

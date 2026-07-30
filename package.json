@@ -18,7 +18,9 @@
     ".": "./cyberpunk-ui.css",
     "./tokens": "./tokens.css",
     "./effects": "./effects.css",
-    "./components": "./components.css"
+    "./components": "./components.css",
+    "./forms": "./forms.css",
+    "./feedback": "./feedback.css"
   },
   "scripts": {
     "check:contrast": "node scripts/check-contrast.js"
