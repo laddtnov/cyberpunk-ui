@@ -71,6 +71,11 @@ textarea.cy-input {
    :user-invalid, not :invalid — :invalid matches empty required fields
    before the user has typed anything, so forms load pre-shouting in red.
    [aria-invalid="true"] lets JS validation drive the state explicitly. */
+
+/* This rule intentionally sits AFTER .cy-input:focus-visible (line 44).
+   Both have equal specificity (0,2,0), so source order is what makes the
+   invalid state win while focused. The focus outline remains visible, so
+   the field is never left without a focus affordance. Do not reorder. */
 .cy-input:user-invalid,
 .cy-input[aria-invalid="true"] {
   border-color: var(--cy-danger);
