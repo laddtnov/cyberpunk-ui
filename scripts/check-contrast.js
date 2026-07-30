@@ -24,13 +24,13 @@ const TEXT_FLOOR = 4.5;
 const UI_FLOOR = 3.0;
 
 function parseBlock(css, selector) {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = css.match(new RegExp(escaped + '\\s*\\{([^}]*)\\}'));
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  const match = css.match(new RegExp(escaped + String.raw`\s*\{([^}]*)\}`));
   if (!match) throw new Error('Block not found: ' + selector);
 
   const tokens = {};
   for (const line of match[1].split('\n')) {
-    const m = line.match(/(--cy-[a-z0-9-]+)\s*:\s*([^;]+);/i);
+    const m = line.match(/(--cy-[a-z0-9-]+)\s*:([^;]+);/i);
     if (m) tokens[m[1]] = m[2].trim();
   }
   return tokens;
@@ -50,6 +50,27 @@ function contrast(fg, bg) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
+function checkToken(label, name, tokens, bg, floor, role, failures) {
+  const value = tokens[name];
+  if (!value) {
+    failures.push(label + ' ' + name + ' is not defined');
+    console.log('  ' + name.padEnd(16) + ' MISSING');
+    return;
+  }
+  // var() aliases resolve to a token already checked on its own.
+  if (!value.startsWith('#')) {
+    console.log('  ' + name.padEnd(16) + ' ' + value + '  (alias, skipped)');
+    return;
+  }
+  const ratio = contrast(value, bg);
+  const ok = ratio >= floor;
+  if (!ok) failures.push(label + ' ' + name + ' ' + ratio.toFixed(2) + ' < ' + floor + ' (' + role + ')');
+  console.log(
+    '  ' + name.padEnd(16) + ' ' + value.padEnd(9) +
+    ratio.toFixed(2).padStart(6) + '  need ' + floor + '  ' + (ok ? 'PASS' : 'FAIL')
+  );
+}
+
 function checkTheme(label, tokens, failures) {
   const bg = tokens['--cy-bg'];
   if (!bg?.startsWith('#')) throw new Error(label + ': --cy-bg missing or not a hex value');
@@ -61,24 +82,7 @@ function checkTheme(label, tokens, failures) {
     [UI_TOKENS, UI_FLOOR, 'ui'],
   ]) {
     for (const name of list) {
-      const value = tokens[name];
-      if (!value) {
-        failures.push(label + ' ' + name + ' is not defined');
-        console.log('  ' + name.padEnd(16) + ' MISSING');
-        continue;
-      }
-      // var() aliases resolve to a token already checked on its own.
-      if (!value.startsWith('#')) {
-        console.log('  ' + name.padEnd(16) + ' ' + value + '  (alias, skipped)');
-        continue;
-      }
-      const ratio = contrast(value, bg);
-      const ok = ratio >= floor;
-      if (!ok) failures.push(label + ' ' + name + ' ' + ratio.toFixed(2) + ' < ' + floor + ' (' + role + ')');
-      console.log(
-        '  ' + name.padEnd(16) + ' ' + value.padEnd(9) +
-        ratio.toFixed(2).padStart(6) + '  need ' + floor + '  ' + (ok ? 'PASS' : 'FAIL')
-      );
+      checkToken(label, name, tokens, bg, floor, role, failures);
     }
   }
 }
