@@ -22,9 +22,11 @@ largely mechanical.
   elements (`<dialog>`, `<details>`) or is left to the consumer, documented with
   copy-paste snippets.
 - **No build step.** The `.css` files are the dist.
-- **Additive only.** No existing token or class changes meaning, so nothing
-  breaks for existing consumers — notably laddtnov-hub, which aliases
-  `--cy-neon-*` into its own palette.
+- **Additive, with one deliberate exception.** No class changes meaning and no
+  token is removed or renamed. The single exception is an accessibility fix:
+  `--cy-neon-cyan`'s light-theme value changes `#008099` → `#00707f` (see
+  below). Consumers keep working; light mode renders a slightly deeper teal.
+  laddtnov-hub aliases this token, so its light theme shifts one shade.
 
 ## Architecture
 
@@ -108,6 +110,38 @@ Adding a duplicate token would create two sources of truth for one colour.
 
 Light-theme overrides exist because the neon hues fail WCAG contrast on light
 backgrounds, consistent with the treatment `--cy-neon-cyan` already receives.
+
+### Accessibility fix: light-theme cyan
+
+```css
+:root[data-theme="light"] {
+  --cy-neon-cyan: #00707f;  /* was #008099 */
+  --cy-cyan-rgb:  0, 112, 127;
+}
+```
+
+Measured while designing the contrast checker: `#008099` scores **4.07** against
+`--cy-bg` (`#f0f0f5`) — below the 4.5 AA floor for normal-size text, though it
+passes the 3.0 floor for large text and UI. Since the README advertises a
+WCAG-aware light theme and the token is used for labels and links at body size,
+the claim was overstated. `#00707f` scores **5.10**.
+
+### Contrast thresholds are role-aware
+
+A single flat rule would be wrong. `--cy-neon-purple` (`#9d00ff`) scores 3.65 on
+dark and 4.77 on light, and **no value passes 4.5 in both themes** — brightening
+it for dark backgrounds breaks it on light. But purple is only ever a
+`box-shadow` glow (`.cy-glow--purple`), never text.
+
+The checker therefore mirrors WCAG's own split:
+
+| Role | Tokens | Floor |
+|---|---|---|
+| Text | `--cy-text`, `--cy-heading`, `--cy-neon-cyan`, `--cy-neon-pink`, `--cy-success`, `--cy-warning`, `--cy-danger` | 4.5 (WCAG 1.4.3 AA) |
+| Non-text / UI | `--cy-neon-purple` | 3.0 (WCAG 1.4.11) |
+
+If a token's role ever changes — purple used for text, say — its threshold must
+move with it. That mapping lives in the checker and is the file to edit.
 
 ### Sizing decision
 
