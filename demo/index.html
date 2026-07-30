@@ -26,6 +26,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../cyberpunk-ui.css">
+  <link rel="stylesheet" href="../forms.css">
   <style>
     body {
       margin: 0;
@@ -147,6 +148,32 @@
           <p style="margin:0">Black holes, supermassive stars, and cosmic voids.</p>
         </div>
       </div>
+    </section>
+
+    <section>
+      <h2>Forms</h2>
+      <div class="cy-field">
+        <label class="cy-label" for="d-name">Name</label>
+        <input class="cy-input" id="d-name" type="text" placeholder="Ada Lovelace">
+        <span class="cy-hint">As it should appear publicly.</span>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-mail">Email</label>
+        <input class="cy-input" id="d-mail" type="email" required placeholder="you@example.com">
+        <span class="cy-error">Enter a valid address.</span>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-sel">Sector</label>
+        <select class="cy-input" id="d-sel"><option>Night City</option><option>Chiba</option></select>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-msg">Message</label>
+        <textarea class="cy-input" id="d-msg" placeholder="Transmission…"></textarea>
+      </div>
+      <label><input class="cy-checkbox" type="checkbox" checked> Encrypt</label>
+      <label><input class="cy-radio" type="radio" name="r" checked> Primary</label>
+      <label><input class="cy-radio" type="radio" name="r"> Backup</label>
+      <input class="cy-input" disabled value="disabled">
     </section>
   </div>
 
