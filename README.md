@@ -125,18 +125,39 @@ interacts — not on page load. Drive it manually with `aria-invalid="true"`.
 | `.cy-toast` · `.cy-toast-container` | floating message (+ `--bottom`) |
 | `.cy-badge` | status pill (+ variants, `--outline`) |
 | `.cy-spinner` | indeterminate loader |
-| `.cy-progress` · `.cy-progress__fill` | determinate bar |
+| `.cy-progress` · `.cy-progress__fill` | determinate bar — native `<progress class="cy-progress">` (recommended) or the div + `.cy-progress__fill` pair (indeterminate/custom-animated) |
 | `.cy-sr-only` | visually-hidden text |
 
-Always give these the right ARIA — CSS cannot make a red box mean "error":
+Prefer native elements over ARIA roles where one exists — the browser gets
+the semantics right for free. `<output>` has an implicit `role="status"`,
+so use it for the "polite" cases (info/success alerts, the spinner, toasts):
+
+```html
+<output class="cy-alert cy-alert--info">Connection established.</output>
+
+<output class="cy-spinner">
+  <span class="cy-sr-only">Loading…</span>
+</output>
+```
+
+`alert` is assertive and has no native-element equivalent, so warnings and
+errors still need the explicit role — CSS cannot make a red box mean "error":
 
 ```html
 <div class="cy-alert cy-alert--danger" role="alert">Breach detected.</div>
+```
 
-<span class="cy-spinner" role="status">
-  <span class="cy-sr-only">Loading…</span>
-</span>
+Progress ships two forms. Prefer the native `<progress>` element — it is
+accessible by default, no ARIA required:
 
+```html
+<progress class="cy-progress" value="66" max="100"></progress>
+```
+
+Fall back to the `div` + `.cy-progress__fill` pair when you need an
+indeterminate state or custom animation that `<progress>` can't express:
+
+```html
 <div class="cy-progress" role="progressbar"
      aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
   <div class="cy-progress__fill" style="width:66%"></div>
@@ -147,9 +168,8 @@ Toasts ship as styling only — no JavaScript in this package. Show one with:
 
 ```js
 const container = document.querySelector('.cy-toast-container');
-const toast = document.createElement('div');
+const toast = document.createElement('output');
 toast.className = 'cy-toast cy-toast--success';
-toast.setAttribute('role', 'status');
 toast.textContent = 'Package published.';
 container.append(toast);
 setTimeout(() => toast.remove(), 4000);

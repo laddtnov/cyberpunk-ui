@@ -19,6 +19,7 @@
    Status colour on a 3px left border plus a faint tint of the same
    hue — which is why the substrate publishes -rgb channels. */
 .cy-alert {
+  display: block;
   font-family: var(--cy-font-mono);
   font-size: 0.9rem;
   line-height: 1.6;
@@ -55,6 +56,7 @@
 }
 
 .cy-toast {
+  display: block;
   pointer-events: auto;
   min-width: 240px;
   max-width: 360px;
@@ -144,6 +146,36 @@
   transition: width 0.3s var(--cy-ease);
 }
 
+/* Native <progress class="cy-progress" value max> — same track/fill look
+   as the div + .cy-progress__fill pair above, driven by the element's own
+   value instead of an inline width. Vendor pseudo-elements cannot share a
+   selector list (an invalid one drops the whole rule), so each lives on
+   its own. */
+progress.cy-progress {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+}
+
+progress.cy-progress::-webkit-progress-bar {
+  background: rgba(var(--cy-cyan-rgb), 0.15);
+  border-radius: var(--cy-radius-lg);
+}
+
+progress.cy-progress::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
+  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  border-radius: var(--cy-radius-lg);
+  transition: width 0.3s var(--cy-ease);
+}
+
+progress.cy-progress::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
+  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  border-radius: var(--cy-radius-lg);
+  transition: width 0.3s var(--cy-ease);
+}
+
 /* ── Reduced motion ───────────────────────────────────────────────
    The spinner KEEPS rotating: a frozen spinner reads as broken and it
    is essential feedback, not decoration. Slow it and drop the
@@ -152,6 +184,8 @@
   .cy-spinner { animation: cy-spin 2s linear infinite; }
   .cy-toast   { animation: cy-fade-in 0.2s ease; }
   .cy-progress__fill { transition: none; }
+  progress.cy-progress::-webkit-progress-value { transition: none; }
+  progress.cy-progress::-moz-progress-bar { transition: none; }
 }
 
 @keyframes cy-fade-in {

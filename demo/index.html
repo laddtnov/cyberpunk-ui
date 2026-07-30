@@ -187,8 +187,8 @@
 
     <section>
       <h2>Feedback</h2>
-      <div class="cy-alert cy-alert--info" role="status">Connection established.</div>
-      <div class="cy-alert cy-alert--success" role="status">Upload complete.</div>
+      <output class="cy-alert cy-alert--info">Connection established.</output>
+      <output class="cy-alert cy-alert--success">Upload complete.</output>
       <div class="cy-alert cy-alert--warning" role="alert">Signal degraded.</div>
       <div class="cy-alert cy-alert--danger" role="alert">Breach detected.</div>
 
@@ -201,18 +201,15 @@
       </div>
 
       <div class="row" style="margin-top:1rem">
-        <span class="cy-spinner" role="status"><span class="cy-sr-only">Loading…</span></span>
+        <output class="cy-spinner"><span class="cy-sr-only">Loading…</span></output>
       </div>
 
-      <div class="cy-progress" style="margin-top:1rem" role="progressbar"
-           aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
-        <div class="cy-progress__fill" style="width:66%"></div>
-      </div>
+      <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
     </section>
   </div>
 
   <div class="cy-toast-container cy-toast-container--bottom">
-    <div class="cy-toast cy-toast--success" role="status">Package published.</div>
+    <output class="cy-toast cy-toast--success">Package published.</output>
   </div>
 
   <script>

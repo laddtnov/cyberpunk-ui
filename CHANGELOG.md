@@ -13,8 +13,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **Forms** (`forms.css`) — `.cy-field`, `.cy-label`, `.cy-input` (with `--sm` /
   `--lg`), `.cy-checkbox`, `.cy-radio`, `.cy-hint`, `.cy-error`.
 - **Feedback** (`feedback.css`) — `.cy-alert`, `.cy-toast` +
-  `.cy-toast-container`, `.cy-badge`, `.cy-spinner`, `.cy-progress`, and the
-  `.cy-sr-only` utility.
+  `.cy-toast-container`, `.cy-badge`, `.cy-spinner`, `.cy-progress` (both a
+  native `progress.cy-progress` element and the div + `.cy-progress__fill`
+  pair), and the `.cy-sr-only` utility.
 - **Button variants** — `.cy-btn--secondary`, `.cy-btn--danger`, `.cy-btn--sm`,
   `.cy-btn--lg`, plus disabled styling.
 - Subpath exports `@laddtnov/cyberpunk-ui/forms` and `/feedback`.
@@ -35,6 +36,17 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **Light-theme `--cy-neon-cyan` was `#008099`, which measures 4.07 against
   `--cy-bg`** — below the 4.5 AA floor for normal text. Now `#00707f` (5.10).
   Light mode renders a slightly deeper teal; no API change.
+- **Demo: unlabelled disabled input** now wrapped in `.cy-field` with a
+  `.cy-label`, matching every other control in the Forms section.
+- **Demo: `role="status"` replaced with native `<output>`** on the polite
+  alerts, the spinner, and the toast — same implicit semantics, one fewer
+  attribute. `role="alert"` is unchanged on the warning/danger alerts since
+  `alert` has no native-element equivalent.
+- **`scripts/check-contrast.js`** — modernised to `node:` protocol imports,
+  `Number.parseInt`, and optional chaining; removed a regex that could
+  backtrack ambiguously while parsing `tokens.css`; split `checkTheme`'s
+  per-token logic into `checkToken` to bring cognitive complexity back
+  under the lint limit. Dev tooling only, not published in the package.
 
 ### Notes
 - Still zero dependencies, zero JavaScript, no build step.
