@@ -2,8 +2,8 @@
 // Parses tokens.css and enforces WCAG contrast against each theme's --cy-bg.
 // Zero dependencies by design: this package ships none, and neither do its tools.
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Role decides the floor. WCAG 1.4.3 requires 4.5 for normal text; 1.4.11
 // requires 3.0 for non-text UI. --cy-neon-purple is only ever a box-shadow
@@ -40,7 +40,7 @@ function relativeLuminance(hex) {
   const c = hex.replace('#', '');
   const full = c.length === 3 ? c.split('').map((x) => x + x).join('') : c;
   const [r, g, b] = [0, 2, 4]
-    .map((i) => parseInt(full.substr(i, 2), 16) / 255)
+    .map((i) => Number.parseInt(full.substr(i, 2), 16) / 255)
     .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
@@ -52,7 +52,7 @@ function contrast(fg, bg) {
 
 function checkTheme(label, tokens, failures) {
   const bg = tokens['--cy-bg'];
-  if (!bg || !bg.startsWith('#')) throw new Error(label + ': --cy-bg missing or not a hex value');
+  if (!bg?.startsWith('#')) throw new Error(label + ': --cy-bg missing or not a hex value');
 
   console.log('\n' + label + '  (background ' + bg + ')');
 
