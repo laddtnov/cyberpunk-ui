@@ -30,6 +30,38 @@
 
   /* ── Motion ───────────────────────────────────────────────── */
   --cy-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ── Geometry ─────────────────────────────────────────────── */
+  --cy-radius-sm: 2px;
+  --cy-radius:    4px;
+  --cy-radius-lg: 8px;
+  --cy-border-width: 1px;
+
+  /* ── Spacing (4px-based scale) ────────────────────────────── */
+  --cy-space-xs: 0.25rem;
+  --cy-space-sm: 0.5rem;
+  --cy-space-md: 0.75rem;
+  --cy-space-lg: 1rem;
+  --cy-space-xl: 1.5rem;
+
+  /* ── Focus (shared by every interactive element) ──────────── */
+  --cy-focus-width:  2px;
+  --cy-focus-offset: 2px;
+  --cy-focus-color:  var(--cy-neon-cyan);
+
+  /* ── Status ────────────────────────────────────────────────
+     --cy-info aliases the cyan on purpose: its channels are already
+     published as --cy-cyan-rgb, so there is one source of truth. */
+  --cy-success: #52ff9a;
+  --cy-warning: #ffc857;
+  --cy-danger:  #ff4d4d;
+  --cy-info:    var(--cy-neon-cyan);
+
+  --cy-success-rgb: 82, 255, 154;
+  --cy-warning-rgb: 255, 200, 87;
+  --cy-danger-rgb:  255, 77, 77;
+
+  --cy-disabled-opacity: 0.45;
 }
 
 /* ── Light theme ──────────────────────────────────────────────
@@ -38,7 +70,9 @@
    already passes (~5.5:1) and is left untouched. Toggle by setting
    data-theme="light" on the <html> element. */
 :root[data-theme="light"] {
-  --cy-neon-cyan: #008099;
+  /* #008099 measured 4.07 against --cy-bg — below the 4.5 AA floor for
+     normal text. #00707f measures 5.10. */
+  --cy-neon-cyan: #00707f;
   --cy-neon-pink: #b3009e;
 
   --cy-bg:      #f0f0f5;
@@ -46,6 +80,15 @@
   --cy-text:    #3a3a45;
   --cy-heading: #16161d;
 
-  --cy-cyan-rgb: 0, 128, 153;
+  --cy-cyan-rgb: 0, 112, 127;
   --cy-pink-rgb: 179, 0, 158;
+
+  /* Neon status hues fail contrast on a light background. */
+  --cy-success: #0a7d43;
+  --cy-warning: #8a5a00;
+  --cy-danger:  #c2110f;
+
+  --cy-success-rgb: 10, 125, 67;
+  --cy-warning-rgb: 138, 90, 0;
+  --cy-danger-rgb:  194, 17, 15;
 }

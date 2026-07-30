@@ -38,6 +38,10 @@
     h1 { font-family: var(--cy-font-display); font-size: clamp(2rem, 7vw, 4rem); letter-spacing: 0.14em; margin: 0; }
     h2 { font-family: var(--cy-font-mono); color: var(--cy-neon-pink); font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 0 1rem; }
     .row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    /* Demo-only: labels are display:inline by default, so the gap between
+       control and text is just a literal space character. Lay each one out
+       as a small inline-flex so the checkbox/radio row reads consistently. */
+    .demo-check-label { display: inline-flex; align-items: center; gap: 0.4rem; }
     .hero { padding: 3rem 2rem; border-radius: 12px; }
     .mono { font-family: var(--cy-font-mono); }
 
@@ -119,6 +123,11 @@
         <a href="#" class="cy-btn cy-glow">&gt;_ ENTER</a>
         <a href="#" class="cy-btn cy-btn--pink cy-glow--pink">ABORT</a>
         <a href="#" class="cy-btn">GHOST</a>
+        <a href="#" class="cy-btn cy-btn--secondary">SECONDARY</a>
+        <a href="#" class="cy-btn cy-btn--danger">DANGER</a>
+        <button class="cy-btn cy-btn--sm">SMALL</button>
+        <button class="cy-btn cy-btn--lg">LARGE</button>
+        <button class="cy-btn" disabled>DISABLED</button>
       </div>
     </section>
 
@@ -143,6 +152,64 @@
         </div>
       </div>
     </section>
+
+    <section>
+      <h2>Forms</h2>
+      <div class="cy-field">
+        <label class="cy-label" for="d-name">Name</label>
+        <input class="cy-input" id="d-name" type="text" placeholder="Ada Lovelace">
+        <span class="cy-hint">As it should appear publicly.</span>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-mail">Email</label>
+        <input class="cy-input" id="d-mail" type="email" required placeholder="you@example.com"
+               aria-invalid="true" aria-describedby="d-mail-error">
+        <span class="cy-error" id="d-mail-error">Enter a valid address.</span>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-sel">Sector</label>
+        <select class="cy-input" id="d-sel"><option>Night City</option><option>Chiba</option></select>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-msg">Message</label>
+        <textarea class="cy-input" id="d-msg" placeholder="Transmission…"></textarea>
+      </div>
+      <div class="row" style="margin-bottom: var(--cy-space-lg)">
+        <label class="demo-check-label"><input class="cy-checkbox" type="checkbox" checked> Encrypt</label>
+        <label class="demo-check-label"><input class="cy-radio" type="radio" name="r" checked> Primary</label>
+        <label class="demo-check-label"><input class="cy-radio" type="radio" name="r"> Backup</label>
+      </div>
+      <div class="cy-field">
+        <label class="cy-label" for="d-clearance">Clearance level</label>
+        <input class="cy-input" id="d-clearance" disabled value="Restricted — contact your handler">
+      </div>
+    </section>
+
+    <section>
+      <h2>Feedback</h2>
+      <output class="cy-alert cy-alert--info">Connection established.</output>
+      <output class="cy-alert cy-alert--success">Upload complete.</output>
+      <div class="cy-alert cy-alert--warning" role="alert">Signal degraded.</div>
+      <div class="cy-alert cy-alert--danger" role="alert">Breach detected.</div>
+
+      <div class="row" style="margin-top:1rem">
+        <span class="cy-badge">NEW</span>
+        <span class="cy-badge cy-badge--success">LIVE</span>
+        <span class="cy-badge cy-badge--warning">BETA</span>
+        <span class="cy-badge cy-badge--danger">DOWN</span>
+        <span class="cy-badge cy-badge--outline cy-badge--success">v0.2</span>
+      </div>
+
+      <div class="row" style="margin-top:1rem">
+        <output class="cy-spinner"><span class="cy-sr-only">Loading…</span></output>
+      </div>
+
+      <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
+    </section>
+  </div>
+
+  <div class="cy-toast-container cy-toast-container--bottom">
+    <output class="cy-toast cy-toast--success">Package published.</output>
   </div>
 
   <script>

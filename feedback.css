@@ -1,0 +1,194 @@
+/*! @laddtnov/cyberpunk-ui — feedback.css | MIT */
+
+/* ── Visually-hidden utility ──────────────────────────────────────
+   Lives here because .cy-spinner requires a text label to be
+   accessible, and a spinner without one is the common mistake. */
+.cy-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Alerts ───────────────────────────────────────────────────────
+   Status colour on a 3px left border plus a faint tint of the same
+   hue — which is why the substrate publishes -rgb channels. */
+.cy-alert {
+  display: block;
+  font-family: var(--cy-font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--cy-text);
+  padding: var(--cy-space-md) var(--cy-space-lg);
+  border-radius: var(--cy-radius);
+  border-left: 3px solid var(--cy-info);
+  background: rgba(var(--cy-cyan-rgb), 0.08);
+}
+
+.cy-alert--info    { border-left-color: var(--cy-info);    background: rgba(var(--cy-cyan-rgb),    0.08); }
+.cy-alert--success { border-left-color: var(--cy-success); background: rgba(var(--cy-success-rgb), 0.08); }
+.cy-alert--warning { border-left-color: var(--cy-warning); background: rgba(var(--cy-warning-rgb), 0.08); }
+.cy-alert--danger  { border-left-color: var(--cy-danger);  background: rgba(var(--cy-danger-rgb),  0.08); }
+
+/* ── Toasts ───────────────────────────────────────────────────────
+   Styling only — no JavaScript ships. Consumers append and remove
+   nodes; see the README snippet. pointer-events on the container is
+   none so it never blocks clicks on the page beneath it. */
+.cy-toast-container {
+  position: fixed;
+  top: var(--cy-space-lg);
+  right: var(--cy-space-lg);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cy-space-sm);
+  pointer-events: none;
+}
+
+.cy-toast-container--bottom {
+  top: auto;
+  bottom: var(--cy-space-lg);
+}
+
+.cy-toast {
+  display: block;
+  pointer-events: auto;
+  min-width: 240px;
+  max-width: 360px;
+  font-family: var(--cy-font-mono);
+  font-size: 0.85rem;
+  color: var(--cy-text);
+  background: var(--cy-surface);
+  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.4);
+  border-left: 3px solid var(--cy-info);
+  border-radius: var(--cy-radius);
+  padding: var(--cy-space-md) var(--cy-space-lg);
+  box-shadow: 0 0 24px rgba(var(--cy-cyan-rgb), 0.18);
+  animation: cy-toast-in 0.25s var(--cy-ease);
+}
+
+.cy-toast--success { border-left-color: var(--cy-success); }
+.cy-toast--warning { border-left-color: var(--cy-warning); }
+.cy-toast--danger  { border-left-color: var(--cy-danger); }
+
+@keyframes cy-toast-in {
+  from { opacity: 0; transform: translateX(1rem); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Badges ───────────────────────────────────────────────────── */
+.cy-badge {
+  display: inline-block;
+  font-family: var(--cy-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem var(--cy-space-sm);
+  border-radius: var(--cy-radius-lg);
+  color: var(--cy-bg);
+  background: var(--cy-info);
+}
+
+.cy-badge--success { background: var(--cy-success); }
+.cy-badge--warning { background: var(--cy-warning); }
+.cy-badge--danger  { background: var(--cy-danger); }
+
+.cy-badge--outline {
+  color: var(--cy-info);
+  background: transparent;
+  border: var(--cy-border-width) solid currentColor;
+}
+
+.cy-badge--outline.cy-badge--success { color: var(--cy-success); }
+.cy-badge--outline.cy-badge--warning { color: var(--cy-warning); }
+.cy-badge--outline.cy-badge--danger  { color: var(--cy-danger); }
+
+/* ── Spinner ──────────────────────────────────────────────────── */
+.cy-spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid rgba(var(--cy-cyan-rgb), 0.25);
+  border-top-color: var(--cy-neon-cyan);
+  border-radius: 50%;
+  animation: cy-spin 0.8s linear infinite,
+             cy-spin-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes cy-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cy-spin-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(var(--cy-cyan-rgb), 0.4); }
+  50%      { box-shadow: 0 0 16px rgba(var(--cy-cyan-rgb), 0.8); }
+}
+
+/* ── Progress ─────────────────────────────────────────────────── */
+.cy-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(var(--cy-cyan-rgb), 0.15);
+  border-radius: var(--cy-radius-lg);
+  overflow: hidden;
+}
+
+.cy-progress__fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
+  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  transition: width 0.3s var(--cy-ease);
+}
+
+/* Native <progress class="cy-progress" value max> — same track/fill look
+   as the div + .cy-progress__fill pair above, driven by the element's own
+   value instead of an inline width. Vendor pseudo-elements cannot share a
+   selector list (an invalid one drops the whole rule), so each lives on
+   its own. */
+progress.cy-progress {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+}
+
+progress.cy-progress::-webkit-progress-bar {
+  background: rgba(var(--cy-cyan-rgb), 0.15);
+  border-radius: var(--cy-radius-lg);
+}
+
+progress.cy-progress::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
+  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  border-radius: var(--cy-radius-lg);
+  transition: width 0.3s var(--cy-ease);
+}
+
+progress.cy-progress::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
+  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  border-radius: var(--cy-radius-lg);
+  transition: width 0.3s var(--cy-ease);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────
+   The spinner KEEPS rotating: a frozen spinner reads as broken and it
+   is essential feedback, not decoration. Slow it and drop the
+   decorative glow pulse instead. */
+@media (prefers-reduced-motion: reduce) {
+  .cy-spinner { animation: cy-spin 2s linear infinite; }
+  .cy-toast   { animation: cy-fade-in 0.2s ease; }
+  .cy-progress__fill { transition: none; }
+  progress.cy-progress::-webkit-progress-value { transition: none; }
+  progress.cy-progress::-moz-progress-bar { transition: none; }
+}
+
+@keyframes cy-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
