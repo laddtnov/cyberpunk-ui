@@ -18,7 +18,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **Button variants** — `.cy-btn--secondary`, `.cy-btn--danger`, `.cy-btn--sm`,
   `.cy-btn--lg`, plus disabled styling.
 - Subpath exports `@laddtnov/cyberpunk-ui/forms` and `/feedback`.
-- `scripts/check-contrast.js` and PR CI enforcing WCAG contrast on every token.
+- `scripts/check-contrast.js` and PR CI enforcing WCAG contrast on the 8 colour
+  tokens that render as text or UI (not every token — geometry, spacing, and
+  font tokens have no contrast ratio to check).
 
 ### Changed
 - `.cy-btn` and `.cy-card` now consume the token substrate instead of hardcoded

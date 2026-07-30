@@ -162,8 +162,9 @@
       </div>
       <div class="cy-field">
         <label class="cy-label" for="d-mail">Email</label>
-        <input class="cy-input" id="d-mail" type="email" required placeholder="you@example.com">
-        <span class="cy-error">Enter a valid address.</span>
+        <input class="cy-input" id="d-mail" type="email" required placeholder="you@example.com"
+               aria-invalid="true" aria-describedby="d-mail-error">
+        <span class="cy-error" id="d-mail-error">Enter a valid address.</span>
       </div>
       <div class="cy-field">
         <label class="cy-label" for="d-sel">Sector</label>

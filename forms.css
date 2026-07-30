@@ -34,7 +34,9 @@
 
 .cy-input::placeholder {
   color: var(--cy-text);
-  opacity: 0.45;
+  /* 0.7 is the lowest opacity that clears 4.5:1 in both themes against
+     --cy-surface (the input's background): 6.40:1 dark, 4.57:1 light. */
+  opacity: 0.7;
 }
 
 .cy-input:hover {
@@ -48,7 +50,17 @@
   box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.3);
 }
 
-/* Native dropdown arrows cannot be styled consistently, so draw our own. */
+/* Native dropdown arrows cannot be styled consistently, so draw our own.
+   `mask-image` was tried so the arrow could take `background-color:
+   var(--cy-neon-cyan)` directly, but a <select> has no wrapper element to
+   confine it to: masking the select clips its ENTIRE painted box (fill,
+   border, and text go with it, leaving only the arrow silhouette) because
+   mask is applied to the whole element, not to one background layer. With
+   no wrapper markup available (a bare `<select class="cy-input">` is the
+   only markup contract this kit makes), the arrow has to stay a background
+   image with its colour baked in — so it is baked in per theme instead of
+   once, keyed off the same [data-theme="light"] switch tokens.css uses, and
+   kept in sync with --cy-neon-cyan's value in each theme below. */
 select.cy-input {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%2300f2ff' d='M0 0h12L6 8z'/%3E%3C/svg%3E");
@@ -56,6 +68,11 @@ select.cy-input {
   background-position: right var(--cy-space-md) center;
   background-size: 10px;
   padding-right: var(--cy-space-xl);
+}
+
+/* Keep in sync with --cy-neon-cyan's light-theme value in tokens.css. */
+:root[data-theme="light"] select.cy-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%2300707f' d='M0 0h12L6 8z'/%3E%3C/svg%3E");
 }
 
 textarea.cy-input {
@@ -92,7 +109,10 @@ textarea.cy-input {
   font-family: var(--cy-font-mono);
   font-size: 0.75rem;
   color: var(--cy-text);
-  opacity: 0.7;
+  /* 0.75 is the lowest opacity that clears 4.5:1 in both themes against
+     --cy-bg (hint text sits on the page background): 7.48:1 dark, 4.86:1
+     light. */
+  opacity: 0.75;
 }
 
 /* ── Checkbox and radio ───────────────────────────────────────────

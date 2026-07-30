@@ -31,6 +31,8 @@ npm install @laddtnov/cyberpunk-ui
 @import "@laddtnov/cyberpunk-ui/tokens";
 @import "@laddtnov/cyberpunk-ui/effects";
 @import "@laddtnov/cyberpunk-ui/components";
+@import "@laddtnov/cyberpunk-ui/forms";
+@import "@laddtnov/cyberpunk-ui/feedback";
 ```
 
 ### No build? Use the CDN
@@ -68,6 +70,12 @@ npm install @laddtnov/cyberpunk-ui
 | `--cy-cyan-rgb` / `--cy-pink-rgb` / `--cy-purple-rgb` | raw RGB triplets for theme-aware `rgba()` glows |
 | `--cy-font-display` / `--cy-font-body` / `--cy-font-mono` | type stacks (you load the fonts) |
 | `--cy-ease` | shared easing curve |
+| `--cy-radius-sm` / `--cy-radius` / `--cy-radius-lg` | corner radii |
+| `--cy-border-width` | shared border thickness |
+| `--cy-space-xs` / `--cy-space-sm` / `--cy-space-md` / `--cy-space-lg` / `--cy-space-xl` | 4px-based spacing scale |
+| `--cy-focus-width` / `--cy-focus-offset` / `--cy-focus-color` | shared `:focus-visible` ring, used by every interactive element |
+| `--cy-success` / `--cy-warning` / `--cy-danger` / `--cy-info` | status colours (+ `-rgb` channels for theme-aware `rgba()`) |
+| `--cy-disabled-opacity` | opacity applied to disabled controls |
 
 ### Effects (`effects.css`)
 
@@ -100,8 +108,9 @@ npm install @laddtnov/cyberpunk-ui
 ```html
 <div class="cy-field">
   <label class="cy-label" for="email">Email</label>
-  <input class="cy-input" id="email" type="email" required>
-  <span class="cy-error">Enter a valid address.</span>
+  <input class="cy-input" id="email" type="email" required
+         aria-invalid="true" aria-describedby="email-error">
+  <span class="cy-error" id="email-error">Enter a valid address.</span>
 </div>
 ```
 
@@ -164,8 +173,10 @@ Flip to the accessible light theme by setting an attribute on `<html>`:
 ## Accessibility
 
 - Light theme dims cyan/pink to preserve WCAG contrast.
-- All animations (`glitch`, `grid`, `cursor`, hover transforms) are disabled
-  under `prefers-reduced-motion: reduce`.
+- Most animations (`glitch`, `grid`, `cursor`, hover transforms) are disabled
+  under `prefers-reduced-motion: reduce`. `.cy-spinner` is the exception: it
+  keeps rotating, just slower and without the decorative glow pulse, because a
+  frozen spinner reads as broken and is essential feedback, not decoration.
 
 ## License
 

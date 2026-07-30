@@ -18,7 +18,7 @@
 
 .cy-btn:hover,
 .cy-btn:focus-visible {
-  color: #000;
+  color: var(--cy-bg);
   background: var(--cy-neon-cyan);
   box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px rgba(var(--cy-cyan-rgb), 0.5);
   transform: translateY(-1px);
@@ -121,6 +121,15 @@
   color: inherit;
   background: transparent;
   box-shadow: none;
-  outline: none;
   transform: none;
+}
+
+/* Native :disabled elements cannot receive focus, so removing the outline
+   here is safe. [aria-disabled="true"] elements deliberately remain in the
+   tab order (see forms.css/README for the pattern), so their outline must
+   stay — otherwise a keyboard user can focus a control with no visible
+   indicator, violating WCAG 2.4.7. */
+.cy-btn:disabled:hover,
+.cy-btn:disabled:focus-visible {
+  outline: none;
 }
