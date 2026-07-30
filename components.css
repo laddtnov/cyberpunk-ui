@@ -21,9 +21,12 @@
   color: #000;
   background: var(--cy-neon-cyan);
   box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px rgba(var(--cy-cyan-rgb), 0.5);
+  transform: translateY(-1px);
+}
+
+.cy-btn:focus-visible {
   outline: var(--cy-focus-width) solid var(--cy-focus-color);
   outline-offset: var(--cy-focus-offset);
-  transform: translateY(-1px);
 }
 
 .cy-btn--pink {
@@ -112,9 +115,12 @@
 }
 
 .cy-btn:disabled:hover,
-.cy-btn[aria-disabled="true"]:hover {
+.cy-btn:disabled:focus-visible,
+.cy-btn[aria-disabled="true"]:hover,
+.cy-btn[aria-disabled="true"]:focus-visible {
   color: inherit;
   background: transparent;
   box-shadow: none;
+  outline: none;
   transform: none;
 }
