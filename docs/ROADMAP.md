@@ -62,13 +62,17 @@ would have driven more.
 What is left is small and worth doing before it is forgotten:
 
 - **`:user-invalid`** — the last real unknown, and the only one that could
-  still bite. The demo cannot answer it: its red email field is a hardcoded
-  `aria-invalid="true"`, a different selector entirely. Needs someone to type
-  into a required field, clear it, and tab away.
+  still bite. The demo could not answer it at first: its red email field is a
+  hardcoded `aria-invalid="true"`, a different selector entirely, so the field
+  loads red no matter what the engine does with `:user-invalid`. A **Relay
+  address** field was added to exercise the CSS-only path — type something
+  malformed into it, tab away, and see whether Gecko turns it red.
 - **The light theme**, and the **glitch / scanline / grid** effects — neither
   was in frame during the pass.
-- **Give the demo a `.cy-progress__fill` example**, so the div-based progress
-  path stops being the one component no browser has ever rendered.
+
+The demo also gained a `.cy-progress__fill` example, so the div-based progress
+path is no longer the one component no browser had ever rendered. Both tracks
+now measure identically.
 
 The lesson generalises past Firefox: two of the kit's engine assumptions were
 written from reasoning rather than observation, and one of them was wrong. That

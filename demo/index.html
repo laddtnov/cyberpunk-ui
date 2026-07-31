@@ -160,11 +160,29 @@
         <input class="cy-input" id="d-name" type="text" placeholder="Ada Lovelace">
         <span class="cy-hint">As it should appear publicly.</span>
       </div>
+      <!-- Two validation paths, and the demo shows both on purpose.
+
+           This one is the JS-driven path: aria-invalid is hardcoded, so the
+           field renders its error state on load without anyone interacting.
+           That makes it a static showcase of the styling — and it means this
+           field says nothing about :user-invalid, which it never matches. -->
       <div class="cy-field">
         <label class="cy-label" for="d-mail">Email</label>
         <input class="cy-input" id="d-mail" type="email" required placeholder="you@example.com"
                aria-invalid="true" aria-describedby="d-mail-error">
         <span class="cy-error" id="d-mail-error">Enter a valid address.</span>
+      </div>
+
+      <!-- …and this one is the CSS-only path, with no aria-invalid on it. It
+           loads clean and only turns red once you have typed something invalid
+           and left the field — which is the whole point of :user-invalid over
+           :invalid. Keep it free of aria-invalid or it stops testing that. -->
+      <div class="cy-field">
+        <label class="cy-label" for="d-relay">Relay address</label>
+        <input class="cy-input" id="d-relay" type="email" required placeholder="relay@night.city"
+               aria-describedby="d-relay-hint">
+        <span class="cy-hint" id="d-relay-hint">Required — stays calm until you
+          leave it empty or malformed.</span>
       </div>
       <div class="cy-field">
         <label class="cy-label" for="d-sel">Sector</label>
@@ -204,7 +222,16 @@
         <output class="cy-spinner"><span class="cy-sr-only">Loading…</span></output>
       </div>
 
+      <!-- Both progress paths, because the kit ships both and only the native
+           one used to appear here — which left the div version as the one
+           component no browser check had ever rendered. -->
       <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
+
+      <div class="cy-progress" style="margin-top:1rem" role="progressbar"
+           aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"
+           aria-label="Sync progress">
+        <div class="cy-progress__fill" style="width:66%"></div>
+      </div>
     </section>
   </div>
 

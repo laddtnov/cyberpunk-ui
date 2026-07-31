@@ -19,9 +19,9 @@ Zero dependencies, zero JavaScript, no build step. 741 lines of CSS.
 | `feedback.css` | 194 | alert, toast, badge, spinner, progress, sr-only |
 | `cyberpunk-ui.css` | 6 | `@import`s all of the above |
 
-Supporting files: `demo/index.html` (the live demo, and the OG image source —
-it exercises nearly every component, with two gaps noted under Known debt),
-`scripts/check-contrast.js`
+Supporting files: `demo/index.html` (the live demo — every component is
+exercised there, including both progress code paths and both validation
+paths, and it is the OG image source), `scripts/check-contrast.js`
 (dev-only, not published), `docs/superpowers/` (specs and plans),
 `.github/workflows/`.
 
@@ -159,14 +159,17 @@ Two traps worth knowing:
   element to scope the mask to.
 - **Two code paths for progress** — a native `<progress class="cy-progress">`
   and a div plus `.cy-progress__fill`. A deliberate choice to support both;
-  dropping `__fill` would simplify. Note only the native element appears in the
-  demo, so `__fill` is the one component no browser check has ever covered.
-  Low risk — it is two plain divs — but it is untested by construction.
+  dropping `__fill` would simplify. Both are in the demo now, and measure
+  identically (880px track, fill at 66.0%, matching the native `value="66"`).
 
-- **The demo does not exercise `:user-invalid`.** Its red email field is a
-  hardcoded `aria-invalid="true"`, which demonstrates the error *styling* while
-  bypassing the selector that drives it in real use. Anything that wants to
-  check `:user-invalid` has to type into a field and blur it by hand.
+- **Two validation paths, and they are easy to confuse.** `:user-invalid` is
+  CSS-only and stays quiet until the user has interacted;
+  `[aria-invalid="true"]` is the hook for JS-driven validation and applies the
+  instant it is set. The demo's Email field hardcodes `aria-invalid`, so it
+  renders red on load *by design* — it is the static showcase, and it never
+  matches `:user-invalid`. The **Relay address** field carries no
+  `aria-invalid` and exists specifically to exercise the CSS-only path. Adding
+  `aria-invalid` to it would silently retire that coverage.
 - **Firefox is verified as of 0.2.1**, on macOS, against the demo page.
   Confirmed painting: `appearance: none` on input / select / textarea (the
   custom select arrow renders, with no native arrow beside it), the checkbox
@@ -180,10 +183,11 @@ Two traps worth knowing:
   input non-replaced, and the tick renders. `forms.css` carries the correction
   inline so it does not get re-derived.
 
-  **Still unverified**, all cheap: `:user-invalid` (the demo's red email field
-  is a hardcoded `aria-invalid="true"`, a different code path — see below), the
-  light theme, and the glitch / scanline / grid effects. Safari confirmed;
-  Chromium confirmed.
+  **Still unverified in Gecko**, all cheap: `:user-invalid`, the light theme,
+  and the glitch / scanline / grid effects. The first of those is now testable
+  from the demo — the **Relay address** field was added for it, since the Email
+  field's hardcoded `aria-invalid` cannot answer the question. Safari
+  confirmed; Chromium confirmed.
 - `::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition` that
   does not actually animate. Harmless, cosmetic only.
 

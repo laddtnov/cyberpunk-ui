@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- **The demo now covers both validation paths and both progress paths.** It
+  previously showed only the `[aria-invalid="true"]` half of validation — on a
+  field with the attribute hardcoded, which renders red on load and can never
+  match `:user-invalid`, making the selector untestable from the page. A
+  **Relay address** field carries no `aria-invalid` and exercises the CSS-only
+  path. A div + `.cy-progress__fill` example joins the native `<progress>`,
+  which was previously the only one present. Demo only — no CSS changed.
+
 ### Docs
 - **`docs/ROADMAP.md`** — what is not built yet, ordered by the two constraints
   that decide it (no JavaScript ships; accessibility outranks the component
