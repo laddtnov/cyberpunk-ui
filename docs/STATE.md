@@ -201,21 +201,24 @@ Two traps worth knowing:
   and a div plus `.cy-progress__fill`. A deliberate choice to support both;
   dropping `__fill` would simplify. Both are in the demo now, and measure
   identically (880px track, fill at 66.0%, matching the native `value="66"`).
-  They are **captioned** there, and must stay so: two unlabelled bars at the
-  same value read as one bar accidentally rendered twice, which is how the
-  pair was first reported.
+  **Only the native element is in the demo.** The div path was added there so
+  something exercised it, and taken out again: two bars at the same value read
+  as one bar rendered twice, and captioning them turned a component showcase
+  into documentation. The demo shows components; this file documents them.
 
-  Showing them together immediately found a drift nobody had noticed: the div
-  fill had no `border-radius`, so its trailing edge was square while the native
-  bar's was round. The track clips the *leading* edge for both, which is why it
-  survived so long — only the right-hand end differed, and nothing had ever put
-  the two side by side. Fixed, and all five progress radii now read
-  `var(--cy-radius-lg)`.
+  Before it was removed it earned its keep once, by exposing a drift nobody had
+  noticed — the div fill had no `border-radius`, so its trailing edge was
+  square while the native bar's was round. The track clips the *leading* edge
+  for both, which is why it survived: only the right-hand end differed, and
+  nothing had ever put the two side by side. Fixed; all five progress radii now
+  read `var(--cy-radius-lg)`.
 
-  That is the third cost this path has incurred — a Sonar rule, a duplicate
-  reading, and now silent visual drift — against a benefit no consumer has
-  asked for. **The case for retiring `__fill` at the next breaking change is
-  now the strongest item in this section.**
+  So `__fill` is once again the one component no browser check covers, and the
+  ledger against it now reads: a Sonar rule, a pair that looked like a bug, a
+  silent visual drift, and no demo coverage — against a benefit no consumer has
+  asked for. **Retiring it at the next breaking change is the strongest item in
+  this section.** Until then it stays, and the radius fix keeps the two paths
+  honest.
 
   The case for dropping it got stronger: SonarCloud flags `role="progressbar"`
   on the div, on the grounds that the native element is the accessible choice —

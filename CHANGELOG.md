@@ -27,9 +27,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **Install instructions for npm, pnpm, Yarn and Bun**, plus downloads, CI and
   unpacked-size badges.
 
-- **Captions on the two progress bars in the demo.** They are meant to look
-  identical, which made them read as one bar rendered twice by mistake. Each
-  now says which code path it is. Demo only.
+- **The demo shows one progress bar again**, the native element. The div +
+  `.cy-progress__fill` path was added to the page so something exercised it,
+  then captioned when the identical pair read as a rendering duplicate — but
+  captions turned a component showcase into documentation. Both are gone; the
+  second path is documented in `docs/STATE.md` instead. It did expose the
+  radius defect above before it went. Demo only.
 
 ### Removed
 - **The `transition` on `::-webkit-progress-value` and `::-moz-progress-bar`**,
