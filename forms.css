@@ -146,11 +146,31 @@ textarea.cy-input {
 .cy-checkbox { border-radius: var(--cy-radius-sm); }
 .cy-radio    { border-radius: 50%; }
 
-.cy-checkbox::after,
-.cy-radio::after {
+.cy-checkbox::after {
   content: "";
   transform: scale(0);
   transition: transform 0.15s var(--cy-ease);
+}
+
+/* The radio's dot is a background-image, NOT an ::after like the checkbox's
+   tick. Gecko does not generate pseudo-elements on replaced elements such as
+   <input>, so an ::after dot can simply not render there — and unlike the
+   checkbox (which also fills solid when checked, so it still reads as
+   selected), the radio has nothing else to signal its state. A checked radio
+   would look identical to an unchecked one.
+
+   A background-image paints on replaced elements in every engine. Animating
+   background-size keeps the same grow-in feel the ::after had. */
+.cy-radio {
+  background-image: radial-gradient(
+    circle at center,
+    var(--cy-neon-cyan) 0 49%,
+    transparent 50%
+  );
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0 0;
+  transition: border-color 0.2s, box-shadow 0.2s, background-size 0.15s var(--cy-ease);
 }
 
 /* The tick is drawn in the page background colour because a checked checkbox
@@ -169,12 +189,6 @@ textarea.cy-input {
   margin-top: -0.1rem;
 }
 
-.cy-radio::after {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  background: var(--cy-neon-cyan);
-}
 
 .cy-checkbox:checked,
 .cy-radio:checked {
@@ -191,9 +205,12 @@ textarea.cy-input {
   background: var(--cy-neon-cyan);
 }
 
-.cy-checkbox:checked::after,
-.cy-radio:checked::after {
+.cy-checkbox:checked::after {
   transform: scale(1);
+}
+
+.cy-radio:checked {
+  background-size: 0.55rem 0.55rem;
 }
 
 .cy-checkbox:focus-visible,
@@ -215,6 +232,5 @@ textarea.cy-input {
   .cy-input,
   .cy-checkbox,
   .cy-radio,
-  .cy-checkbox::after,
-  .cy-radio::after { transition: none; }
+  .cy-checkbox::after { transition: none; }
 }
