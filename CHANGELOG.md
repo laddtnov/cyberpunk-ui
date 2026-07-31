@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] — 2026-07-31
+
+### Fixed
+- **The radio's checked dot may not have rendered in Firefox.** It was an
+  `::after` on the `<input>`, and Gecko does not generate pseudo-elements on
+  replaced elements. Unlike the checkbox — which also fills solid when checked,
+  so it still reads as selected — the radio had nothing else to signal state,
+  making a checked radio look identical to an unchecked one. The dot is now a
+  `background-image` radial-gradient, which paints on replaced elements in
+  every engine. Animating `background-size` preserves the grow-in motion.
+
+  Identical rendering in Chromium and Safari: 8.8px dot, and the colour still
+  tracks `--cy-neon-cyan` in both themes (no hardcoded hex).
+
 ## [0.2.0] — 2026-07-30
 
 ### Added
