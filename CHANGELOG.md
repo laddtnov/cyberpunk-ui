@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   match `:user-invalid`, making the selector untestable from the page. A
   **Relay address** field carries no `aria-invalid` and exercises the CSS-only
   path. A div + `.cy-progress__fill` example joins the native `<progress>`,
-  which was previously the only one present. Demo only — no CSS changed.
+  which was previously the only one present — marked `aria-hidden`, since it
+  duplicates the native bar's value and exists to prove the div path paints.
+  Demo only — no CSS changed.
 
 ### Docs
 - **`docs/ROADMAP.md`** — what is not built yet, ordered by the two constraints

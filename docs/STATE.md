@@ -162,6 +162,16 @@ Two traps worth knowing:
   dropping `__fill` would simplify. Both are in the demo now, and measure
   identically (880px track, fill at 66.0%, matching the native `value="66"`).
 
+  The case for dropping it got stronger: SonarCloud flags `role="progressbar"`
+  on the div, on the grounds that the native element is the accessible choice —
+  which is the same argument this entry already made, arrived at independently.
+  The div in the demo is `aria-hidden` because it duplicates the native bar's
+  value, but a consumer using `__fill` for real must supply the role, the three
+  `aria-value*` attributes and a label, or the bar announces nothing. **That
+  burden is the argument for retiring `__fill` at the next breaking change** —
+  a component whose correct use requires four attributes the kit cannot enforce
+  is a component that will mostly be used incorrectly.
+
 - **Two validation paths, and they are easy to confuse.** `:user-invalid` is
   CSS-only and stays quiet until the user has interacted;
   `[aria-invalid="true"]` is the hook for JS-driven validation and applies the
