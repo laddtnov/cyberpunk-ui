@@ -174,8 +174,9 @@ Two traps worth knowing:
   Confirmed painting: `appearance: none` on input / select / textarea (the
   custom select arrow renders, with no native arrow beside it), the checkbox
   `::after` tick, the radio dot, the native `<progress>` including
-  `::-moz-progress-bar`, `[aria-invalid="true"]`, alerts, badges, spinner,
-  toast, glow and disabled styling.
+  `::-moz-progress-bar`, `[aria-invalid="true"]`, `:user-invalid` (cyan on
+  load, red after blur), alerts, badges, spinner, toast, glow and disabled
+  styling. Nothing needed fixing.
 
   This retired a wrong assumption rather than confirming one. The kit used to
   say Gecko cannot generate pseudo-elements on replaced elements, and that the
@@ -183,10 +184,8 @@ Two traps worth knowing:
   input non-replaced, and the tick renders. `forms.css` carries the correction
   inline so it does not get re-derived.
 
-  **Still unverified in Gecko**, all cheap: `:user-invalid`, the light theme,
-  and the glitch / scanline / grid effects. The first of those is now testable
-  from the demo — the **Relay address** field was added for it, since the Email
-  field's hardcoded `aria-invalid` cannot answer the question. Safari
+  **Still unseen in Gecko**, and cosmetic: the light theme, and the glitch /
+  scanline / grid effects. Neither was in frame during the pass. Safari
   confirmed; Chromium confirmed.
 - `::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition` that
   does not actually animate. Harmless, cosmetic only.

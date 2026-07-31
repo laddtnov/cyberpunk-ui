@@ -18,12 +18,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **`docs/ROADMAP.md`** — what is not built yet, ordered by the two constraints
   that decide it (no JavaScript ships; accessibility outranks the component
   count), plus what has been ruled out and why.
-- **Firefox verified** on macOS against the demo at 0.2.1. `appearance: none`,
-  the custom select arrow, the checkbox tick, the radio dot, the native
-  `<progress>` with `::-moz-progress-bar`, `[aria-invalid="true"]` and the
-  feedback components all render correctly. Recorded in `docs/STATE.md`, along
-  with what is still unchecked (`:user-invalid`, the light theme, the glitch /
-  scanline / grid effects).
+- **Firefox verified** on macOS against the demo at 0.2.1, with nothing needing
+  a fix. `appearance: none`, the custom select arrow, the checkbox tick, the
+  radio dot, the native `<progress>` with `::-moz-progress-bar`,
+  `[aria-invalid="true"]`, `:user-invalid` (cyan on load, red after blur) and
+  the feedback components all render correctly. Recorded in `docs/STATE.md`;
+  the light theme and the glitch / scanline / grid effects were not in frame
+  and remain unseen in Gecko.
 - **Corrected the rationale for 0.2.1's radio dot change.** It claimed Gecko
   does not generate pseudo-elements on replaced elements such as `<input>`.
   That rule does not apply to these controls: `appearance: none` makes the
