@@ -153,13 +153,23 @@ the glow deliberately rather than losing it by accident.
 
 ### 4. Playground
 
-`demo/index.html` already exercises every component and doubles as the OG image
-source. What is missing is not the page — it is that the page is not hosted and
-not editable.
+This item used to say the demo was not hosted. It is — GitHub Pages serves it
+at **https://laddtnov.github.io/cyberpunk-ui/demo/**, deploying from `main`, and
+the live copy tracks merges without anyone doing anything. The OG tags have
+pointed there all along.
 
-Two steps, in order: publish it, then add live token editing so a visitor can
-drag `--cy-neon-cyan` and watch the whole kit reskin. The second one is the
-demo, because token substrate *is* the pitch.
+What was actually missing was a link to it: the README never mentioned the demo
+at all, so the page existed and nothing led anyone to it. Fixed.
+
+So one step is left, and it is the interesting one — **live token editing**, so
+a visitor can drag `--cy-neon-cyan` and watch the whole kit reskin. That is the
+demo worth building, because the token substrate *is* the pitch, and a static
+page of components cannot show it.
+
+Note the constraint this runs into: the kit ships no JavaScript, and a token
+editor is JavaScript. That is fine — the rule binds the *package*, not the demo
+page — but the script stays in `demo/`, and nothing it needs may leak into the
+published CSS.
 
 ### 5. Stylelint and visual regression
 

@@ -6,12 +6,25 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **A link to the live demo, in the README.** The page has been hosted at
+  <https://laddtnov.github.io/cyberpunk-ui/demo/> the whole time, deploying
+  from `main` and tracking merges on its own, and the README never mentioned
+  it — so it existed and nothing led anyone to it.
+
 - **`./package.json` is now an `exports` subpath.** A package that declares
   `exports` makes everything absent from the map unreachable, and
   `package.json` was absent — so build tools and linters that read it were
   locked out. Additive; nothing that worked before changes.
 - **Install instructions for npm, pnpm, Yarn and Bun**, plus downloads, CI and
   unpacked-size badges.
+
+### Removed
+- **The `transition` on `::-webkit-progress-value` and `::-moz-progress-bar`**,
+  which never animated anything. The div path animates because `width` is a
+  real style on a real element; a native `<progress>` takes its bar length from
+  the element's value, which neither engine transitions. The matching
+  `transition: none` overrides in the reduced-motion block went with them,
+  having nothing left to cancel. No visual change in any engine.
 
 ### Verified
 - **All four package managers**, against the published package rather than a

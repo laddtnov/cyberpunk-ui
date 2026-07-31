@@ -162,18 +162,22 @@ progress.cy-progress::-webkit-progress-bar {
   border-radius: var(--cy-radius-lg);
 }
 
+/* No transition on either pseudo-element below, deliberately. The div path
+   animates because `width` is a real style on a real element there; on a
+   native <progress> the bar's length comes from the element's own value
+   attribute, and neither engine transitions the resulting box. The property
+   was declared here for symmetry with .cy-progress__fill and never animated
+   anything. Adding it back does nothing but suggest it works. */
 progress.cy-progress::-webkit-progress-value {
   background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
   box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
   border-radius: var(--cy-radius-lg);
-  transition: width 0.3s var(--cy-ease);
 }
 
 progress.cy-progress::-moz-progress-bar {
   background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
   box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
   border-radius: var(--cy-radius-lg);
-  transition: width 0.3s var(--cy-ease);
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────
@@ -183,9 +187,9 @@ progress.cy-progress::-moz-progress-bar {
 @media (prefers-reduced-motion: reduce) {
   .cy-spinner { animation: cy-spin 2s linear infinite; }
   .cy-toast   { animation: cy-fade-in 0.2s ease; }
+  /* Only the div path needs this. The native <progress> pseudo-elements
+     never transitioned in the first place, so they had nothing to cancel. */
   .cy-progress__fill { transition: none; }
-  progress.cy-progress::-webkit-progress-value { transition: none; }
-  progress.cy-progress::-moz-progress-bar { transition: none; }
 }
 
 @keyframes cy-fade-in {
