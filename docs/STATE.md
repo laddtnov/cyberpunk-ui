@@ -27,7 +27,42 @@ paths, and it is the OG image source), `scripts/check-contrast.js`
 
 **A new CSS file needs a matching entry in `package.json`'s `exports` map**
 and an `@import` in `cyberpunk-ui.css`. Current subpaths: `.`, `/tokens`,
-`/effects`, `/components`, `/forms`, `/feedback`.
+`/effects`, `/components`, `/forms`, `/feedback`, and `./package.json`.
+
+That last one is not a stylesheet. Once a package declares `exports`, anything
+absent from the map is unreachable — including `package.json` itself, which
+build tools and linters routinely read. It is mapped explicitly so they can.
+
+## Package managers
+
+Verified against the **published** package, not a local tarball, on
+2026-07-31:
+
+| Manager | Version | Result |
+| --- | --- | --- |
+| npm | 10.9.8 | installs, all 6 subpaths resolve |
+| pnpm | 11.18.0 | installs, all 6 resolve — **24h cooldown**, see below |
+| Yarn Classic | 1.22.22 | installs, all 6 resolve |
+| Yarn Berry | 4.18.0 | installs, all 6 resolve — under **Plug'n'Play too**, with no `node_modules` on disk. **24h cooldown** |
+| Bun | 1.3.14 | installs, all 6 resolve |
+
+Nothing had to change for any of them. The kit is plain CSS with no
+dependencies, no postinstall and no build step, so there is very little for a
+manager to disagree about — the only real risk was the `exports` map, and it
+resolves everywhere, PnP included.
+
+**pnpm 11 and Yarn 4 will not install a version younger than 24 hours.** Both
+ship a supply-chain cooldown on by default — pnpm's `minimumReleaseAge` and
+Yarn's `npmMinimalAgeGate`, each 1440 minutes. They do not error; they quietly
+resolve to the newest release older than the gate, so a fresh `pnpm add` lands
+on the *previous* version and prints `(x.y.z is available)` next to it. This
+was confirmed both ways: with the gate at its default the install produced
+0.2.0, and with `--config.minimumReleaseAge=0` (pnpm) or `npmMinimalAgeGate: 0`
+(Yarn) it produced 0.2.1.
+
+The practical consequence is for **releasing**: after publishing, do not verify
+with a bare `pnpm add` or `yarn add` and conclude the release failed. Pin the
+version explicitly, or wait a day.
 
 ## Tokens
 
@@ -128,6 +163,11 @@ git checkout main && git pull
 npm version patch   # or minor
 git push --follow-tags
 ```
+
+To confirm the release landed, ask npm — `npm view @laddtnov/cyberpunk-ui
+version`. A bare `pnpm add` or `yarn add` will report the *previous* version
+for the first 24 hours because of the release cooldown described above, which
+looks exactly like a failed publish and is not one.
 
 `main` is protected, so feature work goes through a PR. The version-bump
 commit lands on `main` directly.
