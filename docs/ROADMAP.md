@@ -74,26 +74,40 @@ path was not present either. Both are in the demo now.
 
 Left over, and genuinely cosmetic: the **light theme** and the **glitch /
 scanline / grid** effects were never in frame. Neither carries engine risk worth
-a scheduled task — they will get looked at incidentally, or by item 6's visual
+a scheduled task — they will get looked at incidentally, or by item 5's visual
 regression.
 
 The lesson generalises past Firefox. Two of the kit's engine assumptions were
 written from reasoning rather than observation; one was wrong, and the demo
-could not have caught it. That is the argument for item 6, not for more
+could not have caught it. That is the argument for item 5, not for more
 reasoning.
 
-### 1. Package managers and badges
+### Closed: package managers and badges
 
-The kit is pure CSS with no postinstall and no build step, so pnpm, Yarn and
-Bun already work — there is nothing to make compatible, only something to
-write down. A tabbed install block in the README, and a smoke install per
-manager to confirm the claim before making it.
+The prediction was that pnpm, Yarn and Bun already worked and only needed
+writing down. That held — nothing had to change for any manager — but the
+smoke installs were still worth running, because two things turned up that no
+amount of reasoning would have.
 
-Badges worth adding: downloads, CI status, bundle size (gzip). Not a TypeScript
-badge — there is no TypeScript. Not a hand-drawn "Bun compatible" or
-"Accessible" shield either; a badge nobody computes is decoration.
+All five configurations install and resolve all six subpaths, **including Yarn
+Plug'n'Play with no `node_modules` on disk**, which was the one genuine risk in
+an `exports`-only package. The matrix is in STATE.md.
 
-### 2. v0.3 — containers
+**`package.json` was unreachable.** Once a package declares `exports`, anything
+absent from the map cannot be imported — and `package.json` was absent, so
+tools that read it were locked out. It is mapped now.
+
+**pnpm 11 and Yarn 4 refuse versions younger than 24 hours.** Both default to a
+supply-chain cooldown, and neither errors: they quietly install the previous
+release instead. A bare `pnpm add` right after publishing therefore looks like
+a failed release. This is documented in the README and, more importantly, in
+STATE.md's release section, where the mistake would actually be made.
+
+Badges added: downloads, CI status, unpacked size. No TypeScript badge — there
+is no TypeScript — and no hand-drawn "Bun compatible" or "Accessible" shield,
+since a badge nobody computes is decoration.
+
+### 1. v0.3 — containers
 
 Already scoped in STATE.md, unchanged here:
 
@@ -109,7 +123,7 @@ Terminal / code window
 : The strongest differentiator of the three, and the one nobody else's kit
   has. Reuses `.cy-cursor` and the scanline effect.
 
-### 3. Per-component documentation
+### 2. Per-component documentation
 
 The README class table says a component exists. It does not say how to vary it
 or what breaks it.
@@ -129,7 +143,7 @@ accessibility contract it assumes the consumer keeps. That last section is the
 one worth the effort — `.cy-error` is inert without `aria-describedby`, and
 nothing in CSS can enforce it.
 
-### 4. High-contrast support
+### 3. High-contrast support
 
 The one real gap in an otherwise strong accessibility story. Neither
 `prefers-contrast: more` nor `forced-colors` is handled, and a kit built on
@@ -137,7 +151,7 @@ glow is exactly the kind that Windows High Contrast Mode flattens into
 unreadability. Expect this to mean `forced-color-adjust` in places and losing
 the glow deliberately rather than losing it by accident.
 
-### 5. Playground
+### 4. Playground
 
 `demo/index.html` already exercises every component and doubles as the OG image
 source. What is missing is not the page — it is that the page is not hosted and
@@ -147,7 +161,7 @@ Two steps, in order: publish it, then add live token editing so a visitor can
 drag `--cy-neon-cyan` and watch the whole kit reskin. The second one is the
 demo, because token substrate *is* the pitch.
 
-### 6. Stylelint and visual regression
+### 5. Stylelint and visual regression
 
 Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
 `--variant` modifier convention mechanically instead of by review.

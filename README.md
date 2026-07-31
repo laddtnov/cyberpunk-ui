@@ -5,7 +5,10 @@
 **Zero-dependency cyberpunk neon CSS kit** — design tokens, glow / glitch / scanline effects, form controls, and feedback components.
 
 [![npm](https://img.shields.io/npm/v/@laddtnov/cyberpunk-ui?style=flat-square&color=00f2ff)](https://www.npmjs.com/package/@laddtnov/cyberpunk-ui)
+[![downloads](https://img.shields.io/npm/dm/@laddtnov/cyberpunk-ui?style=flat-square&color=00f2ff)](https://www.npmjs.com/package/@laddtnov/cyberpunk-ui)
+[![CI](https://img.shields.io/github/actions/workflow/status/laddtnov/cyberpunk-ui/ci.yml?style=flat-square&color=00f2ff&label=CI)](https://github.com/laddtnov/cyberpunk-ui/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-ff00ff?style=flat-square)](./LICENSE)
+![size](https://img.shields.io/npm/unpacked-size/@laddtnov/cyberpunk-ui?style=flat-square&color=ff00ff&label=unpacked)
 ![deps](https://img.shields.io/badge/dependencies-0-9d00ff?style=flat-square)
 
 </div>
@@ -26,9 +29,37 @@ animations respect `prefers-reduced-motion`.
 
 ## Install
 
+Pick your package manager — the kit is plain CSS with no dependencies, no
+postinstall and no build step, so all four behave the same.
+
 ```bash
 npm install @laddtnov/cyberpunk-ui
 ```
+```bash
+pnpm add @laddtnov/cyberpunk-ui
+```
+```bash
+yarn add @laddtnov/cyberpunk-ui
+```
+```bash
+bun add @laddtnov/cyberpunk-ui
+```
+
+All six subpath exports resolve under every one of them, including Yarn
+Plug'n'Play with no `node_modules` on disk. Verified against the published
+package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
+
+> **Just published and your lockfile still shows the previous version?**
+> That is deliberate, and not a bug in this package. **pnpm 11** and **Yarn 4**
+> both refuse versions younger than 24 hours by default — a supply-chain
+> cooldown (`minimumReleaseAge` / `npmMinimalAgeGate`, both 1440 minutes). They
+> silently resolve to the newest release older than that, and pnpm prints
+> `(x.y.z is available)` while doing it. npm, Yarn Classic and Bun install
+> immediately. Ask for the version explicitly to bypass the wait:
+>
+> ```bash
+> pnpm add @laddtnov/cyberpunk-ui@0.2.1
+> ```
 
 ```css
 /* everything */

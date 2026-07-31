@@ -5,6 +5,28 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`./package.json` is now an `exports` subpath.** A package that declares
+  `exports` makes everything absent from the map unreachable, and
+  `package.json` was absent — so build tools and linters that read it were
+  locked out. Additive; nothing that worked before changes.
+- **Install instructions for npm, pnpm, Yarn and Bun**, plus downloads, CI and
+  unpacked-size badges.
+
+### Verified
+- **All four package managers**, against the published package rather than a
+  local tarball: npm 10.9.8, pnpm 11.18.0, Yarn Classic 1.22.22, Yarn Berry
+  4.18.0 and Bun 1.3.14. Every one installs the kit and resolves all six
+  subpath exports — Yarn Berry does so under **Plug'n'Play**, with no
+  `node_modules` on disk, which was the one real risk for an `exports`-only
+  package. Nothing had to change for any manager. Matrix in `docs/STATE.md`.
+- **pnpm 11 and Yarn 4 will not install a version younger than 24 hours.** Both
+  default to a supply-chain cooldown (`minimumReleaseAge` /
+  `npmMinimalAgeGate`, 1440 minutes) and neither errors — they quietly resolve
+  to the previous release, so a bare `pnpm add` straight after publishing looks
+  like a failed publish. Documented in the README and in STATE.md's release
+  section. Not a defect in this package; no code change.
+
 ### Changed
 - **The demo now covers both validation paths and both progress paths.** It
   previously showed only the `[aria-invalid="true"]` half of validation — on a
