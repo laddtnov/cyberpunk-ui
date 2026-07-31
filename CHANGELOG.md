@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **`.cy-progress__fill` had no `border-radius`, so its trailing edge was
+  square** while the native `<progress>` bar's was round. The track clips the
+  *leading* edge of both (`overflow: hidden` against its own radius), so only
+  the right-hand end differed — and nothing had ever put the two paths side by
+  side, so it went unnoticed. The two are meant to be interchangeable; all five
+  progress radii now read `var(--cy-radius-lg)`. Visible change for anyone
+  using the div path.
+
 ### Added
 - **A link to the live demo, in the README.** The page has been hosted at
   <https://laddtnov.github.io/cyberpunk-ui/demo/> the whole time, deploying
