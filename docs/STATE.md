@@ -20,7 +20,8 @@ Zero dependencies, zero JavaScript, no build step. 741 lines of CSS.
 | `cyberpunk-ui.css` | 6 | `@import`s all of the above |
 
 Supporting files: `demo/index.html` (the live demo — every component is
-exercised there, and it is the OG image source), `scripts/check-contrast.js`
+exercised there, including both progress code paths and both validation
+paths, and it is the OG image source), `scripts/check-contrast.js`
 (dev-only, not published), `docs/superpowers/` (specs and plans),
 `.github/workflows/`.
 
@@ -158,14 +159,44 @@ Two traps worth knowing:
   element to scope the mask to.
 - **Two code paths for progress** — a native `<progress class="cy-progress">`
   and a div plus `.cy-progress__fill`. A deliberate choice to support both;
-  dropping `__fill` would simplify.
-- **Firefox has never been verified.** Safari is confirmed working. Remaining
-  Gecko risk: `appearance: none` on inputs, `:user-invalid`, and the
-  `<progress>` vendor pseudo-elements. The checkbox tick is still an `::after`
-  on a replaced element — Gecko does not generate those, so the tick may not
-  paint, though it degrades acceptably because the box fills solid when
-  checked. The radio's dot was moved to a `background-image` in 0.2.1 for
-  exactly this reason, since it had no such fallback.
+  dropping `__fill` would simplify. Both are in the demo now, and measure
+  identically (880px track, fill at 66.0%, matching the native `value="66"`).
+
+  The case for dropping it got stronger: SonarCloud flags `role="progressbar"`
+  on the div, on the grounds that the native element is the accessible choice —
+  which is the same argument this entry already made, arrived at independently.
+  The div in the demo is `aria-hidden` because it duplicates the native bar's
+  value, but a consumer using `__fill` for real must supply the role, the three
+  `aria-value*` attributes and a label, or the bar announces nothing. **That
+  burden is the argument for retiring `__fill` at the next breaking change** —
+  a component whose correct use requires four attributes the kit cannot enforce
+  is a component that will mostly be used incorrectly.
+
+- **Two validation paths, and they are easy to confuse.** `:user-invalid` is
+  CSS-only and stays quiet until the user has interacted;
+  `[aria-invalid="true"]` is the hook for JS-driven validation and applies the
+  instant it is set. The demo's Email field hardcodes `aria-invalid`, so it
+  renders red on load *by design* — it is the static showcase, and it never
+  matches `:user-invalid`. The **Relay address** field carries no
+  `aria-invalid` and exists specifically to exercise the CSS-only path. Adding
+  `aria-invalid` to it would silently retire that coverage.
+- **Firefox is verified as of 0.2.1**, on macOS, against the demo page.
+  Confirmed painting: `appearance: none` on input / select / textarea (the
+  custom select arrow renders, with no native arrow beside it), the checkbox
+  `::after` tick, the radio dot, the native `<progress>` including
+  `::-moz-progress-bar`, `[aria-invalid="true"]`, `:user-invalid` (cyan on
+  load, red after blur), alerts, badges, spinner, toast, glow and disabled
+  styling. Nothing needed fixing.
+
+  This retired a wrong assumption rather than confirming one. The kit used to
+  say Gecko cannot generate pseudo-elements on replaced elements, and that the
+  checkbox tick was therefore at risk. It is not: `appearance: none` makes the
+  input non-replaced, and the tick renders. `forms.css` carries the correction
+  inline so it does not get re-derived.
+
+  **Still unseen in Gecko**, and cosmetic: the light theme, and the glitch /
+  scanline / grid effects. Neither was in frame during the pass. Safari
+  confirmed; Chromium confirmed.
 - `::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition` that
   does not actually animate. Harmless, cosmetic only.
 

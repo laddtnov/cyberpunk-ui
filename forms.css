@@ -165,13 +165,19 @@ textarea.cy-input {
 }
 
 /* The radio's dot is a background-image, NOT an ::after like the checkbox's
-   tick. Gecko does not generate pseudo-elements on replaced elements such as
-   <input>, so an ::after dot can simply not render there — and unlike the
-   checkbox (which also fills solid when checked, so it still reads as
-   selected), the radio has nothing else to signal its state. A checked radio
-   would look identical to an unchecked one.
+   tick.
 
-   A background-image paints on replaced elements in every engine. Animating
+   The original reason given for this was wrong, and is corrected here so it
+   does not get "fixed" back: it claimed Gecko cannot generate pseudo-elements
+   on replaced elements such as <input>. That rule does not apply to these
+   controls — `appearance: none` makes the input non-replaced, and Firefox
+   renders the checkbox's ::after tick above without trouble (verified in
+   Firefox on macOS, 0.2.1).
+
+   The change is kept anyway. A background-image needs no generated box at
+   all, which is one less rendering assumption on a control whose only state
+   signal is that dot — the checkbox at least fills solid when checked, so it
+   still reads as selected if its tick were ever to vanish. Animating
    background-size keeps the same grow-in feel the ::after had. */
 .cy-radio {
   border-radius: 50%;

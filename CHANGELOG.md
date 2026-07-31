@@ -3,6 +3,39 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- **The demo now covers both validation paths and both progress paths.** It
+  previously showed only the `[aria-invalid="true"]` half of validation — on a
+  field with the attribute hardcoded, which renders red on load and can never
+  match `:user-invalid`, making the selector untestable from the page. A
+  **Relay address** field carries no `aria-invalid` and exercises the CSS-only
+  path. A div + `.cy-progress__fill` example joins the native `<progress>`,
+  which was previously the only one present — marked `aria-hidden`, since it
+  duplicates the native bar's value and exists to prove the div path paints.
+  Demo only — no CSS changed.
+
+### Docs
+- **`docs/ROADMAP.md`** — what is not built yet, ordered by the two constraints
+  that decide it (no JavaScript ships; accessibility outranks the component
+  count), plus what has been ruled out and why.
+- **Firefox verified** on macOS against the demo at 0.2.1, with nothing needing
+  a fix. `appearance: none`, the custom select arrow, the checkbox tick, the
+  radio dot, the native `<progress>` with `::-moz-progress-bar`,
+  `[aria-invalid="true"]`, `:user-invalid` (cyan on load, red after blur) and
+  the feedback components all render correctly. Recorded in `docs/STATE.md`;
+  the light theme and the glitch / scanline / grid effects were not in frame
+  and remain unseen in Gecko.
+- **Corrected the rationale for 0.2.1's radio dot change.** It claimed Gecko
+  does not generate pseudo-elements on replaced elements such as `<input>`.
+  That rule does not apply to these controls: `appearance: none` makes the
+  input non-replaced, and Firefox renders the checkbox's `::after` tick — the
+  very construction the note predicted would fail. The `background-image` dot
+  is kept (it needs no generated box at all, on the one control whose only
+  state signal is that dot), but the reasoning is fixed in `forms.css` so it is
+  not re-derived. No CSS behaviour changed.
+
 ## [0.2.1] — 2026-07-31
 
 ### Fixed

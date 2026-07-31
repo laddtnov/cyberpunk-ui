@@ -46,20 +46,43 @@ which means it is not usable by half the kit.
 
 ## Next
 
-### 1. Verify on Firefox
+### Closed: the Firefox check
 
-Nothing else is worth building on an unverified base. Gecko has never been
-exercised, and STATE.md names four specific risks: `appearance: none` on
-inputs, `:user-invalid`, the `<progress>` vendor pseudo-elements, and the
-checkbox tick — still an `::after` on a replaced element, which Gecko does not
-generate. The radio's dot moved to a `background-image` in 0.2.1 for exactly
-this reason; the checkbox has not, because it degrades acceptably when the box
-fills solid. "Acceptably" is a guess until someone looks.
+This was the first item on the list, on the grounds that nothing should be
+built on an unverified base. It has been done — Firefox on macOS, against the
+demo at 0.2.1 — and it is recorded here rather than deleted, because how it
+resolved is the useful part.
 
-This is first because every finding is a change to code that already shipped,
-and the longer the list of components, the more expensive the sweep.
+Everything renders: `appearance: none` on input / select / textarea, the custom
+select arrow, the checkbox tick, the radio dot, the native `<progress>` with
+`::-moz-progress-bar`, `[aria-invalid="true"]`, `:user-invalid` (quiet on load,
+red after blur — exactly the behaviour the selector is chosen for), and the
+feedback components. Nothing had to be fixed.
 
-### 2. Package managers and badges
+Two things came out of it that were worth more than the pass itself.
+
+**A wrong assumption was retired.** The kit believed Gecko could not generate
+pseudo-elements on `<input>`, and had flagged the checkbox tick as likely
+broken. It renders — `appearance: none` makes the input non-replaced, so the
+rule never applied to these controls. That belief had already driven a code
+change in 0.2.1 and would have driven more.
+
+**The demo was hiding two paths.** `:user-invalid` could not be tested from the
+page at all: the only validation example hardcoded `aria-invalid="true"`, which
+renders red on load and never matches the selector. The div + `.cy-progress__fill`
+path was not present either. Both are in the demo now.
+
+Left over, and genuinely cosmetic: the **light theme** and the **glitch /
+scanline / grid** effects were never in frame. Neither carries engine risk worth
+a scheduled task — they will get looked at incidentally, or by item 6's visual
+regression.
+
+The lesson generalises past Firefox. Two of the kit's engine assumptions were
+written from reasoning rather than observation; one was wrong, and the demo
+could not have caught it. That is the argument for item 6, not for more
+reasoning.
+
+### 1. Package managers and badges
 
 The kit is pure CSS with no postinstall and no build step, so pnpm, Yarn and
 Bun already work — there is nothing to make compatible, only something to
@@ -70,7 +93,7 @@ Badges worth adding: downloads, CI status, bundle size (gzip). Not a TypeScript
 badge — there is no TypeScript. Not a hand-drawn "Bun compatible" or
 "Accessible" shield either; a badge nobody computes is decoration.
 
-### 3. v0.3 — containers
+### 2. v0.3 — containers
 
 Already scoped in STATE.md, unchanged here:
 
@@ -86,7 +109,7 @@ Terminal / code window
 : The strongest differentiator of the three, and the one nobody else's kit
   has. Reuses `.cy-cursor` and the scanline effect.
 
-### 4. Per-component documentation
+### 3. Per-component documentation
 
 The README class table says a component exists. It does not say how to vary it
 or what breaks it.
@@ -106,7 +129,7 @@ accessibility contract it assumes the consumer keeps. That last section is the
 one worth the effort — `.cy-error` is inert without `aria-describedby`, and
 nothing in CSS can enforce it.
 
-### 5. High-contrast support
+### 4. High-contrast support
 
 The one real gap in an otherwise strong accessibility story. Neither
 `prefers-contrast: more` nor `forced-colors` is handled, and a kit built on
@@ -114,7 +137,7 @@ glow is exactly the kind that Windows High Contrast Mode flattens into
 unreadability. Expect this to mean `forced-color-adjust` in places and losing
 the glow deliberately rather than losing it by accident.
 
-### 6. Playground
+### 5. Playground
 
 `demo/index.html` already exercises every component and doubles as the OG image
 source. What is missing is not the page — it is that the page is not hosted and
@@ -124,7 +147,7 @@ Two steps, in order: publish it, then add live token editing so a visitor can
 drag `--cy-neon-cyan` and watch the whole kit reskin. The second one is the
 demo, because token substrate *is* the pitch.
 
-### 7. Stylelint and visual regression
+### 6. Stylelint and visual regression
 
 Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
 `--variant` modifier convention mechanically instead of by review.
@@ -139,10 +162,10 @@ cheapest thing that would have caught it.
 ## Waiting on a decision
 
 **Tabs.** No JavaScript means the radio-input hack or `:target`. Both produce a
-control that a screen reader announces as something it is not. Constraint two
-beats constraint six: tabs wait until there is an approach that survives a
-screen-reader pass, or until the kit is willing to ship the pattern as
-markup-plus-your-own-JS and say so plainly.
+control that a screen reader announces as something it is not. This is exactly
+the collision the second constraint exists to settle: tabs wait until there is
+an approach that survives a screen-reader pass, or until the kit is willing to
+ship the pattern as markup-plus-your-own-JS and say so plainly.
 
 **Tooltip.** Same shape of problem. A CSS-only tooltip is hover-only, which
 means keyboard users and touch users never see it. Usable as decoration for
