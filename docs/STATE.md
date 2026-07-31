@@ -176,3 +176,6 @@ Scoped, not started:
 - **Containers** — modal on `<dialog>`, accordion on `<details>`/`<summary>`,
   and a **terminal / code window**, the strongest differentiator of the three.
 - **Navigation and data** — top nav bar, breadcrumb, data table.
+
+`ROADMAP.md` carries the rest: what comes after v0.3, what is blocked on an
+accessibility decision, and what has been ruled out.
