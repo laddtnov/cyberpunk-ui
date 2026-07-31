@@ -1,22 +1,22 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.2.1**.
+Current as of **0.2.2**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 741 lines of CSS.
+Zero dependencies, zero JavaScript, no build step. 758 lines of CSS.
 
 | File | Lines | Contains |
 | --- | --- | --- |
 | `tokens.css` | 94 | every custom property, plus the `[data-theme="light"]` overrides |
 | `effects.css` | 80 | glow, glitch, scanlines, grid, cursor |
 | `components.css` | 135 | `.cy-btn`, `.cy-card` |
-| `forms.css` | 232 | field, label, input, select, textarea, checkbox, radio, hint, error |
-| `feedback.css` | 194 | alert, toast, badge, spinner, progress, sr-only |
+| `forms.css` | 238 | field, label, input, select, textarea, checkbox, radio, hint, error |
+| `feedback.css` | 205 | alert, toast, badge, spinner, progress, sr-only |
 | `cyberpunk-ui.css` | 6 | `@import`s all of the above |
 
 Supporting files: `demo/index.html` (the live demo — every component is

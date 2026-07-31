@@ -3,7 +3,7 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.2] — 2026-07-31
 
 ### Fixed
 - **`.cy-progress__fill` had no `border-radius`, so its trailing edge was
