@@ -237,8 +237,12 @@ Two traps worth knowing:
   **Still unseen in Gecko**, and cosmetic: the light theme, and the glitch /
   scanline / grid effects. Neither was in frame during the pass. Safari
   confirmed; Chromium confirmed.
-- `::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition` that
-  does not actually animate. Harmless, cosmetic only.
+- ~~`::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition`
+  that does not actually animate.~~ Removed. The div path animates because
+  `width` is a real style on a real element; a native `<progress>` derives its
+  bar length from the element's value, which neither engine transitions. The
+  matching `transition: none` overrides in the reduced-motion block went too,
+  having nothing left to cancel.
 
 ## Next up — v0.3
 

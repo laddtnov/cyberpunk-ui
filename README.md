@@ -11,6 +11,10 @@
 ![size](https://img.shields.io/npm/unpacked-size/@laddtnov/cyberpunk-ui?style=flat-square&color=ff00ff&label=unpacked)
 ![deps](https://img.shields.io/badge/dependencies-0-9d00ff?style=flat-square)
 
+### [**`>_ OPEN THE LIVE DEMO`**](https://laddtnov.github.io/cyberpunk-ui/demo/)
+
+Every component on one page — themes, forms, feedback, effects.
+
 </div>
 
 ---
