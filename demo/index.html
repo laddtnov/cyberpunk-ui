@@ -227,17 +227,15 @@
            component no browser check had ever rendered. -->
       <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
 
-      <!-- aria-hidden, and deliberately so. This bar duplicates the value of
-           the native <progress> directly above it, so announcing both would
-           read the same 66% twice; here it exists only to prove the div path
-           still paints. That is also why it carries no role="progressbar" —
-           Sonar rightly flags that role as a worse choice than the native
-           element, and on a decorative duplicate there is nothing to weigh.
+      <!-- Decorative on purpose, hence aria-hidden. This bar repeats the value
+           of the native progress element directly above it, so announcing both
+           would read the same 66 per cent twice. It is here to prove the div
+           path still paints, and nothing more.
 
-           A consumer using this path for a real progress bar does need
-           role="progressbar" with aria-valuenow / valuemin / valuemax and a
-           label, since a bare div announces nothing at all. Prefer the native
-           <progress> above unless something rules it out. -->
+           Using that path for a real bar takes more work than this: a bare div
+           announces nothing, so it needs the progressbar role, the three aria
+           value attributes and a label. Prefer the native element unless
+           something rules it out. -->
       <div class="cy-progress" style="margin-top:1rem" aria-hidden="true">
         <div class="cy-progress__fill" style="width:66%"></div>
       </div>
