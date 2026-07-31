@@ -222,6 +222,12 @@ Flip to the accessible light theme by setting an attribute on `<html>`:
   keeps rotating, just slower and without the decorative glow pulse, because a
   frozen spinner reads as broken and is essential feedback, not decoration.
 
+## Contributing
+
+[`docs/STATE.md`](docs/STATE.md) is the map: every token and class that
+already exists, the conventions an addition has to follow, how releases work,
+and the known debt. Read it before adding a component.
+
 ## License
 
 MIT © [Vladyslav Novytskyi](https://laddtnov.xyz)
