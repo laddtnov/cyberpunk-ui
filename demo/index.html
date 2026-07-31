@@ -222,33 +222,13 @@
         <output class="cy-spinner"><span class="cy-sr-only">Loading…</span></output>
       </div>
 
-      <!-- Both progress paths, because the kit ships both and only the native
-           one used to appear here — which left the div version as the one
-           component no browser check had ever rendered.
-
-           They are captioned because they are meant to look identical: two
-           unlabelled bars at the same value read as one bar rendered twice by
-           mistake, which is the opposite of the point. -->
-      <div class="cy-field" style="margin-top:1rem">
-        <span class="cy-hint">Native &lt;progress&gt; — the element's own value draws the bar.</span>
-        <progress class="cy-progress" value="66" max="100"></progress>
-      </div>
-
-      <!-- Decorative on purpose, hence aria-hidden. This bar repeats the value
-           of the native one above it, so announcing both would read the same
-           66 per cent twice. It is here to prove the div path still paints.
-
-           Using that path for a real bar takes more work than this: a bare div
-           announces nothing, so it needs the progressbar role, the three aria
-           value attributes and a label. Prefer the native element unless
-           something rules it out. -->
-      <div class="cy-field">
-        <span class="cy-hint">Div plus .cy-progress__fill — an inline width draws it
-          instead. Same value, so the two paths can be compared.</span>
-        <div class="cy-progress" aria-hidden="true">
-          <div class="cy-progress__fill" style="width:66%"></div>
-        </div>
-      </div>
+      <!-- One bar, the native element. The kit also ships a div plus
+           .cy-progress__fill, and this page used to show both so the second
+           path had something exercising it — but two identical bars read as
+           one bar rendered twice, and captioning them only added noise to a
+           page whose job is to show the components, not to document them.
+           The div path is covered by docs/STATE.md instead. -->
+      <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
     </section>
   </div>
 
