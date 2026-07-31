@@ -201,6 +201,9 @@ Two traps worth knowing:
   and a div plus `.cy-progress__fill`. A deliberate choice to support both;
   dropping `__fill` would simplify. Both are in the demo now, and measure
   identically (880px track, fill at 66.0%, matching the native `value="66"`).
+  They are **captioned** there, and must stay so: two unlabelled bars at the
+  same value read as one bar accidentally rendered twice, which is how the
+  pair was first reported.
 
   The case for dropping it got stronger: SonarCloud flags `role="progressbar"`
   on the div, on the grounds that the native element is the accessible choice —

@@ -18,6 +18,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **Install instructions for npm, pnpm, Yarn and Bun**, plus downloads, CI and
   unpacked-size badges.
 
+- **Captions on the two progress bars in the demo.** They are meant to look
+  identical, which made them read as one bar rendered twice by mistake. Each
+  now says which code path it is. Demo only.
+
 ### Removed
 - **The `transition` on `::-webkit-progress-value` and `::-moz-progress-bar`**,
   which never animated anything. The div path animates because `width` is a
