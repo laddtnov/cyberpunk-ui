@@ -19,8 +19,9 @@ Zero dependencies, zero JavaScript, no build step. 741 lines of CSS.
 | `feedback.css` | 194 | alert, toast, badge, spinner, progress, sr-only |
 | `cyberpunk-ui.css` | 6 | `@import`s all of the above |
 
-Supporting files: `demo/index.html` (the live demo — every component is
-exercised there, and it is the OG image source), `scripts/check-contrast.js`
+Supporting files: `demo/index.html` (the live demo, and the OG image source —
+it exercises nearly every component, with two gaps noted under Known debt),
+`scripts/check-contrast.js`
 (dev-only, not published), `docs/superpowers/` (specs and plans),
 `.github/workflows/`.
 
@@ -158,14 +159,31 @@ Two traps worth knowing:
   element to scope the mask to.
 - **Two code paths for progress** — a native `<progress class="cy-progress">`
   and a div plus `.cy-progress__fill`. A deliberate choice to support both;
-  dropping `__fill` would simplify.
-- **Firefox has never been verified.** Safari is confirmed working. Remaining
-  Gecko risk: `appearance: none` on inputs, `:user-invalid`, and the
-  `<progress>` vendor pseudo-elements. The checkbox tick is still an `::after`
-  on a replaced element — Gecko does not generate those, so the tick may not
-  paint, though it degrades acceptably because the box fills solid when
-  checked. The radio's dot was moved to a `background-image` in 0.2.1 for
-  exactly this reason, since it had no such fallback.
+  dropping `__fill` would simplify. Note only the native element appears in the
+  demo, so `__fill` is the one component no browser check has ever covered.
+  Low risk — it is two plain divs — but it is untested by construction.
+
+- **The demo does not exercise `:user-invalid`.** Its red email field is a
+  hardcoded `aria-invalid="true"`, which demonstrates the error *styling* while
+  bypassing the selector that drives it in real use. Anything that wants to
+  check `:user-invalid` has to type into a field and blur it by hand.
+- **Firefox is verified as of 0.2.1**, on macOS, against the demo page.
+  Confirmed painting: `appearance: none` on input / select / textarea (the
+  custom select arrow renders, with no native arrow beside it), the checkbox
+  `::after` tick, the radio dot, the native `<progress>` including
+  `::-moz-progress-bar`, `[aria-invalid="true"]`, alerts, badges, spinner,
+  toast, glow and disabled styling.
+
+  This retired a wrong assumption rather than confirming one. The kit used to
+  say Gecko cannot generate pseudo-elements on replaced elements, and that the
+  checkbox tick was therefore at risk. It is not: `appearance: none` makes the
+  input non-replaced, and the tick renders. `forms.css` carries the correction
+  inline so it does not get re-derived.
+
+  **Still unverified**, all cheap: `:user-invalid` (the demo's red email field
+  is a hardcoded `aria-invalid="true"`, a different code path — see below), the
+  light theme, and the glitch / scanline / grid effects. Safari confirmed;
+  Chromium confirmed.
 - `::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition` that
   does not actually animate. Harmless, cosmetic only.
 

@@ -46,18 +46,33 @@ which means it is not usable by half the kit.
 
 ## Next
 
-### 1. Verify on Firefox
+### 1. Finish the Firefox check
 
-Nothing else is worth building on an unverified base. Gecko has never been
-exercised, and STATE.md names four specific risks: `appearance: none` on
-inputs, `:user-invalid`, the `<progress>` vendor pseudo-elements, and the
-checkbox tick — still an `::after` on a replaced element, which Gecko does not
-generate. The radio's dot moved to a `background-image` in 0.2.1 for exactly
-this reason; the checkbox has not, because it degrades acceptably when the box
-fills solid. "Acceptably" is a guess until someone looks.
+Mostly done, and it went better than expected. Firefox on macOS was run against
+the demo at 0.2.1: `appearance: none`, the custom select arrow, the checkbox
+tick, the radio dot, the native `<progress>`, `[aria-invalid="true"]` and the
+feedback components all render correctly. Details in STATE.md.
 
-This is first because every finding is a change to code that already shipped,
-and the longer the list of components, the more expensive the sweep.
+The sweep's main result was **retiring a wrong assumption**. The kit believed
+Gecko could not generate pseudo-elements on `<input>`, and had flagged the
+checkbox tick as likely broken. It renders fine — `appearance: none` makes the
+input non-replaced. That belief had already driven a code change in 0.2.1, and
+would have driven more.
+
+What is left is small and worth doing before it is forgotten:
+
+- **`:user-invalid`** — the last real unknown, and the only one that could
+  still bite. The demo cannot answer it: its red email field is a hardcoded
+  `aria-invalid="true"`, a different selector entirely. Needs someone to type
+  into a required field, clear it, and tab away.
+- **The light theme**, and the **glitch / scanline / grid** effects — neither
+  was in frame during the pass.
+- **Give the demo a `.cy-progress__fill` example**, so the div-based progress
+  path stops being the one component no browser has ever rendered.
+
+The lesson generalises past Firefox: two of the kit's engine assumptions were
+written from reasoning rather than observation, and one of them was wrong. That
+is the argument for item 7's visual regression, not for more reasoning.
 
 ### 2. Package managers and badges
 
