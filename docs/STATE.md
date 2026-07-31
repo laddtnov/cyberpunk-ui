@@ -205,6 +205,18 @@ Two traps worth knowing:
   same value read as one bar accidentally rendered twice, which is how the
   pair was first reported.
 
+  Showing them together immediately found a drift nobody had noticed: the div
+  fill had no `border-radius`, so its trailing edge was square while the native
+  bar's was round. The track clips the *leading* edge for both, which is why it
+  survived so long — only the right-hand end differed, and nothing had ever put
+  the two side by side. Fixed, and all five progress radii now read
+  `var(--cy-radius-lg)`.
+
+  That is the third cost this path has incurred — a Sonar rule, a duplicate
+  reading, and now silent visual drift — against a benefit no consumer has
+  asked for. **The case for retiring `__fill` at the next breaking change is
+  now the strongest item in this section.**
+
   The case for dropping it got stronger: SonarCloud flags `role="progressbar"`
   on the div, on the grounds that the native element is the accessible choice —
   which is the same argument this entry already made, arrived at independently.

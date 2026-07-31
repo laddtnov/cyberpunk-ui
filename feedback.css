@@ -138,11 +138,18 @@
   overflow: hidden;
 }
 
+/* The radius matters on the RIGHT end. The track clips the left end round on
+   its own (overflow: hidden against its own radius), but the fill's trailing
+   edge sits inside the track and is not clipped by anything — so without this
+   it ends square, while the native bar's ::-webkit-progress-value and
+   ::-moz-progress-bar both round it. The two paths are meant to be
+   interchangeable, so they have to agree here. */
 .cy-progress__fill {
   height: 100%;
   width: 0;
   background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
   box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  border-radius: var(--cy-radius-lg);
   transition: width 0.3s var(--cy-ease);
 }
 
