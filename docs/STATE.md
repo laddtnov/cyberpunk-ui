@@ -199,12 +199,12 @@ Two traps worth knowing:
   element to scope the mask to.
 - **Two code paths for progress** — a native `<progress class="cy-progress">`
   and a div plus `.cy-progress__fill`. A deliberate choice to support both;
-  dropping `__fill` would simplify. Both are in the demo now, and measure
-  identically (880px track, fill at 66.0%, matching the native `value="66"`).
-  **Only the native element is in the demo.** The div path was added there so
-  something exercised it, and taken out again: two bars at the same value read
-  as one bar rendered twice, and captioning them turned a component showcase
-  into documentation. The demo shows components; this file documents them.
+  dropping `__fill` would simplify. **Only the native element is in the demo.**
+  The div path was added there so something exercised it — the two measured
+  identically (880px track, fill at 66.0%, matching the native `value="66"`) —
+  and taken out again: two bars at the same value read as one bar rendered
+  twice, and captioning them turned a component showcase into documentation.
+  The demo shows components; this file documents them.
 
   Before it was removed it earned its keep once, by exposing a drift nobody had
   noticed — the div fill had no `border-radius`, so its trailing edge was
