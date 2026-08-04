@@ -1,7 +1,7 @@
 # Roadmap
 
 Where the kit goes next, and why in that order.
-Written against **0.2.1**.
+Written against **0.2.2**.
 
 `docs/STATE.md` records what *is*. This file records what is **not yet**, what
 was considered and rejected, and what the constraints rule out entirely. Read
@@ -197,6 +197,53 @@ non-essential text, not as the carrier of anything a user needs.
 
 Neither is blocked on effort. Both are blocked on being willing to ship
 something worse than the rest of the kit.
+
+## Parked — type of our own
+
+Wanted eventually: type that belongs to the kit rather than three families
+borrowed from Google Fonts. Parked rather than scheduled, and worth writing
+down because the shape of the problem is already clear.
+
+**The seam exists and is the right one.** `tokens.css` names three stacks —
+`--cy-font-display`, `--cy-font-body`, `--cy-font-mono` — each with a system
+fallback, and the file already says the consumer loads the fonts. **No font
+file ships**: `files` is `["*.css", "README.md", "LICENSE"]`, and the whole
+package is 40.8 kB. Only the demo pulls Orbitron / Rajdhani / Share Tech Mono,
+through one `<link>` to Google Fonts. Swapping in a different face is three
+token values and nothing else.
+
+Three constraints bind whatever comes next:
+
+Installing a font locally does nothing for anyone else
+: A face on the author's machine is invisible to every consumer of the
+  package. Either they load it, or the kit ships the file.
+
+Shipping files ends the size story
+: A single Nerd Font is 2–8 MB, fifty to two hundred times the entire kit.
+  If font files ever ship they belong in a separate package or an opt-in
+  subpath, never in the base import.
+
+Licences travel with the font, not the patcher
+: Nerd Fonts are patched builds of other people's typefaces, and the original
+  licence governs redistribution. Each family has to be checked before any
+  file is republished. Canonical source is `ryanoasis/nerd-fonts`.
+
+Two things have been installed locally, and they are not the same kind of
+thing:
+
+**Nerd Fonts** are real font files, patched to add developer and powerline
+glyphs. That makes them a poor fit for display or body text and a *good* one
+for exactly one planned component — the **terminal / code window** in item 1,
+which is the place a kit would legitimately want box-drawing and prompt
+glyphs. Worth trying there first, at demo scale, before anything is packaged.
+
+**Tegaki** (`gkurt/tegaki`, MIT) is not a typeface at all. It is a JavaScript
+library that animates handwriting stroke by stroke and emits SVG, PNG, GIF or
+WebM. As a runtime dependency it is disqualified by the first constraint — no
+JavaScript ships, ever. But its *output* is not JavaScript: a pre-rendered SVG
+is a static asset, and an animated hand-drawn wordmark rendered once at build
+time could sit in the README or the demo without the package gaining a
+dependency. That is the only version of this worth pursuing.
 
 ## Deliberately not doing
 
