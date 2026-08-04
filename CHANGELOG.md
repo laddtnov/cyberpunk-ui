@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Verified
+- **Firefox coverage is complete.** A second pass closed the two things the
+  first had not seen: the light theme and the glitch / scanline / grid effects.
+  Both correct, including the `select` arrow — the only item with real risk,
+  since its colour is baked into a per-theme data-URI and a desync would paint
+  a cyan arrow on a light background. It renders teal. **Nothing has ever
+  needed fixing for Gecko**, and all three engines are now verified.
+
 ### Docs
 - **A parked section in `docs/ROADMAP.md` for type of the kit's own**, recording
   why the font tokens are already the right seam and the three constraints that

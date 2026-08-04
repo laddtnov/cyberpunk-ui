@@ -72,10 +72,15 @@ page at all: the only validation example hardcoded `aria-invalid="true"`, which
 renders red on load and never matches the selector. The div + `.cy-progress__fill`
 path was not present either. Both are in the demo now.
 
-Left over, and genuinely cosmetic: the **light theme** and the **glitch /
-scanline / grid** effects were never in frame. Neither carries engine risk worth
-a scheduled task — they will get looked at incidentally, or by item 5's visual
-regression.
+A second pass at 0.2.2 closed the remainder: the **light theme** and the
+**glitch / scanline / grid** effects, neither of which had been in frame the
+first time. Both correct. The one item there with real risk was the `select`
+arrow, whose colour is baked into a per-theme data-URI and would show as a cyan
+arrow on a light background if the two SVGs ever drifted. It renders teal.
+
+So **all three engines are now verified**, and nothing about the kit is
+unknown in Gecko. A regression from here would be new work rather than an
+unknown, which is an argument for item 5 and not for another manual sweep.
 
 The lesson generalises past Firefox. Two of the kit's engine assumptions were
 written from reasoning rather than observation; one was wrong, and the demo
