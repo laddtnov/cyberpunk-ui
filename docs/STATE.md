@@ -201,8 +201,26 @@ python3 -m http.server 8085 -d .
 
 Two traps worth knowing:
 
-- Toggling the theme and reading computed styles **in the same synchronous
-  block** returns stale values. Measure in a separate step.
+- **Anything with a `transition` reads stale right after you change it.** This
+  used to be written down as a theme-toggling problem, which undersold it —
+  the theme switch is simply the most obvious case. It is really any
+  transitioned property measured before the tween has finished, and almost
+  everything in this kit transitions something.
+
+  It produces false failures that look exactly like real ones. Three in one
+  sitting while building `containers.css`: the accordion chevron read `45deg`
+  when open (the `[open]` rule *was* applying — `rotate` was mid-tween), and
+  the summary's colour read the dark-theme cyan in light mode twice, because
+  `color` is transitioned too.
+
+  Measuring "in a separate step" is not always enough, since a step can still
+  land inside the 0.2s window. When a value looks wrong, **prove it before
+  believing it**: inject `transition: none !important` for that selector and
+  read again. If it changes, the CSS was right and the clock was wrong. The
+  cheaper habit is to write the check against a non-transitioned property
+  where one exists — the open accordion's `border-bottom-color` was correct
+  every time the chevron lied.
+
 - The portfolio demo registers a service worker that serves stale HTML.
   Unregister it and clear caches before trusting anything you see.
 

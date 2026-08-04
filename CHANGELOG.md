@@ -37,6 +37,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   needed fixing for Gecko**, and all three engines are now verified.
 
 ### Docs
+- **Sharpened the stale-computed-styles trap in `docs/STATE.md`.** It was
+  written as a theme-toggling problem; it is really any transitioned property
+  measured before the tween finishes, and almost everything in the kit
+  transitions something. Building `containers.css` produced three false
+  failures from it in one sitting. Now says how to prove it — inject
+  `transition: none !important` and read again — and to prefer checking a
+  non-transitioned property where one exists.
 - **A parked section in `docs/ROADMAP.md` for type of the kit's own**, recording
   why the font tokens are already the right seam and the three constraints that
   bind anything further: a locally installed font is invisible to consumers, one
