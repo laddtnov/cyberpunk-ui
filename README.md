@@ -49,7 +49,7 @@ yarn add @laddtnov/cyberpunk-ui
 bun add @laddtnov/cyberpunk-ui
 ```
 
-All six subpath exports resolve under every one of them, including Yarn
+All six stylesheet subpaths resolve under every one of them, including Yarn
 Plug'n'Play with no `node_modules` on disk. Verified against the published
 package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 
@@ -59,10 +59,11 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > cooldown (`minimumReleaseAge` / `npmMinimalAgeGate`, both 1440 minutes). They
 > silently resolve to the newest release older than that, and pnpm prints
 > `(x.y.z is available)` while doing it. npm, Yarn Classic and Bun install
-> immediately. Ask for the version explicitly to bypass the wait:
+> immediately. Ask for the version explicitly to bypass the wait — naming any
+> exact version skips the gate, so use whichever one you are actually after:
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.2.1
+> pnpm add @laddtnov/cyberpunk-ui@0.2.2
 > ```
 
 ```css
