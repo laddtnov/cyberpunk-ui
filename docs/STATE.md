@@ -8,16 +8,17 @@ read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 758 lines of CSS.
+Zero dependencies, zero JavaScript, no build step. 934 lines of CSS.
 
 | File | Lines | Contains |
 | --- | --- | --- |
-| `tokens.css` | 94 | every custom property, plus the `[data-theme="light"]` overrides |
+| `tokens.css` | 104 | every custom property, plus the `[data-theme="light"]` overrides |
 | `effects.css` | 80 | glow, glitch, scanlines, grid, cursor |
 | `components.css` | 135 | `.cy-btn`, `.cy-card` |
+| `containers.css` | 165 | accordion, modal, terminal — all on native elements |
 | `forms.css` | 238 | field, label, input, select, textarea, checkbox, radio, hint, error |
 | `feedback.css` | 205 | alert, toast, badge, spinner, progress, sr-only |
-| `cyberpunk-ui.css` | 6 | `@import`s all of the above |
+| `cyberpunk-ui.css` | 7 | `@import`s all of the above |
 
 Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both progress code paths and both validation
@@ -27,7 +28,8 @@ paths, and it is the OG image source), `scripts/check-contrast.js`
 
 **A new CSS file needs a matching entry in `package.json`'s `exports` map**
 and an `@import` in `cyberpunk-ui.css`. Current subpaths: `.`, `/tokens`,
-`/effects`, `/components`, `/forms`, `/feedback`, and `./package.json`.
+`/effects`, `/components`, `/containers`, `/forms`, `/feedback`, and
+`./package.json`.
 
 That last one is not a stylesheet. Once a package declares `exports`, anything
 absent from the map is unreachable — including `package.json` itself, which
@@ -90,6 +92,13 @@ Focus
 Type
 : `--cy-font-body` `--cy-font-display` `--cy-font-mono`
 
+Scrim
+: `--cy-backdrop` — the modal backdrop, a finished `rgba()` rather than a hue
+  plus a twin, because the alpha *is* the value and nothing fades it further.
+  Deliberately **not** derived from `--cy-bg`: a scrim pushes the page behind
+  it away, so it stays dark in both themes. Tying it to `--cy-bg` made the
+  light theme wash near-white over near-white and separate nothing.
+
 Other
 : `--cy-ease` `--cy-disabled-opacity`
 
@@ -111,6 +120,10 @@ plus disabled styling
 `select.cy-input` and `textarea.cy-input`) `.cy-checkbox` `.cy-radio`
 `.cy-hint` `.cy-error`
 
+**Containers** — `.cy-accordion` + `.cy-accordion__body` (on `<details>`;
+styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
+`::backdrop`), `.cy-terminal` + `.cy-terminal__bar` (styles a scoped `<pre>`)
+
 **Feedback** — `.cy-alert` (`--success` `--warning` `--danger` `--info`),
 `.cy-toast` (`--success` `--warning` `--danger`), `.cy-toast-container`
 (`--bottom`), `.cy-badge` (`--success` `--warning` `--danger` `--outline`),
@@ -119,7 +132,11 @@ plus disabled styling
 ## Conventions
 
 - **`cy-` prefix on every class.** Modifiers are `--variant`. A `__element`
-  child only where one is unavoidable (`.cy-progress__fill`).
+  child only where one is unavoidable — `.cy-progress__fill`,
+  `.cy-accordion__body` (no readable selector means "everything that is not
+  the summary"), and `.cy-terminal__bar`. Where a native child *can* carry the
+  style it does, scoped to the wrapper: `.cy-accordion > summary` and
+  `.cy-terminal > pre` keep the consumer's markup contract to one class.
 - **Opt-in classes only.** Never style a bare `input {}` or `button {}` — that
   hijacks every control on a consumer's page the moment they import the kit.
 - **Style the native element.** `appearance: none` on the real control, never

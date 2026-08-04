@@ -154,6 +154,53 @@
     </section>
 
     <section>
+      <h2>Containers</h2>
+
+      <details class="cy-accordion">
+        <summary>Orbital mechanics</summary>
+        <div class="cy-accordion__body">
+          Native <code>&lt;details&gt;</code>, so the keyboard already works —
+          Enter and Space toggle, and the open state is the element's own.
+        </div>
+      </details>
+      <details class="cy-accordion" open>
+        <summary>Reactor status</summary>
+        <div class="cy-accordion__body">
+          Starts open with the <code>open</code> attribute. The chevron turns
+          to report the state, so it keeps turning under reduced motion —
+          only the tween is dropped.
+        </div>
+      </details>
+
+      <!-- Combining the frame with .cy-scanlines and .cy-cursor, which is
+           what the terminal was scoped to reuse rather than reimplement. -->
+      <div class="cy-terminal cy-scanlines" style="margin-top:1.5rem">
+        <div class="cy-terminal__bar">~/night-city — ssh</div>
+<pre>$ npm i @laddtnov/cyberpunk-ui
++ @laddtnov/cyberpunk-ui@0.2.2
+$ _</pre>
+      </div>
+
+      <div class="row" style="margin-top:1.5rem">
+        <button class="cy-btn cy-glow" id="d-modal-open">OPEN MODAL</button>
+      </div>
+
+      <!-- Opened with showModal(), never show(): only showModal() traps
+           focus, closes on Esc, and renders ::backdrop at all. -->
+      <dialog class="cy-modal" id="d-modal" aria-labelledby="d-modal-title">
+        <h3 id="d-modal-title" style="margin:0 0 .5rem; color:var(--cy-heading)">Confirm jack-in</h3>
+        <p style="margin:0 0 1.25rem">
+          Native <code>&lt;dialog&gt;</code> brings the focus trap, the Esc
+          key and the top layer. The kit only paints it.
+        </p>
+        <div class="row">
+          <button class="cy-btn cy-btn--danger" id="d-modal-close">ABORT</button>
+          <button class="cy-btn" autofocus>CONFIRM</button>
+        </div>
+      </dialog>
+    </section>
+
+    <section>
       <h2>Forms</h2>
       <div class="cy-field">
         <label class="cy-label" for="d-name">Name</label>
@@ -265,6 +312,15 @@
       }
       setTimeout(() => { hint.textContent = 'COPY'; }, 2000);
     });
+
+    // Modal. showModal() rather than show() — it is what puts the dialog in
+    // the top layer, traps focus, wires up Esc, and renders ::backdrop.
+    // Everything the kit styles about the modal depends on this call.
+    const modal = document.getElementById('d-modal');
+    document.getElementById('d-modal-open')
+      .addEventListener('click', () => modal.showModal());
+    document.getElementById('d-modal-close')
+      .addEventListener('click', () => modal.close());
   </script>
 </body>
 </html>

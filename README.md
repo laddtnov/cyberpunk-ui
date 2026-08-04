@@ -22,9 +22,10 @@ Every component on one page — themes, forms, feedback, effects.
 No build step, no JavaScript, no runtime. Just CSS custom properties and a set
 of classes, extracted from the [laddtnov.xyz](https://laddtnov.xyz) portfolio.
 
-Buttons, cards, inputs, checkboxes, radios, alerts, toasts, badges, a spinner
-and a progress bar — all driven by a token substrate you can override to
-reskin the whole kit.
+Buttons, cards, inputs, checkboxes, radios, alerts, toasts, badges, a spinner,
+a progress bar, and containers built on native elements — an accordion, a
+modal and a terminal window. All driven by a token substrate you can override
+to reskin the whole kit.
 
 Accessibility is treated as part of the design, not a footnote: a **WCAG-aware
 light theme** dims the neon hues so text keeps its contrast, every contrast
@@ -49,7 +50,7 @@ yarn add @laddtnov/cyberpunk-ui
 bun add @laddtnov/cyberpunk-ui
 ```
 
-All six stylesheet subpaths resolve under every one of them, including Yarn
+All seven stylesheet subpaths resolve under every one of them, including Yarn
 Plug'n'Play with no `node_modules` on disk. Verified against the published
 package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 
@@ -74,6 +75,7 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 @import "@laddtnov/cyberpunk-ui/tokens";
 @import "@laddtnov/cyberpunk-ui/effects";
 @import "@laddtnov/cyberpunk-ui/components";
+@import "@laddtnov/cyberpunk-ui/containers";
 @import "@laddtnov/cyberpunk-ui/forms";
 @import "@laddtnov/cyberpunk-ui/feedback";
 ```
@@ -135,6 +137,7 @@ A form and a status message:
 | `--cy-space-xs` / `--cy-space-sm` / `--cy-space-md` / `--cy-space-lg` / `--cy-space-xl` | 4px-based spacing scale |
 | `--cy-focus-width` / `--cy-focus-offset` / `--cy-focus-color` | shared `:focus-visible` ring, used by every interactive element |
 | `--cy-success` / `--cy-warning` / `--cy-danger` / `--cy-info` | status colours (+ `-rgb` channels for theme-aware `rgba()`) |
+| `--cy-backdrop` | modal scrim — stays dark in both themes, since a scrim's job is to push the page behind it away |
 | `--cy-disabled-opacity` | opacity applied to disabled controls |
 
 ### Effects (`effects.css`)
@@ -176,6 +179,27 @@ A form and a status message:
 
 Invalid styling uses `:user-invalid`, so fields only turn red **after** the user
 interacts — not on page load. Drive it manually with `aria-invalid="true"`.
+
+### Containers (`containers.css`)
+
+| Class | Purpose |
+|-------|---------|
+| `.cy-accordion` · `.cy-accordion__body` | disclosure on `<details>` — styles `summary` itself, so the wrapper class is the whole contract |
+| `.cy-modal` | dialog on `<dialog>`, with a blurred `::backdrop` |
+| `.cy-terminal` · `.cy-terminal__bar` | code window; styles a scoped `<pre>`. Add `.cy-scanlines` and `.cy-cursor` for the CRT treatment |
+
+All three are native elements, so the behaviour is the browser's: `<details>`
+handles its own keyboard and open state, and `<dialog>` brings focus trapping,
+`Esc` and the top layer.
+
+**Open the modal with `showModal()`, not `show()`.** Only `showModal()` traps
+focus, wires up `Esc`, and renders `::backdrop` at all — `show()` gives a
+non-modal box with none of it, and nothing for the kit to paint.
+
+```html
+<dialog class="cy-modal" id="m">…</dialog>
+<script>m.showModal()</script>
+```
 
 ### Feedback (`feedback.css`)
 

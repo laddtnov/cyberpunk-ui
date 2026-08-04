@@ -21,6 +21,16 @@
   --cy-pink-rgb:   255, 0, 255;
   --cy-purple-rgb: 157, 0, 255;
 
+  /* ── Scrim ───────────────────────────────────────────────────
+     The modal backdrop, and deliberately NOT derived from --cy-bg: a
+     scrim's job is to push the page behind it away, so it stays dark in
+     both themes. Tying it to --cy-bg made the light theme paint a
+     near-white wash over a near-white page, which separated nothing.
+
+     It is a finished colour rather than a hue plus an -rgb twin because
+     nothing fades it further — the alpha is the point. */
+  --cy-backdrop: rgba(10, 10, 12, 0.72);
+
   /* ── Type ─────────────────────────────────────────────────────
      Load these fonts yourself (Google Fonts / self-hosted); the kit
      degrades to system fonts if they're absent. */

@@ -5,6 +5,29 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Containers (`containers.css`)** — the v0.3 batch, each built on the native
+  element that already owns the behaviour, so nothing new ships as JavaScript.
+  - `.cy-accordion` + `.cy-accordion__body` on `<details>`. The `summary` is
+    styled through the wrapper (`.cy-accordion > summary`), so the consumer's
+    markup contract stays one class. Keyboard and open state are the browser's.
+  - `.cy-modal` on `<dialog>`, with a blurred `::backdrop`. **Open it with
+    `showModal()`, not `show()`** — only `showModal()` traps focus, wires up
+    `Esc`, and renders `::backdrop` at all.
+  - `.cy-terminal` + `.cy-terminal__bar`, styling a scoped `<pre>`. Composes
+    with `.cy-scanlines` and `.cy-cursor` rather than reimplementing them.
+- **`--cy-backdrop`** — the modal scrim. A finished `rgba()` rather than a hue
+  plus an `-rgb` twin, because the alpha is the value and nothing fades it
+  further. Deliberately **not** derived from `--cy-bg`: a scrim pushes the page
+  behind it away, and deriving it made the light theme wash near-white over
+  near-white and separate nothing.
+- Subpath export `@laddtnov/cyberpunk-ui/containers`.
+
+### Changed
+- **The barrel's banner no longer carries a version number.** It read `v0.2.0`
+  at 0.2.2, having drifted twice, because `npm version` does not touch it.
+  Removing the number removes the drift rather than the symptom.
+
 ### Verified
 - **Firefox coverage is complete.** A second pass closed the two things the
   first had not seen: the light theme and the glitch / scanline / grid effects.

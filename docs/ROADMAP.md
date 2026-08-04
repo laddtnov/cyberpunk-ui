@@ -29,9 +29,9 @@ So nobody plans it twice:
 | --- | --- |
 | Publishing | npm with `--provenance`, GitHub Releases, SemVer, MIT, CHANGELOG |
 | CI | contrast check + `npm pack --dry-run` on every PR; tag-triggered publish |
-| Design tokens | `tokens.css`, 94 lines, every value a custom property |
+| Design tokens | `tokens.css`, 104 lines, every value a custom property |
 | Accessibility | contrast enforced in CI, shared focus rings, reduced-motion, `:user-invalid`, `.cy-sr-only`, WCAG-aware light theme |
-| Components | button, card, input, select, textarea, checkbox, radio, alert, toast, badge, spinner, progress |
+| Components | button, card, input, select, textarea, checkbox, radio, alert, toast, badge, spinner, progress, accordion, modal, terminal |
 
 Two notes on that table, because both get proposed again:
 
@@ -80,11 +80,11 @@ arrow on a light background if the two SVGs ever drifted. It renders teal.
 
 So **all three engines are now verified**, and nothing about the kit is
 unknown in Gecko. A regression from here would be new work rather than an
-unknown, which is an argument for item 5 and not for another manual sweep.
+unknown, which is an argument for item 4 and not for another manual sweep.
 
 The lesson generalises past Firefox. Two of the kit's engine assumptions were
 written from reasoning rather than observation; one was wrong, and the demo
-could not have caught it. That is the argument for item 5, not for more
+could not have caught it. That is the argument for item 4, not for more
 reasoning.
 
 ### Closed: package managers and badges
@@ -112,23 +112,40 @@ Badges added: downloads, CI status, unpacked size. No TypeScript badge — there
 is no TypeScript — and no hand-drawn "Bun compatible" or "Accessible" shield,
 since a badge nobody computes is decoration.
 
-### 1. v0.3 — containers
+### Closed: v0.3 containers
 
-Already scoped in STATE.md, unchanged here:
-
-Modal
-: `<dialog>`. The element brings focus trapping, `Esc`, and the top layer for
-  free — everything that makes a hand-rolled modal an accessibility liability.
-  `::backdrop` takes the blur.
+All three shipped, in `containers.css`, each on the native element that already
+owns the behaviour:
 
 Accordion
-: `<details>` / `<summary>`. Native disclosure semantics, keyboard included.
+: `<details>` / `<summary>`. Keyboard and open state are the browser's.
+
+Modal
+: `<dialog>`, with a blurred `::backdrop`. Focus trapping, `Esc` and the top
+  layer come from `showModal()` — which is the consumer's call to make; the kit
+  only paints the result.
 
 Terminal / code window
-: The strongest differentiator of the three, and the one nobody else's kit
-  has. Reuses `.cy-cursor` and the scanline effect.
+: The differentiator. Composes with `.cy-scanlines` and `.cy-cursor` rather
+  than reimplementing them.
 
-### 2. Per-component documentation
+Two things came out of building them.
+
+**A scrim must not follow the theme.** The backdrop was first derived from
+`--cy-bg`, which meant the light theme painted a near-white wash over a
+near-white page and separated nothing. `--cy-backdrop` is now a finished
+`rgba()` that stays dark in both themes. Only measuring it in light mode caught
+that; it looks perfectly fine in the dark theme everything gets built in.
+
+**`::backdrop` may not inherit custom properties**, so `var(--cy-backdrop)`
+carries a literal fallback. Without one, a failure there is not a wrong colour
+but *no* backdrop at all, leaving the page fully legible behind an open modal.
+
+Still open from the original v0.3 scope: **navigation and data** — top nav bar,
+breadcrumb, data table. Those are a second, larger batch, and none of them get
+a native element to stand on the way these three did.
+
+### 1. Per-component documentation
 
 The README class table says a component exists. It does not say how to vary it
 or what breaks it.
@@ -148,7 +165,7 @@ accessibility contract it assumes the consumer keeps. That last section is the
 one worth the effort — `.cy-error` is inert without `aria-describedby`, and
 nothing in CSS can enforce it.
 
-### 3. High-contrast support
+### 2. High-contrast support
 
 The one real gap in an otherwise strong accessibility story. Neither
 `prefers-contrast: more` nor `forced-colors` is handled, and a kit built on
@@ -156,7 +173,7 @@ glow is exactly the kind that Windows High Contrast Mode flattens into
 unreadability. Expect this to mean `forced-color-adjust` in places and losing
 the glow deliberately rather than losing it by accident.
 
-### 4. Playground
+### 3. Playground
 
 This item used to say the demo was not hosted. It is — GitHub Pages serves it
 at **https://laddtnov.github.io/cyberpunk-ui/demo/**, deploying from `main`, and
@@ -176,7 +193,7 @@ editor is JavaScript. That is fine — the rule binds the *package*, not the dem
 page — but the script stays in `demo/`, and nothing it needs may leak into the
 published CSS.
 
-### 5. Stylelint and visual regression
+### 4. Stylelint and visual regression
 
 Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
 `--variant` modifier convention mechanically instead of by review.
@@ -283,9 +300,9 @@ thing:
 
 **Nerd Fonts** are real font files, patched to add developer and powerline
 glyphs. That makes them a poor fit for display or body text and a *good* one
-for exactly one planned component — the **terminal / code window** in item 1,
-which is the place a kit would legitimately want box-drawing and prompt
-glyphs. Worth trying there first, at demo scale, before anything is packaged.
+for exactly one component — the **terminal / code window**, which now exists
+and is the place a kit would legitimately want box-drawing and prompt glyphs.
+Worth trying there first, at demo scale, before anything is packaged.
 
 **Tegaki** (`gkurt/tegaki`, MIT) is not a typeface at all. It is a JavaScript
 library that animates handwriting stroke by stroke and emits SVG, PNG, GIF or

@@ -1,0 +1,165 @@
+/*! @laddtnov/cyberpunk-ui — containers.css | MIT */
+
+/* Opt-in classes only. Styling bare `details {}` or `dialog {}` would hijack
+   every disclosure and modal on a consumer's page the moment they import the
+   kit.
+
+   All three components here are built on a native element, so the behaviour
+   ships with the browser rather than with the kit: <details> brings its own
+   keyboard handling and open state, <dialog> brings focus trapping, Esc and
+   the top layer. No JavaScript ships, ever. */
+
+/* ── Accordion ────────────────────────────────────────────────────
+   <details class="cy-accordion">
+     <summary>Heading</summary>
+     <div class="cy-accordion__body">…</div>
+   </details>
+
+   The summary is styled through the class rather than given one of its own:
+   `.cy-accordion > summary` is still opt-in, since it cannot match without
+   the wrapper, and it keeps the consumer's markup contract to one class.
+   The body needs its own class because there is no way to select "everything
+   that is not the summary" that stays readable. */
+.cy-accordion {
+  background: var(--cy-surface);
+  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border-radius: var(--cy-radius);
+  margin-bottom: var(--cy-space-sm);
+  overflow: hidden;
+}
+
+.cy-accordion > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--cy-space-sm);
+  padding: var(--cy-space-sm) var(--cy-space-md);
+  font-family: var(--cy-font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cy-neon-cyan);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  /* Two removals for one marker. `display: flex` already drops the
+     ::marker in engines that follow the spec, list-style covers the rest,
+     and WebKit needs its own pseudo-element hidden explicitly. */
+  list-style: none;
+}
+
+.cy-accordion > summary::-webkit-details-marker { display: none; }
+
+.cy-accordion > summary:hover {
+  background: rgba(var(--cy-cyan-rgb), 0.06);
+}
+
+/* The ring is not negotiable — a disclosure is keyboard-operated by
+   definition, and the summary is the thing that takes the focus. */
+.cy-accordion > summary:focus-visible {
+  outline: var(--cy-focus-width) solid var(--cy-focus-color);
+  outline-offset: calc(var(--cy-focus-offset) * -1);
+}
+
+/* Same rotated-border technique as the checkbox tick in forms.css, so the
+   two read as one family. `margin-left: auto` pins it to the trailing edge
+   whatever the heading length. */
+.cy-accordion > summary::after {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  rotate: 45deg;
+  transition: rotate 0.2s var(--cy-ease);
+}
+
+.cy-accordion[open] > summary::after { rotate: 225deg; }
+
+.cy-accordion[open] > summary {
+  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.2);
+}
+
+.cy-accordion__body {
+  padding: var(--cy-space-md);
+  color: var(--cy-text);
+}
+
+/* ── Modal ────────────────────────────────────────────────────────
+   <dialog class="cy-modal">…</dialog>
+
+   Open it with showModal(), not show(). Only showModal() puts the dialog in
+   the top layer, traps focus, closes on Esc and renders ::backdrop at all —
+   show() gives a non-modal box with none of that, and no backdrop to style.
+   That call is the consumer's; the kit only paints the result. */
+.cy-modal {
+  padding: var(--cy-space-lg);
+  max-width: min(90vw, 32rem);
+  background: var(--cy-surface);
+  color: var(--cy-text);
+  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.5);
+  border-radius: var(--cy-radius-lg);
+  box-shadow: 0 0 30px rgba(var(--cy-cyan-rgb), 0.25);
+}
+
+/* The fallback is not belt-and-braces: ::backdrop has historically not
+   inherited custom properties from the page, so var(--cy-backdrop) can fail
+   to resolve here even though it is defined on :root. Without a fallback that
+   would leave the backdrop transparent and the page fully legible behind an
+   open modal. The literal repeats --cy-backdrop's value; keep them in step. */
+.cy-modal::backdrop {
+  background: var(--cy-backdrop, rgba(10, 10, 12, 0.72));
+  backdrop-filter: blur(6px);
+}
+
+/* ── Terminal / code window ───────────────────────────────────────
+   <div class="cy-terminal">
+     <div class="cy-terminal__bar">~/ops</div>
+     <pre>…</pre>
+   </div>
+
+   The bar is optional; a terminal with no chrome is a valid code block.
+   Combine with .cy-scanlines and .cy-cursor from effects.css for the full
+   CRT treatment — they are kept separate so the frame can be used plain. */
+.cy-terminal {
+  background: var(--cy-surface);
+  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border-radius: var(--cy-radius);
+  box-shadow: 0 0 18px rgba(var(--cy-cyan-rgb), 0.12);
+  overflow: hidden;
+}
+
+.cy-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--cy-space-sm);
+  padding: var(--cy-space-xs) var(--cy-space-md);
+  background: rgba(var(--cy-cyan-rgb), 0.08);
+  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  font-family: var(--cy-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cy-neon-cyan);
+}
+
+/* Scoped to the frame, so a bare <pre> elsewhere on the page is untouched. */
+.cy-terminal > pre {
+  margin: 0;
+  padding: var(--cy-space-md);
+  overflow-x: auto;
+  font-family: var(--cy-font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--cy-text);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────
+   The chevron still turns — it reports the open state, so freezing it would
+   remove information rather than decoration. Only the tween goes. */
+@media (prefers-reduced-motion: reduce) {
+  .cy-accordion > summary,
+  .cy-accordion > summary::after { transition: none; }
+  .cy-modal::backdrop { backdrop-filter: none; }
+}
