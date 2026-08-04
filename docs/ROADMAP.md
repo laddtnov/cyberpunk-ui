@@ -228,6 +228,51 @@ Licences travel with the font, not the patcher
   licence governs redistribution. Each family has to be checked before any
   file is republished. Canonical source is `ryanoasis/nerd-fonts`.
 
+### Licensing, before anyone reaches for a file
+
+None of this is legal advice, and none of it is urgent — **the kit is at zero
+exposure today and stays there while no font file ships.** `tokens.css` only
+*names* families, which is a reference rather than a copy, and the demo's
+Google Fonts `<link>` means Google serves the bytes. `files` is
+`["*.css", "README.md", "LICENSE"]`. There is nothing to infringe.
+
+The traps all sit on the other side of that line, and two of them are easy to
+walk into:
+
+**A repository's licence does not cover the fonts bundled inside it.** Tegaki
+is MIT, and that MIT covers Tegaki's own code. The ten faces it ships —
+Caveat, Italianno, Tangerine, Parisienne, Suez One, Amiri, Tillana, Klee One,
+Nanum Pen Script, Atma — each keep their own licence, mostly OFL 1.1. Reading
+a repo's top-level licence as covering its third-party assets is the most
+common mistake in this area.
+
+**Nerd Fonts is not one licence either.** The project has its own, but every
+patched font retains the licence of the typeface it was built from. The repo
+carries a `license-audit.md` for exactly this, and marks **Reserved Font Name**
+status per family — Anonymous Pro and Bitstream Vera Sans Mono among the RFN
+ones. Under OFL, a reserved name may not be used for a modified version, which
+is why every patched face is renamed to `… Nerd Font`.
+
+**OFL cannot be relicensed to MIT.** If an OFL file ever ships here it stays
+OFL, its licence text has to travel with it, and this repository's blanket
+`LICENSE` stops being accurate — an attribution section would be required
+alongside it.
+
+**Output is not the font.** OFL explicitly does not restrict documents
+*produced with* a font, so a wordmark pre-rendered to SVG is a document, not a
+font file. That is what makes the Tegaki plan above clean, provided the face it
+renders is OFL or Apache.
+
+So the low-risk shape of this is: use Nerd Fonts **locally** to design how the
+terminal component should look and ship no file, and treat Tegaki as a
+build-time tool whose SVG is the only thing committed. All of the aesthetic,
+none of the exposure.
+
+If a face is ever shipped regardless: one font, licence checked individually,
+RFN status verified, the font's licence file shipped beside it, an attribution
+section added so `LICENSE` no longer implies MIT covers everything, and the
+file kept in a separate package or opt-in subpath.
+
 Two things have been installed locally, and they are not the same kind of
 thing:
 
