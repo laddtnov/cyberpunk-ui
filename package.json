@@ -1,7 +1,7 @@
 {
   "name": "@laddtnov/cyberpunk-ui",
   "version": "0.2.2",
-  "description": "Zero-dependency cyberpunk neon CSS kit — design tokens, glow/glitch/scanline effects, form controls, and feedback components. WCAG-aware light theme, no build step.",
+  "description": "Zero-dependency cyberpunk neon CSS kit — design tokens, glow/glitch/scanline effects, form controls, feedback, and containers on native <details>/<dialog>. WCAG-aware light theme, no build step.",
   "license": "MIT",
   "author": "Vladyslav Novytskyi <novytskiyvladislav@gmail.com> (https://laddtnov.xyz)",
   "homepage": "https://github.com/laddtnov/cyberpunk-ui#readme",
@@ -19,6 +19,7 @@
     "./tokens": "./tokens.css",
     "./effects": "./effects.css",
     "./components": "./components.css",
+    "./containers": "./containers.css",
     "./forms": "./forms.css",
     "./feedback": "./feedback.css",
     "./package.json": "./package.json"
