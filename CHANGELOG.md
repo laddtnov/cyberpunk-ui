@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Docs
+- **A parked section in `docs/ROADMAP.md` for type of the kit's own**, recording
+  why the font tokens are already the right seam and the three constraints that
+  bind anything further: a locally installed font is invisible to consumers, one
+  Nerd Font is fifty to two hundred times the size of the whole package, and
+  licences follow the original typeface rather than whoever patched it.
+- **The licensing traps that go with it**, written down before anyone reaches
+  for a font file. The kit is at zero exposure while none ships. Past that line:
+  a repository's licence does not cover fonts bundled inside it, Nerd Fonts is
+  many licences with per-family Reserved Font Name status, OFL cannot be
+  relicensed to MIT, and OFL does not restrict documents *produced with* a font
+  — which is what makes a pre-rendered SVG wordmark clean.
+- Corrected a stale claim in `docs/STATE.md` that both progress paths appear in
+  the demo; only the native element does.
+
 ## [0.2.2] — 2026-07-31
 
 ### Fixed
