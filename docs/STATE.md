@@ -238,13 +238,22 @@ Two traps worth knowing:
   matches `:user-invalid`. The **Relay address** field carries no
   `aria-invalid` and exists specifically to exercise the CSS-only path. Adding
   `aria-invalid` to it would silently retire that coverage.
-- **Firefox is verified as of 0.2.1**, on macOS, against the demo page.
+- **Firefox is fully verified**, on macOS, against the demo page — first pass
+  at 0.2.1, completed at 0.2.2. **Nothing has ever needed fixing for Gecko.**
+
   Confirmed painting: `appearance: none` on input / select / textarea (the
   custom select arrow renders, with no native arrow beside it), the checkbox
   `::after` tick, the radio dot, the native `<progress>` including
   `::-moz-progress-bar`, `[aria-invalid="true"]`, `:user-invalid` (cyan on
   load, red after blur), alerts, badges, spinner, toast, glow and disabled
-  styling. Nothing needed fixing.
+  styling.
+
+  Also confirmed, in the second pass: **the light theme**, including the
+  `select` arrow — the one item here with real risk, since its colour is baked
+  into a per-theme data-URI (see the debt entry above) and a desync would show
+  as a cyan arrow on a light background. It renders teal, so the two SVGs are
+  in sync. And the **glitch, scanline, grid and cursor effects**, which animate
+  correctly.
 
   This retired a wrong assumption rather than confirming one. The kit used to
   say Gecko cannot generate pseudo-elements on replaced elements, and that the
@@ -252,9 +261,10 @@ Two traps worth knowing:
   input non-replaced, and the tick renders. `forms.css` carries the correction
   inline so it does not get re-derived.
 
-  **Still unseen in Gecko**, and cosmetic: the light theme, and the glitch /
-  scanline / grid effects. Neither was in frame during the pass. Safari
-  confirmed; Chromium confirmed.
+  **Nothing is left unseen in Gecko.** Safari confirmed; Chromium confirmed.
+  All three engines now render the kit as designed, so a regression here would
+  be new work rather than an unknown — which is the case for item 5's visual
+  regression, not for another manual sweep.
 - ~~`::-webkit-progress-value` / `::-moz-progress-bar` carry a `transition`
   that does not actually animate.~~ Removed. The div path animates because
   `width` is a real style on a real element; a native `<progress>` derives its
