@@ -1,6 +1,6 @@
 {
   "name": "@laddtnov/cyberpunk-ui",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Zero-dependency cyberpunk neon CSS kit — design tokens, glow/glitch/scanline effects, form controls, feedback, and containers on native <details>/<dialog>. WCAG-aware light theme, no build step.",
   "license": "MIT",
   "author": "Vladyslav Novytskyi <novytskiyvladislav@gmail.com> (https://laddtnov.xyz)",
