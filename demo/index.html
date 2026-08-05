@@ -93,10 +93,15 @@
     }
 
     /* ── Playground controls — demo-only ──────────────────────────
-       `type="color"` and `type="range"` are deliberately NOT given
-       .cy-input: the kit styles text inputs, <select> and <textarea>, and
-       putting its class on controls it does not support would advertise
-       support that is not there. These are local styles for a local tool. */
+       Colour and range inputs are deliberately NOT given .cy-input: the kit
+       styles text inputs plus the select and textarea elements, and lending
+       its class to controls it does not support would advertise support that
+       is not there. These are local styles for a local tool.
+
+       Element names are written without angle brackets on purpose. Sonar
+       parses this stylesheet as part of the document, so a literal tag inside
+       a comment is read as real markup — a bracketed select and textarea here
+       were reported as two unlabelled form controls. */
     .pg-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
