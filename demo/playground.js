@@ -12,7 +12,10 @@ const radius = document.getElementById('pg-radius');
 const border = document.getElementById('pg-border');
 const radiusOut = document.getElementById('pg-radius-out');
 const borderOut = document.getElementById('pg-border-out');
-const status = document.getElementById('pg-status');
+// Not named `status`: that is the deprecated `window.status`, and a top-level
+// binding which merely shadows it reads as a use of the global to both linters
+// and anyone skimming the file.
+const statusEl = document.getElementById('pg-status');
 const out = document.getElementById('pg-out');
 const outCss = document.getElementById('pg-out-css');
 
@@ -20,19 +23,32 @@ const outCss = document.getElementById('pg-out-css');
 // deltas rather than a dump of every token at its default.
 const overrides = new Map();
 
+// Both shorthand expansions use replace rather than spreading the string into
+// an array to map over it — same result, one fewer allocation, and it is the
+// pattern the scanner flags.
+const expandShorthand = (digits) => digits.replace(/./g, (c) => c + c);
+
 const hexToRgb = (hex) => {
   const h = hex.replace('#', '');
-  const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
+  const full = h.length === 3 ? expandShorthand(h) : h;
   return [0, 2, 4].map((i) => Number.parseInt(full.slice(i, i + 2), 16)).join(', ');
 };
 
 // getComputedStyle returns whatever the cascade resolved, which is what the
 // colour input needs — but it can come back as `rgb(0, 242, 255)` rather than
 // a hex, and <input type="color"> only accepts hex.
+//
+// The channel groups are bounded to three digits rather than left as `\d+`.
+// An unbounded quantifier followed by an optional separator is the shape that
+// backtracks super-linearly on input that nearly matches, and no RGB channel
+// is longer than three digits anyway. `scripts/check-contrast.js` carries the
+// same fix for the same reason.
 const toHex = (value) => {
   const v = value.trim();
-  if (v.startsWith('#')) return v.length === 4 ? '#' + [...v.slice(1)].map((c) => c + c).join('') : v;
-  const m = v.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+  if (v.startsWith('#')) {
+    return v.length === 4 ? '#' + expandShorthand(v.slice(1)) : v;
+  }
+  const m = v.match(/(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/);
   if (!m) return '#000000';
   return '#' + m.slice(1, 4).map((n) => Number(n).toString(16).padStart(2, '0')).join('');
 };
@@ -45,9 +61,9 @@ const setToken = (name, value) => {
 };
 
 const say = (msg) => {
-  status.textContent = msg;
+  statusEl.textContent = msg;
   clearTimeout(say.t);
-  say.t = setTimeout(() => { status.textContent = ''; }, 2400);
+  say.t = setTimeout(() => { statusEl.textContent = ''; }, 2400);
 };
 
 // ── Colours ───────────────────────────────────────────────────────
