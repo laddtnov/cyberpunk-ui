@@ -102,3 +102,33 @@
   --cy-warning-rgb: 138, 90, 0;
   --cy-danger-rgb:  194, 17, 15;
 }
+
+/* ── Increased contrast ───────────────────────────────────────────
+   `prefers-contrast: more` is a request to make everything easier to see,
+   and most of the answer belongs here rather than in the components: raising
+   a token reaches every rule that consumes it, which is the entire reason
+   the substrate exists.
+
+   Body text goes to the extremes of each theme, borders and focus rings get
+   thicker, and disabled controls become more legible — "disabled" is still
+   communicated by the cursor, the styling and the semantics, so dimming it
+   to near-invisible was never carrying the meaning on its own.
+
+   Individual borders in the component files use their own alpha values and
+   cannot be lifted from here; each file raises its own alongside this.
+
+   These values are strictly higher-contrast than the base ones they replace,
+   so `scripts/check-contrast.js` — which reads the first `:root` block per
+   theme — stays authoritative for the floors. */
+@media (prefers-contrast: more) {
+  :root {
+    --cy-text: #ffffff;
+    --cy-border-width: 2px;
+    --cy-focus-width: 3px;
+    --cy-disabled-opacity: 0.7;
+  }
+
+  :root[data-theme="light"] {
+    --cy-text: #16161d;
+  }
+}

@@ -236,3 +236,61 @@ textarea.cy-input {
   .cy-radio,
   .cy-checkbox::after { transition: none; }
 }
+
+/* ── Increased contrast ───────────────────────────────────────────
+   The hint and the placeholder are dimmed to the lowest opacity that still
+   clears 4.5:1 (see the comments on each). Clearing the floor is the
+   minimum, not the goal, so when more contrast is asked for they go to
+   full strength and stop being the quietest text on the page. */
+@media (prefers-contrast: more) {
+  .cy-input,
+  .cy-checkbox,
+  .cy-radio { border-color: var(--cy-neon-cyan); }
+
+  .cy-hint,
+  .cy-input::placeholder { opacity: 1; }
+}
+
+/* ── Forced colours ───────────────────────────────────────────────
+   The checked states are the whole problem here. A checked checkbox fills
+   with cyan and knocks its tick out in --cy-bg; a checked radio paints its
+   dot as a background-image. Forced colours rewrites `background-color`
+   but not `background-image`, and it rewrites the tick's border-color to
+   the same text colour it gives the fill — so left alone, the checkbox
+   becomes a solid block with an invisible tick, and the radio keeps a cyan
+   dot the user asked not to see.
+
+   Naming the system's own selected pair fixes both: Highlight is what the
+   platform fills a chosen control with, HighlightText is what it draws on
+   top. The kit stops choosing, which is the entire contract of this mode. */
+@media (forced-colors: active) {
+  .cy-input,
+  .cy-checkbox,
+  .cy-radio { box-shadow: none; }
+
+  .cy-checkbox:checked,
+  .cy-radio:checked {
+    background: Highlight;
+    border-color: Highlight;
+  }
+
+  .cy-checkbox:checked::after {
+    border-color: HighlightText;
+  }
+
+  /* The dot is a background-image, which forced colours leaves alone, so it
+     is dropped: a checked radio becomes a solid Highlight circle instead.
+     Deliberately not an inset box-shadow standing in for the dot — shadows
+     are unreliable in this mode, and a state signal must not depend on one.
+     Filled-versus-outlined carries it, and the round shape still tells the
+     two controls apart. */
+  .cy-radio:checked { background-image: none; }
+
+  .cy-input:disabled,
+  .cy-checkbox:disabled,
+  .cy-radio:disabled {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
+  }
+}

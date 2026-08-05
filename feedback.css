@@ -203,3 +203,63 @@ progress.cy-progress::-moz-progress-bar {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* ── Increased contrast ───────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  .cy-toast,
+  .cy-badge { border-color: var(--cy-neon-cyan); }
+
+  .cy-spinner { border-color: rgba(var(--cy-cyan-rgb), 0.6); border-top-color: var(--cy-neon-cyan); }
+
+  /* The alert tints sit at 0.08 so the hue reads without competing with the
+     text on top. Doubling that keeps the variants distinguishable from each
+     other, which is the only job the fill has. */
+  .cy-alert            { background: rgba(var(--cy-cyan-rgb),    0.16); }
+  .cy-alert--info      { background: rgba(var(--cy-cyan-rgb),    0.16); }
+  .cy-alert--success   { background: rgba(var(--cy-success-rgb), 0.16); }
+  .cy-alert--warning   { background: rgba(var(--cy-warning-rgb), 0.16); }
+  .cy-alert--danger    { background: rgba(var(--cy-danger-rgb),  0.16); }
+}
+
+/* ── Forced colours ───────────────────────────────────────────────
+   The spinner is the one component here that loses its meaning outright.
+   Its whole animation reads because three borders are faint and the fourth
+   is bright — and forced colours rewrites every border-color to the same
+   value, which turns a spinning arc into a static ring. Nothing is broken,
+   nothing looks wrong, and it silently stops saying "working". Naming two
+   different system colours restores the contrast the rotation depends on.
+
+   The progress fill has the mirror-image problem: it is a gradient, so
+   forced colours leaves it alone entirely and it would keep its cyan-to-pink
+   while everything around it changed. Both the native bar and the div path
+   are pinned to the system's Highlight instead.
+
+   Badges are filled shapes with no border, so once the fill is forced to the
+   page background they would dissolve into it. They get an outline. */
+@media (forced-colors: active) {
+  .cy-toast,
+  .cy-alert,
+  .cy-badge { box-shadow: none; }
+
+  .cy-spinner {
+    border-color: GrayText;
+    border-top-color: CanvasText;
+    animation: cy-spin 0.8s linear infinite;
+  }
+
+  .cy-badge { border: var(--cy-border-width) solid CanvasText; }
+
+  .cy-progress {
+    background: Canvas;
+    border: var(--cy-border-width) solid CanvasText;
+  }
+
+  .cy-progress__fill,
+  progress.cy-progress::-webkit-progress-value,
+  progress.cy-progress::-moz-progress-bar {
+    background-image: none;
+    background-color: Highlight;
+  }
+
+  progress.cy-progress::-webkit-progress-bar { background: Canvas; }
+}

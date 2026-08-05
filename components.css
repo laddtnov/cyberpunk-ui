@@ -133,3 +133,27 @@
 .cy-btn:disabled:focus-visible {
   outline: none;
 }
+
+/* ── Increased contrast ───────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  .cy-btn,
+  .cy-card { border-color: var(--cy-neon-cyan); }
+}
+
+/* ── Forced colours ───────────────────────────────────────────────
+   Both components carry a real border, so the UA forces it to the user's
+   text colour and the shape survives on its own. What does not survive is
+   the glow, and `.cy-btn:disabled` leans on opacity — which forced colours
+   does not touch — so the system's own disabled colour is named instead.
+   GrayText is the one the platform already uses for this, which is the
+   point: in forced colours the user's conventions win, not ours. */
+@media (forced-colors: active) {
+  .cy-btn,
+  .cy-card { box-shadow: none; }
+
+  .cy-btn:disabled {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
+  }
+}

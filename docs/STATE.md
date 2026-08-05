@@ -165,6 +165,62 @@ It checks **tokens against backgrounds only**. It cannot see a component's
 colour *pairings* — a hardcoded `color: #000` on `.cy-btn:hover` sat at 3.62:1
 and shipped, because no token was involved. Check pairings by hand.
 
+### `prefers-contrast: more`
+
+A lift, and most of it happens in `tokens.css`, because raising a token reaches
+every rule that consumes it. Body text goes to the extreme of each theme
+(12.95:1 → **19.78:1** dark, 9.88:1 → **15.85:1** light), borders go to 2px,
+focus rings to 3px, and `--cy-disabled-opacity` rises from 0.45 to 0.7 —
+"disabled" is still carried by the cursor, the styling and the semantics, so
+dimming it toward invisible was never doing that work alone.
+
+What cannot be lifted centrally is the borders: each uses its own alpha
+(`rgba(var(--cy-cyan-rgb), 0.2)` through `0.6`), and those values are not
+interchangeable, so **every file raises its own to full strength**. The hint
+and placeholder opacities go to 1 — they sit at the lowest value that clears
+4.5:1, and clearing the floor is the minimum rather than the goal.
+
+### `forced-colors: active`
+
+A surrender, not a lift. The user's palette replaces the kit's, and the only
+job left is making sure **no affordance was being carried by colour alone**.
+Three were:
+
+- **The spinner.** Its entire animation reads because three borders are faint
+  and the fourth is bright. Forced colours rewrites every `border-color` to the
+  same value, turning a spinning arc into a static ring — nothing looks broken,
+  it just silently stops saying "working". Now `GrayText` against `CanvasText`.
+- **The checked checkbox and radio.** The tick is knocked out in `--cy-bg` and
+  the radio's dot is a `background-image`. Forced colours rewrites
+  `background-color` but **not** `background-image`, and forces the tick's
+  border to the same colour as its fill — so the checkbox would become a solid
+  block with an invisible tick and the radio would keep a cyan dot the user
+  asked not to see. Both now use the system's `Highlight` / `HighlightText`
+  pair, and the radio drops its dot for a solid fill.
+- **The progress fill.** A gradient, so forced colours ignores it and it would
+  keep its cyan-to-pink while everything around it changed. Pinned to
+  `Highlight` on both code paths.
+
+Decoration is removed rather than left to the UA, because two of the properties
+involved are not forced at all: `text-shadow` (a cyan glow can survive under
+forced text and muddy it) and `background-image` (the grid and the scanline
+veil would keep painting over recoloured content). The scanline overlay is the
+worst of them — a translucent black wash on top of the text, which is a direct
+contrast *reduction* applied to someone who asked for more.
+
+**State signals must not depend on `box-shadow` here.** Shadows are unreliable
+in this mode; that is why the radio's checked dot became a fill rather than an
+inset shadow.
+
+**Verification status, stated plainly:** `prefers-contrast` was verified by
+applying the same declarations unwrapped and measuring the computed result.
+`forced-colors` was **not** verified visually — it needs Windows High Contrast
+Mode, which is not available here. What was confirmed is that both media
+blocks parse and are live in the CSSOM, that every selector in them matches a
+real element in the demo, and that every system colour keyword used is
+supported. The reasoning above is sound but unproven on a real forced-colors
+display, and should be treated that way until someone looks.
+
 ## CI and releasing
 
 - `ci.yml` on PRs: contrast check, then `npm pack --dry-run`. Deliberately
