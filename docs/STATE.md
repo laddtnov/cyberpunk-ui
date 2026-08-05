@@ -21,8 +21,10 @@ Zero dependencies, zero JavaScript, no build step. 934 lines of CSS.
 | `cyberpunk-ui.css` | 7 | `@import`s all of the above |
 
 Supporting files: `demo/index.html` (the live demo — every component is
-exercised there, including both progress code paths and both validation
-paths, and it is the OG image source), `scripts/check-contrast.js`
+exercised there, including both validation paths, and it is the OG image
+source), `demo/playground.js` (the live token editor; demo-only, and never
+published — `files` ships `*.css`, `README.md` and `LICENSE` only),
+`scripts/check-contrast.js`
 (dev-only, not published), `docs/superpowers/` (specs and plans),
 `.github/workflows/`.
 

@@ -91,6 +91,39 @@
       .topbar { justify-content: center; }
       .topbar__spacer { display: none; }
     }
+
+    /* ── Playground controls — demo-only ──────────────────────────
+       `type="color"` and `type="range"` are deliberately NOT given
+       .cy-input: the kit styles text inputs, <select> and <textarea>, and
+       putting its class on controls it does not support would advertise
+       support that is not there. These are local styles for a local tool. */
+    .pg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--cy-space-md);
+      margin-bottom: var(--cy-space-md);
+    }
+    .pg-ctl { display: flex; flex-direction: column; gap: var(--cy-space-xs); }
+    .pg-ctl .cy-label { display: flex; justify-content: space-between; gap: 0.5rem; }
+    .pg-ctl output { color: var(--cy-text); opacity: 0.75; }
+
+    .pg-swatch {
+      width: 100%;
+      height: 2.25rem;
+      padding: 2px;
+      background: var(--cy-surface);
+      border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+      border-radius: var(--cy-radius);
+      cursor: pointer;
+    }
+    .pg-swatch:focus-visible,
+    .pg-range:focus-visible {
+      outline: var(--cy-focus-width) solid var(--cy-focus-color);
+      outline-offset: var(--cy-focus-offset);
+    }
+    .pg-range { width: 100%; accent-color: var(--cy-neon-cyan); cursor: pointer; }
+
+    #pg-status:not(:empty) { color: var(--cy-neon-cyan); opacity: 1; }
   </style>
 </head>
 <body>
@@ -116,6 +149,73 @@
       <h1 class="cy-glitch">CYBERPUNK-UI</h1>
       <p class="mono">deep space observatory <span class="cy-cursor"></span></p>
     </section>
+
+    <!-- The playground is built out of the kit it edits — the panel is a
+         .cy-accordion, the labels are .cy-label, the buttons are .cy-btn — so
+         anything the editor changes changes the editor too. That is the
+         fastest way to notice a token which does not reach as far as it
+         should.
+
+         The colour and range inputs are the exception, and deliberately so:
+         see the .pg-swatch / .pg-range note in the stylesheet above. -->
+    <details class="cy-accordion" id="pg" open>
+      <summary>Theme playground</summary>
+      <div class="cy-accordion__body">
+
+        <div class="pg-grid">
+          <label class="pg-ctl">
+            <span class="cy-label">Neon cyan</span>
+            <input class="pg-swatch" type="color" data-var="--cy-neon-cyan" data-rgb="--cy-cyan-rgb">
+          </label>
+          <label class="pg-ctl">
+            <span class="cy-label">Neon pink</span>
+            <input class="pg-swatch" type="color" data-var="--cy-neon-pink" data-rgb="--cy-pink-rgb">
+          </label>
+          <label class="pg-ctl">
+            <span class="cy-label">Neon purple</span>
+            <input class="pg-swatch" type="color" data-var="--cy-neon-purple" data-rgb="--cy-purple-rgb">
+          </label>
+          <label class="pg-ctl">
+            <span class="cy-label">Background</span>
+            <input class="pg-swatch" type="color" data-var="--cy-bg">
+          </label>
+          <label class="pg-ctl">
+            <span class="cy-label">Surface</span>
+            <input class="pg-swatch" type="color" data-var="--cy-surface">
+          </label>
+          <label class="pg-ctl">
+            <span class="cy-label">Corner radius <output id="pg-radius-out">4px</output></span>
+            <input class="pg-range" type="range" id="pg-radius" min="0" max="16" step="1" value="4">
+          </label>
+          <label class="pg-ctl">
+            <span class="cy-label">Border width <output id="pg-border-out">1px</output></span>
+            <input class="pg-range" type="range" id="pg-border" min="1" max="4" step="1" value="1">
+          </label>
+        </div>
+
+        <p class="cy-hint" id="pg-note">
+          Every colour writes its <code>-rgb</code> twin too — glows are
+          <code>rgba(var(--cy-*-rgb), α)</code>, so a hue that skipped its twin
+          would recolour the borders and leave the glow behind.
+        </p>
+
+        <div class="row">
+          <button class="cy-btn cy-glow" id="pg-copy">COPY CSS</button>
+          <button class="cy-btn cy-btn--secondary" id="pg-reset">RESET</button>
+          <output class="cy-hint" id="pg-status" aria-live="polite"></output>
+        </div>
+
+        <!-- The emitted CSS, shown as well as copied — a clipboard write needs
+             a secure context and permission, and neither is guaranteed. When
+             it fails the text is selected instead, the same fallback the
+             install button in the topbar uses. Rendered in a .cy-terminal,
+             which is the component that already exists for exactly this. -->
+        <div class="cy-terminal" id="pg-out" hidden>
+          <div class="cy-terminal__bar">:root overrides</div>
+          <pre id="pg-out-css"></pre>
+        </div>
+      </div>
+    </details>
 
     <section>
       <h2>Buttons</h2>
@@ -284,10 +384,14 @@ $ _</pre>
   </div>
 
   <script>
-    // Theme toggle
+    // Theme toggle. Announces the change so the playground can re-sync its
+    // controls: an inline override on :root outranks both the base rule and
+    // :root[data-theme="light"], so an edit made in one theme would otherwise
+    // survive into the other — a dark background pinned over the light theme.
     document.getElementById('theme').addEventListener('click', () => {
       const root = document.documentElement;
       root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
+      document.dispatchEvent(new CustomEvent('cy-theme-change'));
     });
 
     // Copy the install command. If the Clipboard API is unavailable or blocked
@@ -322,5 +426,10 @@ $ _</pre>
     document.getElementById('d-modal-close')
       .addEventListener('click', () => modal.close());
   </script>
+
+  <!-- Deferred so it runs after the markup above and after the theme handler
+       is bound. Demo only — package.json's `files` allowlist never ships
+       demo/, so no JavaScript reaches consumers of the kit. -->
+  <script src="playground.js" defer></script>
 </body>
 </html>

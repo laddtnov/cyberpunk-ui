@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **A live theme playground in the demo** (`demo/playground.js`) — five colour
+  pickers, a radius slider and a border-width slider, plus a COPY CSS button
+  that emits only what was actually changed, so a visitor leaves with a `:root`
+  block to paste. Demo only; `files` has never published `demo/`, so the
+  package still ships no JavaScript.
+  - Every colour writes its **`-rgb` twin** alongside the hue. Writing only the
+    hue recolours borders and text and leaves every glow behind — the rule was
+    documented, and this is the first place it is demonstrable in one drag.
+  - Switching themes **clears the overrides** and re-reads that theme's values:
+    an inline style on `:root` outranks `:root[data-theme="light"]`, so an edit
+    made in dark mode would otherwise pin a near-black background over the
+    light theme.
+
 ### Docs
 - **A per-component reference in `docs/components/`**, one page per subpath —
   `/effects`, `/components`, `/containers`, `/forms`, `/feedback` — because the

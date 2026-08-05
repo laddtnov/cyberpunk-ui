@@ -80,11 +80,11 @@ arrow on a light background if the two SVGs ever drifted. It renders teal.
 
 So **all three engines are now verified**, and nothing about the kit is
 unknown in Gecko. A regression from here would be new work rather than an
-unknown, which is an argument for item 2 and not for another manual sweep.
+unknown, which is an argument for item 1 and not for another manual sweep.
 
 The lesson generalises past Firefox. Two of the kit's engine assumptions were
 written from reasoning rather than observation; one was wrong, and the demo
-could not have caught it. That is the argument for item 2, not for more
+could not have caught it. That is the argument for item 1, not for more
 reasoning.
 
 ### Closed: package managers and badges
@@ -195,7 +195,7 @@ every system colour used is supported — which is a long way from having looked
 at it. Written down in STATE.md rather than quietly assumed, and a good
 candidate for whoever next has a Windows machine in reach.
 
-### 1. Playground
+### Closed: playground
 
 This item used to say the demo was not hosted. It is — GitHub Pages serves it
 at **https://laddtnov.github.io/cyberpunk-ui/demo/**, deploying from `main`, and
@@ -205,17 +205,36 @@ pointed there all along.
 What was actually missing was a link to it: the README never mentioned the demo
 at all, so the page existed and nothing led anyone to it. Fixed.
 
-So one step is left, and it is the interesting one — **live token editing**, so
-a visitor can drag `--cy-neon-cyan` and watch the whole kit reskin. That is the
-demo worth building, because the token substrate *is* the pitch, and a static
-page of components cannot show it.
+**Live token editing** is now in, as `demo/playground.js` — five colours, a
+radius slider and a border-width slider, plus a COPY CSS button that emits only
+what was actually changed, so a visitor leaves with a `:root` block they can
+paste. The script lives in `demo/`, which `files` has never published, so the
+package still ships no JavaScript.
 
-Note the constraint this runs into: the kit ships no JavaScript, and a token
-editor is JavaScript. That is fine — the rule binds the *package*, not the demo
-page — but the script stays in `demo/`, and nothing it needs may leak into the
-published CSS.
+Three things it forced into the open, all of them arguments the kit already
+makes but could not previously *show*:
 
-### 2. Stylelint and visual regression
+**A colour and its `-rgb` twin have to move together.** The editor writes both
+on every change. Writing only the hue recolours borders and text and leaves
+every glow on the old colour — the rule is documented, and this is the first
+place it is demonstrable in one drag.
+
+**Inline styles on `:root` outrank the theme.** An override set in dark mode
+survives into `:root[data-theme="light"]` and pins, say, a near-black
+background over the light theme. Switching themes therefore clears the
+overrides and re-reads that theme's own values, which is the only behaviour
+that is not confusing.
+
+**The kit does not style every input.** `type="color"` and `type="range"` are
+not `.cy-input` — the kit covers text inputs, `<select>` and `<textarea>`, and
+putting its class on controls it does not support would advertise support that
+is not there. The playground styles those two locally and says why.
+
+Still open here: nothing blocking. Persisting a theme across reloads and
+sharing one by URL are both obvious next steps and neither is needed for the
+page to make its point.
+
+### 1. Stylelint and visual regression
 
 Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
 `--variant` modifier convention mechanically instead of by review.
