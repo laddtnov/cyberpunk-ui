@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Docs
+- **A per-component reference in `docs/components/`**, one page per subpath —
+  `/effects`, `/components`, `/containers`, `/forms`, `/feedback` — because the
+  subpath is the boundary consumers import, not the individual component.
+  Each entry documents the markup the kit expects, the modifier classes, the
+  tokens that restyle it, and the accessibility contract.
+- That last section is the point. Every item in it is a way to build something
+  that **looks finished and is not**: a `.cy-error` with no `aria-describedby`,
+  a `.cy-spinner` with no `.cy-sr-only` label, a `<div>` where a toast needs
+  `<output>`, a modal opened with `show()` instead of `showModal()`. None of
+  them produce a visual symptom, so none get caught by looking.
+- Records the `<select>` arrow's baked-in colour as a **consumer-facing**
+  limitation rather than only internal debt: override `--cy-neon-cyan` and the
+  arrow will not follow.
+- README links the reference.
+
 ## [0.4.0] — 2026-08-05
 
 ### Added

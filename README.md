@@ -89,6 +89,18 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 <button class="cy-btn cy-glow">&gt;_ ENTER</button>
 ```
 
+## Documentation
+
+Per-component reference, one page per subpath — markup, modifiers, the tokens
+that restyle each component, and the accessibility contract the kit cannot
+enforce for you:
+
+**[docs/components/](docs/components/)** — [effects](docs/components/effects.md)
+· [button and card](docs/components/components.md)
+· [containers](docs/components/containers.md)
+· [forms](docs/components/forms.md)
+· [feedback](docs/components/feedback.md)
+
 ## Usage
 
 ```html
