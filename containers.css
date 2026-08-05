@@ -163,3 +163,36 @@
   .cy-accordion > summary::after { transition: none; }
   .cy-modal::backdrop { backdrop-filter: none; }
 }
+
+/* ── Increased contrast ───────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  .cy-accordion,
+  .cy-modal,
+  .cy-terminal { border-color: var(--cy-neon-cyan); }
+
+  .cy-accordion[open] > summary,
+  .cy-terminal__bar { border-bottom-color: var(--cy-neon-cyan); }
+}
+
+/* ── Forced colours ───────────────────────────────────────────────
+   All three keep their frames, since a forced border-color is still a
+   border. The chevron survives too — it is drawn in `currentColor`, so it
+   follows the summary's forced text colour without being told to.
+
+   The backdrop is the exception worth spelling out. It is the only thing
+   separating an open modal from the page behind it, and it is built from a
+   translucent fill plus a blur. Forced colours does not reliably keep
+   either, and a modal that cannot be told apart from the page underneath is
+   a worse failure than a modal that looks plain. It is pinned to the
+   system's own window background so the separation is never in doubt, and
+   the blur — decoration, and expensive — goes. */
+@media (forced-colors: active) {
+  .cy-modal,
+  .cy-terminal { box-shadow: none; }
+
+  .cy-modal::backdrop {
+    background: Canvas;
+    backdrop-filter: none;
+    opacity: 0.85;
+  }
+}

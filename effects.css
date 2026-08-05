@@ -78,3 +78,37 @@
   .cy-grid-bg,
   .cy-cursor { animation: none; }
 }
+
+/* ── Forced colours ───────────────────────────────────────────────
+   Windows High Contrast Mode and friends replace the palette with the
+   user's own. This file is where the kit gives up the most, and it should:
+   every effect here is decoration, and decoration is exactly what a user
+   asking for forced colours is asking to be rid of.
+
+   The removals are explicit rather than left to the UA. `text-shadow` is
+   not forced by the feature, so a cyan glow can survive underneath forced
+   text and muddy it; `background-image` is not forced either, so the grid
+   and the scanline veil would keep painting over content whose colours
+   have changed underneath them. The scanline overlay is the worst of these
+   — it is a translucent black wash sitting on top of the text, which is a
+   direct contrast reduction applied to someone who has asked for more. */
+@media (forced-colors: active) {
+  .cy-glow,
+  .cy-glow--pink,
+  .cy-glow--purple { box-shadow: none; }
+
+  .cy-text-glow,
+  .cy-text-glow--pink,
+  .cy-glitch { text-shadow: none; }
+
+  /* The RGB split is drawn entirely in text-shadow, so with the shadow
+     gone the animation has nothing left to move. */
+  .cy-glitch { animation: none; }
+
+  .cy-scanlines::after { background: none; }
+
+  .cy-grid-bg {
+    background-image: none;
+    animation: none;
+  }
+}

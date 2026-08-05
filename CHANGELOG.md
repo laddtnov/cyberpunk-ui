@@ -3,6 +3,35 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **High-contrast support**, closing the last gap in the accessibility story.
+  - **`prefers-contrast: more`** — a lift, mostly absorbed by `tokens.css`
+    since raising a token reaches everything that consumes it. Body text goes
+    to the extreme of each theme (12.95:1 → 19.78:1 dark, 9.88:1 → 15.85:1
+    light), borders to 2px, focus rings to 3px, and `--cy-disabled-opacity`
+    from 0.45 to 0.7. Borders carry per-rule alphas that cannot be lifted
+    centrally, so each file raises its own; hint and placeholder opacity go
+    to full.
+  - **`forced-colors: active`** — a surrender. The work was finding the three
+    places that signalled state with colour alone and would have failed
+    *silently*: the spinner (every border forced to one value turns a spinning
+    arc into a static ring), the checked checkbox and radio (the tick is
+    knocked out in `--cy-bg`, the radio's dot is a `background-image`, and
+    forced colours rewrites `background-color` but not `background-image`),
+    and the progress fill (a gradient, so it is ignored entirely). All now use
+    the system `Highlight` / `HighlightText` / `GrayText` palette.
+  - Decoration is removed explicitly rather than left to the UA, because
+    `text-shadow` and `background-image` are not forced — the scanline veil
+    would otherwise keep washing translucent black over recoloured text.
+  - Follows the existing per-file `prefers-reduced-motion` precedent; no new
+    stylesheet, no new export.
+  - **`forced-colors` is not visually verified** — it needs Windows High
+    Contrast Mode. Both blocks parse and are live, every selector matches a
+    real element, and every system colour used is supported. See
+    `docs/STATE.md`.
+
 ## [0.3.0] — 2026-08-04
 
 ### Added

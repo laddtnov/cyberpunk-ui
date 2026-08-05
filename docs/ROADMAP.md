@@ -165,15 +165,32 @@ accessibility contract it assumes the consumer keeps. That last section is the
 one worth the effort — `.cy-error` is inert without `aria-describedby`, and
 nothing in CSS can enforce it.
 
-### 2. High-contrast support
+### Closed: high-contrast support
 
-The one real gap in an otherwise strong accessibility story. Neither
-`prefers-contrast: more` nor `forced-colors` is handled, and a kit built on
-glow is exactly the kind that Windows High Contrast Mode flattens into
-unreadability. Expect this to mean `forced-color-adjust` in places and losing
-the glow deliberately rather than losing it by accident.
+Both `prefers-contrast: more` and `forced-colors: active` are handled now, per
+file, following the `prefers-reduced-motion` precedent rather than adding a
+seventh stylesheet. Details in STATE.md; the shape of it is that the first is a
+lift the token substrate mostly absorbs on its own, and the second is a
+surrender where the only real work is making sure nothing was signalling with
+colour alone.
 
-### 3. Playground
+The prediction was that this would mean "losing the glow deliberately rather
+than by accident", and that part held. What it missed is that **removing the
+glow was the easy half**. Three components were signalling state through colour
+that forced colours would have flattened without appearing broken — the
+spinner's arc, the checked checkbox and radio, and the progress fill. A static
+ring that used to spin still looks like a perfectly fine ring. That is the
+failure mode worth remembering: in forced colours, things do not break
+visibly, they stop meaning what they meant.
+
+One caveat carried forward: **`forced-colors` has not been seen on a real
+display.** It needs Windows High Contrast Mode. What was verified is that both
+blocks parse and are live, that every selector matches a real element, and that
+every system colour used is supported — which is a long way from having looked
+at it. Written down in STATE.md rather than quietly assumed, and a good
+candidate for whoever next has a Windows machine in reach.
+
+### 2. Playground
 
 This item used to say the demo was not hosted. It is — GitHub Pages serves it
 at **https://laddtnov.github.io/cyberpunk-ui/demo/**, deploying from `main`, and
@@ -193,7 +210,7 @@ editor is JavaScript. That is fine — the rule binds the *package*, not the dem
 page — but the script stays in `demo/`, and nothing it needs may leak into the
 published CSS.
 
-### 4. Stylelint and visual regression
+### 3. Stylelint and visual regression
 
 Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
 `--variant` modifier convention mechanically instead of by review.
