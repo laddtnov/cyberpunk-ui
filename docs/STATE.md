@@ -1,7 +1,7 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.3.0**.
+Current as of **0.4.0**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.

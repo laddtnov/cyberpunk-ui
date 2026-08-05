@@ -3,7 +3,7 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.4.0] — 2026-08-05
 
 ### Added
 - **High-contrast support**, closing the last gap in the accessibility story.
