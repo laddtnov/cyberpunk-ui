@@ -80,11 +80,11 @@ arrow on a light background if the two SVGs ever drifted. It renders teal.
 
 So **all three engines are now verified**, and nothing about the kit is
 unknown in Gecko. A regression from here would be new work rather than an
-unknown, which is an argument for item 4 and not for another manual sweep.
+unknown, which is an argument for item 2 and not for another manual sweep.
 
 The lesson generalises past Firefox. Two of the kit's engine assumptions were
 written from reasoning rather than observation; one was wrong, and the demo
-could not have caught it. That is the argument for item 4, not for more
+could not have caught it. That is the argument for item 2, not for more
 reasoning.
 
 ### Closed: package managers and badges
@@ -145,25 +145,30 @@ Still open from the original v0.3 scope: **navigation and data** — top nav bar
 breadcrumb, data table. Those are a second, larger batch, and none of them get
 a native element to stand on the way these three did.
 
-### 1. Per-component documentation
+### Closed: per-component documentation
 
-The README class table says a component exists. It does not say how to vary it
-or what breaks it.
+`docs/components/`, one page per subpath rather than per component — the
+subpath is the boundary a consumer actually imports, so `/forms` and
+`forms.md` describe the same thing, and fifteen fragments do not have to be
+navigated.
 
-The usual template — description, props, examples, best practices,
-accessibility — needs one substitution to mean anything here. **A CSS kit has
-no props.** The analogue is *modifier classes and the tokens that restyle
-them*:
+Each component carries what it is, the markup the kit expects, its modifier
+classes, the tokens that restyle it, and its accessibility contract.
 
-```html
-<button class="cy-btn cy-btn--danger cy-btn--lg cy-glow">DELETE</button>
-```
+That last section turned out to be most of the value, and it is worth saying
+why: **everything in it is a way to build something that looks completely
+finished and is not.** A `.cy-error` with no `aria-describedby` styles
+perfectly and is invisible to a screen reader. A `.cy-spinner` with no
+`.cy-sr-only` label spins beautifully and announces nothing. A `<div>` in
+place of `<output>` for a toast is pixel-identical and silent. A modal opened
+with `show()` instead of `showModal()` renders without its backdrop and traps
+nothing. None of these produce a visual symptom, so none of them get caught by
+looking — which is exactly why they had to be written down.
 
-So each component page carries: what it is, the modifier classes it accepts,
-the tokens that change its appearance, the markup it expects, and the
-accessibility contract it assumes the consumer keeps. That last section is the
-one worth the effort — `.cy-error` is inert without `aria-describedby`, and
-nothing in CSS can enforce it.
+Writing the pages also surfaced that the `<select>` arrow's baked-in colour is
+a consumer-facing limitation and not only internal debt: override
+`--cy-neon-cyan` and the arrow does not follow. Documented where someone
+retheming will hit it.
 
 ### Closed: high-contrast support
 
@@ -190,7 +195,7 @@ every system colour used is supported — which is a long way from having looked
 at it. Written down in STATE.md rather than quietly assumed, and a good
 candidate for whoever next has a Windows machine in reach.
 
-### 2. Playground
+### 1. Playground
 
 This item used to say the demo was not hosted. It is — GitHub Pages serves it
 at **https://laddtnov.github.io/cyberpunk-ui/demo/**, deploying from `main`, and
@@ -210,7 +215,7 @@ editor is JavaScript. That is fine — the rule binds the *package*, not the dem
 page — but the script stays in `demo/`, and nothing it needs may leak into the
 published CSS.
 
-### 3. Stylelint and visual regression
+### 2. Stylelint and visual regression
 
 Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
 `--variant` modifier convention mechanically instead of by review.
