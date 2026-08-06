@@ -70,10 +70,18 @@ decoration:
 
 - **`tabindex="0"`** makes the box reachable by keyboard. A scrollable region
   that only responds to a mouse or a trackpad fails WCAG 2.1.1 — there is
-  content the keyboard user simply cannot reach. Firefox focuses scrollers on
-  its own and Chrome now does too, but it is not universal, so the attribute
-  stays. A linter may flag `tabindex` on a non-interactive element; a
-  scrollable region is the documented exception to that rule.
+  content the keyboard user simply cannot reach.
+
+  Modern engines increasingly do this themselves. Measured in Chrome 148: a
+  container with no `tabindex` **is** focusable once it actually overflows, and
+  is not while it fits — which is the correct behaviour, and it reports
+  `tabIndex === -1` the whole time. Firefox has focused scrollers for years.
+  **Safari is the gap**, so the attribute stays: dropping it would trade a
+  guaranteed keyboard path for one that depends on the engine.
+
+  A linter will flag `tabindex` on a non-interactive element. That is a sound
+  rule of thumb and a scrollable region is the documented exception to it —
+  suppress the warning rather than deleting the attribute.
 - **`aria-label`** is required *because* the box is focusable. Something the
   user can tab to must announce what it is, and an unnamed focusable element
   announces nothing.

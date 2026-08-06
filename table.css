@@ -83,6 +83,12 @@
    cannot reach. `tabindex="0"` is what fixes that, and a focusable thing needs
    a name, which is what the label supplies.
 
+   Chrome and Firefox now focus overflowing scrollers on their own — measured
+   in Chrome 148, which focuses the box once it actually overflows and not
+   while it fits. Safari does not, so the attribute is kept rather than left to
+   the engine. A linter flagging tabindex on a non-interactive element is
+   applying a good rule to its documented exception.
+
    Use a section rather than a div with role="region": a named section already
    carries that role, and the kit prefers the element over the ARIA attribute
    everywhere else. Note the name is what makes the mapping happen — an
