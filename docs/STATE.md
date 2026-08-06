@@ -129,13 +129,13 @@ styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
 **Feedback** — `.cy-alert` (`--success` `--warning` `--danger` `--info`),
 `.cy-toast` (`--success` `--warning` `--danger`), `.cy-toast-container`
 (`--bottom`), `.cy-badge` (`--success` `--warning` `--danger` `--outline`),
-`.cy-spinner`, `.cy-progress` + `.cy-progress__fill`, `.cy-sr-only`
+`.cy-spinner`, `.cy-progress`, `.cy-sr-only`
 
 ## Conventions
 
 - **`cy-` prefix on every class.** Modifiers are `--variant`. A `__element`
-  child only where one is unavoidable — `.cy-progress__fill`,
-  `.cy-accordion__body` (no readable selector means "everything that is not
+  child only where one is unavoidable — `.cy-accordion__body` (no readable
+  selector means "everything that is not
   the summary"), and `.cy-terminal__bar`. Where a native child *can* carry the
   style it does, scoped to the wrapper: `.cy-accordion > summary` and
   `.cy-terminal > pre` keep the consumer's markup contract to one class.
@@ -290,38 +290,20 @@ Two traps worth knowing:
   `background-color` directly, and reverted: masking a bare `<select>` clips
   its entire painted box, and the kit's markup contract offers no wrapper
   element to scope the mask to.
-- **Two code paths for progress** — a native `<progress class="cy-progress">`
-  and a div plus `.cy-progress__fill`. A deliberate choice to support both;
-  dropping `__fill` would simplify. **Only the native element is in the demo.**
-  The div path was added there so something exercised it — the two measured
-  identically (880px track, fill at 66.0%, matching the native `value="66"`) —
-  and taken out again: two bars at the same value read as one bar rendered
-  twice, and captioning them turned a component showcase into documentation.
-  The demo shows components; this file documents them.
+- ~~**Two code paths for progress.**~~ Resolved in 0.5.0 by removing
+  `.cy-progress__fill`; only the native `<progress class="cy-progress">`
+  remains. The ledger against the div path had four entries by the end — a
+  Sonar rule for its `role="progressbar"`, a pair that read as a rendering
+  duplicate when shown beside the native bar, a silent visual drift where its
+  trailing edge was square while the native one was round, and no demo coverage
+  once the duplicate was taken back out — against a benefit no consumer ever
+  asked for.
 
-  Before it was removed it earned its keep once, by exposing a drift nobody had
-  noticed — the div fill had no `border-radius`, so its trailing edge was
-  square while the native bar's was round. The track clips the *leading* edge
-  for both, which is why it survived: only the right-hand end differed, and
-  nothing had ever put the two side by side. Fixed; all five progress radii now
-  read `var(--cy-radius-lg)`.
-
-  So `__fill` is once again the one component no browser check covers, and the
-  ledger against it now reads: a Sonar rule, a pair that looked like a bug, a
-  silent visual drift, and no demo coverage — against a benefit no consumer has
-  asked for. **Retiring it at the next breaking change is the strongest item in
-  this section.** Until then it stays, and the radius fix keeps the two paths
-  honest.
-
-  The case for dropping it got stronger: SonarCloud flags `role="progressbar"`
-  on the div, on the grounds that the native element is the accessible choice —
-  which is the same argument this entry already made, arrived at independently.
-  The div in the demo is `aria-hidden` because it duplicates the native bar's
-  value, but a consumer using `__fill` for real must supply the role, the three
-  `aria-value*` attributes and a label, or the bar announces nothing. **That
-  burden is the argument for retiring `__fill` at the next breaking change** —
-  a component whose correct use requires four attributes the kit cannot enforce
-  is a component that will mostly be used incorrectly.
+  The deciding argument was not the ledger, though. Correct use of that path
+  required a `progressbar` role, three `aria-value*` attributes and a name:
+  four things the kit could not enforce, each of which produces no visual
+  symptom when omitted. A component whose failure mode is "looks perfect,
+  announces nothing" is one the kit should not ship.
 
 - **Two validation paths, and they are easy to confuse.** `:user-invalid` is
   CSS-only and stays quiet until the user has interacted;

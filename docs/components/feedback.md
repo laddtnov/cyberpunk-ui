@@ -118,31 +118,25 @@ An indeterminate loading indicator.
 
 ## `.cy-progress`
 
-Determinate progress. Two code paths.
-
-**Prefer the native element:**
+Determinate progress, on the native element.
 
 ```html
 <progress class="cy-progress" value="66" max="100"></progress>
 ```
 
-It is announced, keyboard-inspectable and needs nothing else from you.
+Announced, keyboard-inspectable, and it needs nothing else from you. Drop
+`value` for an indeterminate bar — the element handles that state itself.
 
-**The div path exists for cases the native element cannot cover:**
+**Accessibility**
 
-```html
-<div class="cy-progress" role="progressbar"
-     aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"
-     aria-label="Sync progress">
-  <div class="cy-progress__fill" style="width:66%"></div>
-</div>
-```
-
-**That markup is the whole cost of this path** — a bare `<div>` announces
-nothing, so it needs the role, all three `aria-value*` attributes and a name.
-Four things the kit cannot enforce and that are easy to omit, which is why the
-native element is the recommendation and this path is likely to be retired in a
-future major version.
+- Give it a name if the surrounding text does not already supply one:
+  `aria-label`, or a `<label for>` pointing at it.
+- Do not reach for `role="progressbar"` on a `<div>`. That was the second code
+  path this component used to ship, and it was **removed in 0.5.0**: a bare div
+  announces nothing, so correct use needed the role, all three `aria-value*`
+  attributes *and* a name — four things the kit could not enforce and that were
+  easy to omit, leaving a bar that looked finished and told a screen reader
+  nothing. The migration note is in CHANGELOG 0.5.0.
 
 ---
 

@@ -5,6 +5,51 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Removed
+- **BREAKING: `.cy-progress__fill` is gone.** Progress is now the native
+  `<progress class="cy-progress">` element only.
+
+  It let a plain `<div>` act as a progress bar, and correct use of it required
+  a `progressbar` role, all three `aria-value*` attributes **and** an
+  accessible name — four things the kit could not enforce, none of which
+  produce a visual symptom when omitted. A component whose failure mode is
+  "looks perfect, announces nothing" is one this kit should not ship. Along the
+  way it also drew a Sonar rule, read as a rendering duplicate when placed
+  beside the native bar, and drifted out of visual sync with it unnoticed.
+
+  **Migration.** In almost every case, the native element is a smaller,
+  better-behaved replacement and needs no ARIA at all:
+
+  ```html
+  <!-- before -->
+  <div class="cy-progress" role="progressbar"
+       aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"
+       aria-label="Sync progress">
+    <div class="cy-progress__fill" style="width:66%"></div>
+  </div>
+
+  <!-- after -->
+  <progress class="cy-progress" value="66" max="100"></progress>
+  ```
+
+  Omit `value` for an indeterminate bar. If you genuinely need the div — an
+  animation `<progress>` cannot express, say — `.cy-progress` still styles the
+  track, and this is the rule that was removed, to paste into your own project:
+
+  ```css
+  .my-progress-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
+    box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+    border-radius: var(--cy-radius-lg);
+    transition: width 0.3s var(--cy-ease);
+  }
+  ```
+
+  Keep the role and the `aria-value*` attributes if you do; they were never
+  optional.
+
 ### Added
 - **A live theme playground in the demo** (`demo/playground.js`) — five colour
   pickers, a radius slider and a border-width slider, plus a COPY CSS button

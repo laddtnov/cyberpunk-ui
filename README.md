@@ -221,7 +221,7 @@ non-modal box with none of it, and nothing for the kit to paint.
 | `.cy-toast` · `.cy-toast-container` | floating message (+ `--bottom`) |
 | `.cy-badge` | status pill (+ variants, `--outline`) |
 | `.cy-spinner` | indeterminate loader |
-| `.cy-progress` · `.cy-progress__fill` | determinate bar — native `<progress class="cy-progress">` (recommended) or the div + `.cy-progress__fill` pair (indeterminate/custom-animated) |
+| `.cy-progress` | determinate bar, on the native `<progress>` element |
 | `.cy-sr-only` | visually-hidden text |
 
 Prefer native elements over ARIA roles where one exists — the browser gets
@@ -243,22 +243,16 @@ errors still need the explicit role — CSS cannot make a red box mean "error":
 <div class="cy-alert cy-alert--danger" role="alert">Breach detected.</div>
 ```
 
-Progress ships two forms. Prefer the native `<progress>` element — it is
-accessible by default, no ARIA required:
+Progress is the native `<progress>` element — accessible by default, no ARIA
+required:
 
 ```html
 <progress class="cy-progress" value="66" max="100"></progress>
 ```
 
-Fall back to the `div` + `.cy-progress__fill` pair when you need an
-indeterminate state or custom animation that `<progress>` can't express:
-
-```html
-<div class="cy-progress" role="progressbar"
-     aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
-  <div class="cy-progress__fill" style="width:66%"></div>
-</div>
-```
+Omit `value` for an indeterminate bar; the element handles that itself. The
+`.cy-progress__fill` div pair was removed in 0.5.0 — see the CHANGELOG if you
+were using it.
 
 Toasts ship as styling only — no JavaScript in this package. Show one with:
 

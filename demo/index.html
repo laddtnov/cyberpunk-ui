@@ -374,12 +374,11 @@ $ _</pre>
         <output class="cy-spinner"><span class="cy-sr-only">Loading…</span></output>
       </div>
 
-      <!-- One bar, the native element. The kit also ships a div plus
-           .cy-progress__fill, and this page used to show both so the second
-           path had something exercising it — but two identical bars read as
-           one bar rendered twice, and captioning them only added noise to a
-           page whose job is to show the components, not to document them.
-           The div path is covered by docs/STATE.md instead. -->
+      <!-- The native element, which since 0.5.0 is the only progress the kit
+           ships. There used to be a div-based second path; it needed a role,
+           three aria-value attributes and a name to be correct, none of which
+           the kit could enforce, so it was retired rather than kept as a way
+           to build a bar that looks finished and announces nothing. -->
       <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
     </section>
   </div>
