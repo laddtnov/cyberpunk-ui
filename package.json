@@ -20,8 +20,6 @@
     "./effects": "./effects.css",
     "./components": "./components.css",
     "./containers": "./containers.css",
-    "./navigation": "./navigation.css",
-    "./table": "./table.css",
     "./forms": "./forms.css",
     "./feedback": "./feedback.css",
     "./package.json": "./package.json"

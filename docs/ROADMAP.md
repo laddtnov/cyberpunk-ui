@@ -141,28 +141,9 @@ that; it looks perfectly fine in the dark theme everything gets built in.
 carries a literal fallback. Without one, a failure there is not a wrong colour
 but *no* backdrop at all, leaving the page fully legible behind an open modal.
 
-The rest of the original v0.3 scope — **navigation and data** — followed in
-`navigation.css` and `table.css`. The prediction that none of them would get a
-native element to stand on was right, and it changed what the batch was: a
-`<nav>` is a landmark and a `<table>` is a structure, so neither hands over
-behaviour the way `<details>` and `<dialog>` did. There was nothing to trap
-focus or toggle. What there was instead is markup that carries meaning CSS
-cannot supply, and the work went there.
-
-Two things worth keeping.
-
-**The current item is styled from `aria-current`, not from a modifier class.**
-A `--active` class would let someone build a nav whose current item looks
-current and announces as ordinary — the failure mode the whole component
-reference exists to warn about. Styling the attribute makes the appearance and
-the announcement the same declaration, so they cannot drift.
-
-**A table looks identical whether or not it is accessible.** `scope` on the
-headers, a `<caption>`, a real `<thead>` — all three are invisible when absent
-and all three are the difference between "Output: 982 TW" and a wall of
-numbers. The same is true of the scroll wrapper: a box that scrolls only under
-a mouse fails WCAG 2.1.1, and the `tabindex` that fixes it then requires a name
-because it is focusable. Documented rather than assumed.
+Still open from the original v0.3 scope: **navigation and data** — top nav bar,
+breadcrumb, data table. Those are a second, larger batch, and none of them get
+a native element to stand on the way these three did.
 
 ### Closed: per-component documentation
 

@@ -98,8 +98,6 @@ enforce for you:
 **[docs/components/](docs/components/)** — [effects](docs/components/effects.md)
 · [button and card](docs/components/components.md)
 · [containers](docs/components/containers.md)
-· [navigation](docs/components/navigation.md)
-· [table](docs/components/table.md)
 · [forms](docs/components/forms.md)
 · [feedback](docs/components/feedback.md)
 
@@ -225,9 +223,6 @@ non-modal box with none of it, and nothing for the kit to paint.
 | `.cy-spinner` | indeterminate loader |
 | `.cy-progress` | determinate bar, on the native `<progress>` element |
 | `.cy-sr-only` | visually-hidden text |
-| `.cy-nav` · `.cy-nav__brand` | top navigation bar; current item via `aria-current` |
-| `.cy-breadcrumb` | breadcrumb trail on an `<ol>` |
-| `.cy-table` | data table (+ `--striped` `--compact`), plus `.cy-table-scroll` |
 
 Prefer native elements over ARIA roles where one exists — the browser gets
 the semantics right for free. `<output>` has an implicit `role="status"`,
