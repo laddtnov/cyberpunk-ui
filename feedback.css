@@ -138,26 +138,21 @@
   overflow: hidden;
 }
 
-/* The radius matters on the RIGHT end. The track clips the left end round on
-   its own (overflow: hidden against its own radius), but the fill's trailing
-   edge sits inside the track and is not clipped by anything — so without this
-   it ends square, while the native bar's ::-webkit-progress-value and
-   ::-moz-progress-bar both round it. The two paths are meant to be
-   interchangeable, so they have to agree here. */
-.cy-progress__fill {
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
-  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
-  border-radius: var(--cy-radius-lg);
-  transition: width 0.3s var(--cy-ease);
-}
+/* `.cy-progress__fill` was removed in 0.5.0. It let a plain div act as a
+   progress bar, and it cost more than it returned: a bare div announces
+   nothing, so correct use required a progressbar role, three aria-value
+   attributes and a label — four things the kit cannot enforce and that were
+   easy to omit, leaving a bar that looked finished and told a screen reader
+   nothing. Along the way it drew a Sonar rule, read as a rendering duplicate
+   when shown beside the native bar, and quietly drifted out of visual sync
+   with it.
 
-/* Native <progress class="cy-progress" value max> — same track/fill look
-   as the div + .cy-progress__fill pair above, driven by the element's own
-   value instead of an inline width. Vendor pseudo-elements cannot share a
-   selector list (an invalid one drops the whole rule), so each lives on
-   its own. */
+   The native element below does all of it correctly and for free. Migration
+   is in CHANGELOG 0.5.0 for anyone who still needs the div. */
+
+/* Native <progress class="cy-progress" value max>. Vendor pseudo-elements
+   cannot share a selector list — an invalid one drops the whole rule — so
+   each lives on its own. */
 progress.cy-progress {
   appearance: none;
   -webkit-appearance: none;
@@ -169,12 +164,10 @@ progress.cy-progress::-webkit-progress-bar {
   border-radius: var(--cy-radius-lg);
 }
 
-/* No transition on either pseudo-element below, deliberately. The div path
-   animates because `width` is a real style on a real element there; on a
-   native <progress> the bar's length comes from the element's own value
-   attribute, and neither engine transitions the resulting box. The property
-   was declared here for symmetry with .cy-progress__fill and never animated
-   anything. Adding it back does nothing but suggest it works. */
+/* No transition on either pseudo-element below, deliberately. A native
+   <progress> takes its bar length from the element's own value attribute,
+   and neither engine transitions the resulting box. A transition here does
+   nothing except suggest it works. */
 progress.cy-progress::-webkit-progress-value {
   background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
   box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
@@ -194,9 +187,6 @@ progress.cy-progress::-moz-progress-bar {
 @media (prefers-reduced-motion: reduce) {
   .cy-spinner { animation: cy-spin 2s linear infinite; }
   .cy-toast   { animation: cy-fade-in 0.2s ease; }
-  /* Only the div path needs this. The native <progress> pseudo-elements
-     never transitioned in the first place, so they had nothing to cancel. */
-  .cy-progress__fill { transition: none; }
 }
 
 @keyframes cy-fade-in {
@@ -254,7 +244,6 @@ progress.cy-progress::-moz-progress-bar {
     border: var(--cy-border-width) solid CanvasText;
   }
 
-  .cy-progress__fill,
   progress.cy-progress::-webkit-progress-value,
   progress.cy-progress::-moz-progress-bar {
     background-image: none;
