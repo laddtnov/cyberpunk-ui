@@ -1,7 +1,7 @@
 # Roadmap
 
 Where the kit goes next, and why in that order.
-Written against **0.4.0**.
+Written against **0.5.0**.
 
 `docs/STATE.md` records what *is*. This file records what is **not yet**, what
 was considered and rejected, and what the constraints rule out entirely. Read
