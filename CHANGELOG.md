@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- **`release.yml` can be run by hand** — Actions → Release → Run workflow, with
+  the tag as an input. A tag push is a single event, so if Actions is degraded
+  when the tag lands the run is simply never created; the only other recovery
+  was deleting and re-pushing the tag. The tag is validated for shape and
+  charset before use, and the workflow still refuses to publish anything that
+  is not a version tag. No change to how a normal tagged release behaves.
+
 ## [0.5.0] — 2026-08-06
 
 ### Added

@@ -238,6 +238,13 @@ display, and should be treated that way until someone looks.
 - `release.yml` on a `v*` tag: `npm publish --provenance` (SLSA attestation),
   mirror to GitHub Packages (`continue-on-error`), cut a GitHub Release.
 
+  It also takes a **manual run** — Actions → Release → Run workflow — with the
+  tag typed into a form. That exists because a tag push is a *single event*:
+  when Actions is down as the tag lands, no run is ever created, and the only
+  other way back in is deleting and re-pushing the tag. v0.5.0 was tagged
+  during an Actions outage and needed exactly that. The manual path publishes
+  an existing tag; it never publishes from a branch.
+
 To release: merge the PR, then
 
 ```sh
