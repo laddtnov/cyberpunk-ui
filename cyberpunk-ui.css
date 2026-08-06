@@ -3,5 +3,7 @@
 @import "./effects.css";
 @import "./components.css";
 @import "./containers.css";
+@import "./navigation.css";
+@import "./table.css";
 @import "./forms.css";
 @import "./feedback.css";

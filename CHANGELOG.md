@@ -5,6 +5,35 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Navigation (`navigation.css`)** — `.cy-nav` with `.cy-nav__brand`, and
+  `.cy-breadcrumb` on an `<ol>`. Links are styled through the wrapper, so the
+  markup contract stays one class.
+  - **The current item is styled from `aria-current`, and there is no
+    `--active` modifier.** A class would allow a nav whose current item looks
+    current and announces as ordinary; using the attribute makes the appearance
+    and the announcement the same declaration.
+  - The breadcrumb separator is `content: "/" / ""` — the empty second half is
+    the alternative text, so the glyph is not read aloud. Held to the 4.5:1
+    text floor anyway (0.75 opacity: 7.48:1 dark, 4.92:1 light), matching
+    `.cy-hint`, because a trail with faded separators is harder to read as a
+    trail.
+- **Table (`table.css`)** — `.cy-table` with `--striped` and `--compact`, plus
+  `.cy-table-scroll` for wide tables. Cells styled through the wrapper.
+  - The scroll container is a **`<section>` with an accessible name**, not a
+    `<div role="region">` — a named section already carries that role, and the
+    kit prefers the element over the ARIA attribute everywhere else.
+  - It keeps `tabindex="0"`: a box that scrolls only under a mouse fails WCAG
+    2.1.1. Firefox focuses scrollers natively and Chrome now does too, but it
+    is not universal. A linter flagging `tabindex` on a non-interactive element
+    is applying a rule of thumb to which a scrollable region is the documented
+    exception.
+  - `scope`, `<caption>` and `<thead>` are the consumer's, and the table looks
+    identical without them — which is exactly why the component page leads with
+    them.
+- Subpath exports `@laddtnov/cyberpunk-ui/navigation` and `/table`, plus
+  component reference pages for both.
+
 ### Removed
 - **BREAKING: `.cy-progress__fill` is gone.** Progress is now the native
   `<progress class="cy-progress">` element only.
