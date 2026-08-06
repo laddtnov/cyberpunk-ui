@@ -142,7 +142,10 @@
 
     <span class="topbar__spacer"></span>
 
-    <nav class="topbar__links">
+    <!-- Named because the page now has three nav landmarks. An unnamed one
+         is indistinguishable from the others when jumping between landmarks,
+         which is the rule docs/components/navigation.md states. -->
+    <nav class="topbar__links" aria-label="Project links">
       <a class="cy-btn" href="https://www.npmjs.com/package/@laddtnov/cyberpunk-ui" target="_blank" rel="noopener noreferrer">npm</a>
       <a class="cy-btn" href="https://github.com/laddtnov/cyberpunk-ui" target="_blank" rel="noopener noreferrer">GitHub</a>
       <button type="button" class="cy-btn cy-btn--pink" id="theme" aria-label="Toggle light and dark theme">THEME</button>
@@ -255,6 +258,65 @@
           <h3 style="margin:0 0 .5rem; color:var(--cy-heading)">Void Sector</h3>
           <p style="margin:0">Black holes, supermassive stars, and cosmic voids.</p>
         </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Navigation</h2>
+
+      <!-- aria-label on the nav distinguishes this landmark from the page's
+           other one; the current item is marked with aria-current, which is
+           also what the kit styles it from. There is no --active class on
+           purpose: styling and announcement stay the same declaration. -->
+      <nav class="cy-nav" aria-label="Demo">
+        <a class="cy-nav__brand" href="#">&gt;_ night.city</a>
+        <a href="#">Sectors</a>
+        <a href="#" aria-current="page">Reactor</a>
+        <a href="#">Archive</a>
+      </nav>
+
+      <!-- The ordered list is what makes this a trail rather than a row of
+           unrelated links; the wrapping nav with a label is what lets someone
+           jump to it. Neither is decoration. -->
+      <nav aria-label="Breadcrumb" style="margin-top:1.5rem">
+        <ol class="cy-breadcrumb">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Sector 7</a></li>
+          <li><a href="#" aria-current="page">Reactor core</a></li>
+        </ol>
+      </nav>
+
+      <!-- The scroll box is focusable so a keyboard user can scroll it, which
+           means it needs a name — hence role and aria-label. -->
+      <div class="cy-table-scroll" tabindex="0" role="region"
+           aria-label="Reactor readings" style="margin-top:1.5rem">
+        <table class="cy-table cy-table--striped">
+          <caption>Reactor readings</caption>
+          <thead>
+            <tr>
+              <th scope="col">Node</th>
+              <th scope="col">Output</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Core A</th>
+              <td>982 TW</td>
+              <td><span class="cy-badge cy-badge--success">LIVE</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Core B</th>
+              <td>431 TW</td>
+              <td><span class="cy-badge cy-badge--warning">DEGRADED</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Coolant</th>
+              <td>— </td>
+              <td><span class="cy-badge cy-badge--danger">OFFLINE</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 

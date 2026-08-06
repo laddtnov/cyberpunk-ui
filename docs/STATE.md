@@ -8,17 +8,19 @@ read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 934 lines of CSS.
+Zero dependencies, zero JavaScript, no build step. 1457 lines of CSS.
 
 | File | Lines | Contains |
 | --- | --- | --- |
-| `tokens.css` | 104 | every custom property, plus the `[data-theme="light"]` overrides |
-| `effects.css` | 80 | glow, glitch, scanlines, grid, cursor |
-| `components.css` | 135 | `.cy-btn`, `.cy-card` |
-| `containers.css` | 165 | accordion, modal, terminal — all on native elements |
-| `forms.css` | 238 | field, label, input, select, textarea, checkbox, radio, hint, error |
-| `feedback.css` | 205 | alert, toast, badge, spinner, progress, sr-only |
-| `cyberpunk-ui.css` | 7 | `@import`s all of the above |
+| `tokens.css` | 134 | every custom property, plus the `[data-theme="light"]` overrides |
+| `effects.css` | 114 | glow, glitch, scanlines, grid, cursor |
+| `components.css` | 159 | `.cy-btn`, `.cy-card` |
+| `containers.css` | 198 | accordion, modal, terminal — all on native elements |
+| `navigation.css` | 167 | nav bar, breadcrumb |
+| `table.css` | 126 | data table, scroll container |
+| `forms.css` | 296 | field, label, input, select, textarea, checkbox, radio, hint, error |
+| `feedback.css` | 254 | alert, toast, badge, spinner, progress, sr-only |
+| `cyberpunk-ui.css` | 9 | `@import`s all of the above |
 
 Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both validation paths, and it is the OG image
@@ -130,6 +132,11 @@ styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
 `.cy-toast` (`--success` `--warning` `--danger`), `.cy-toast-container`
 (`--bottom`), `.cy-badge` (`--success` `--warning` `--danger` `--outline`),
 `.cy-spinner`, `.cy-progress`, `.cy-sr-only`
+
+**Navigation** — `.cy-nav` + `.cy-nav__brand` (current item styled from
+`[aria-current]`, never a modifier class), `.cy-breadcrumb`
+
+**Table** — `.cy-table` (`--striped` `--compact`), `.cy-table-scroll`
 
 ## Conventions
 
