@@ -73,17 +73,24 @@
 }
 
 /* ── Scroll container ─────────────────────────────────────────────
-   <div class="cy-table-scroll" tabindex="0" role="region"
-        aria-label="Sector readings">
-     <table class="cy-table">…</table>
-   </div>
+   Put the table in a section with an accessible name and tabindex="0":
+
+     section.cy-table-scroll[tabindex="0"][aria-label="Sector readings"]
+       > table.cy-table
 
    A wide table has to scroll somewhere, and a scrollable box that only
-   responds to a mouse fails WCAG 2.1.1. `tabindex="0"` is what makes it
-   reachable by keyboard, and a focusable region needs a name — hence the role
-   and the label. This is a plain utility rather than a `__element`, because
-   the table is its child rather than the other way round, and because a table
-   which fits needs no wrapper at all. */
+   responds to a mouse fails WCAG 2.1.1 — there is content the keyboard user
+   cannot reach. `tabindex="0"` is what fixes that, and a focusable thing needs
+   a name, which is what the label supplies.
+
+   Use a section rather than a div with role="region": a named section already
+   carries that role, and the kit prefers the element over the ARIA attribute
+   everywhere else. Note the name is what makes the mapping happen — an
+   unnamed section is not a region.
+
+   A plain utility rather than a `__element`, because the table is its child
+   rather than the other way round, and because a table which fits needs no
+   wrapper at all. */
 .cy-table-scroll {
   overflow-x: auto;
   /* The focus ring belongs on the scroll box: when it is focusable, it is the

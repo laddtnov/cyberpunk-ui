@@ -286,10 +286,18 @@
         </ol>
       </nav>
 
-      <!-- The scroll box is focusable so a keyboard user can scroll it, which
-           means it needs a name — hence role and aria-label. -->
-      <div class="cy-table-scroll" tabindex="0" role="region"
-           aria-label="Reactor readings" style="margin-top:1.5rem">
+      <!-- A section with an accessible name already carries the region role,
+           so the role attribute is redundant — prefer the element, as the kit
+           says everywhere else.
+
+           The tabindex stays. A box that scrolls only under a mouse leaves
+           content a keyboard user cannot reach, which fails WCAG 2.1.1;
+           Firefox focuses scrollers natively and Chrome now does too, but it
+           is not universal. Sonar flags tabindex on a non-interactive element
+           as a rule of thumb, and a scrollable region is the documented
+           exception to it. -->
+      <section class="cy-table-scroll" tabindex="0"
+               aria-label="Reactor readings" style="margin-top:1.5rem">
         <table class="cy-table cy-table--striped">
           <caption>Reactor readings</caption>
           <thead>
@@ -317,7 +325,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </section>
     </section>
 
     <section>

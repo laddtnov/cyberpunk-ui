@@ -20,9 +20,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
     trail.
 - **Table (`table.css`)** — `.cy-table` with `--striped` and `--compact`, plus
   `.cy-table-scroll` for wide tables. Cells styled through the wrapper.
-  - The scroll container is documented as needing `tabindex="0"` (a box that
-    scrolls only under a mouse fails WCAG 2.1.1) and therefore `role="region"`
-    with a name, since a focusable element must announce what it is.
+  - The scroll container is a **`<section>` with an accessible name**, not a
+    `<div role="region">` — a named section already carries that role, and the
+    kit prefers the element over the ARIA attribute everywhere else.
+  - It keeps `tabindex="0"`: a box that scrolls only under a mouse fails WCAG
+    2.1.1. Firefox focuses scrollers natively and Chrome now does too, but it
+    is not universal. A linter flagging `tabindex` on a non-interactive element
+    is applying a rule of thumb to which a scrollable region is the documented
+    exception.
   - `scope`, `<caption>` and `<thead>` are the consumer's, and the table looks
     identical without them — which is exactly why the component page leads with
     them.

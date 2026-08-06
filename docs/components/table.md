@@ -60,21 +60,27 @@ is not a header; it is bold text.
 ## Wide tables
 
 ```html
-<div class="cy-table-scroll" tabindex="0" role="region"
-     aria-label="Reactor readings">
+<section class="cy-table-scroll" tabindex="0" aria-label="Reactor readings">
   <table class="cy-table">…</table>
-</div>
+</section>
 ```
 
-`.cy-table-scroll` gives horizontal overflow. The three attributes are not
-optional decoration:
+`.cy-table-scroll` gives horizontal overflow. Neither attribute is optional
+decoration:
 
 - **`tabindex="0"`** makes the box reachable by keyboard. A scrollable region
   that only responds to a mouse or a trackpad fails WCAG 2.1.1 — there is
-  content the keyboard user simply cannot reach.
-- **`role="region"` and a name** are required *because* it is focusable.
-  Something the user can tab to must announce what it is; an unnamed focusable
-  `<div>` announces nothing.
+  content the keyboard user simply cannot reach. Firefox focuses scrollers on
+  its own and Chrome now does too, but it is not universal, so the attribute
+  stays. A linter may flag `tabindex` on a non-interactive element; a
+  scrollable region is the documented exception to that rule.
+- **`aria-label`** is required *because* the box is focusable. Something the
+  user can tab to must announce what it is, and an unnamed focusable element
+  announces nothing.
+- **Use `<section>`, not `<div role="region">`.** A section *with an accessible
+  name* already has that role, and the kit prefers the element over the ARIA
+  attribute everywhere else. The name is what triggers the mapping — an unnamed
+  section is not a region, so the label is doing double duty here.
 
 Skip the wrapper entirely when the table fits. A focusable element that never
 needs to scroll is one more stop in the tab order for no reason.
