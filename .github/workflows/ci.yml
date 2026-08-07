@@ -24,6 +24,12 @@ jobs:
       - name: WCAG contrast check
         run: npm run check:contrast
 
+      # The conventions in docs/STATE.md that a generic CSS linter cannot know:
+      # -rgb twins, class naming, no unscoped element selectors, barrel/exports
+      # wiring, and docs that only name things which exist.
+      - name: Convention check
+        run: npm run check:conventions
+
       # Catches an over-broad or over-narrow files allowlist before release.
       - name: Verify tarball contents
         run: npm pack --dry-run
