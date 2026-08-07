@@ -6,6 +6,44 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **`.cy-sidebar`** and `.cy-sidebar__title` in `/navigation` — a vertical
+  section nav, the last of the components from the original roadmap worth
+  building. Requires a `<ul>`, for the reason the breadcrumb requires an
+  `<ol>`: it is what makes a screen reader announce a list and count through
+  it, and a column of bare links looks identical while announcing as loose
+  links. The current item is styled from `[aria-current]`, never a modifier
+  class — the rule the rest of `/navigation` already follows.
+  - **It sets no width**, deliberately. Where a sidebar sits and how wide it is
+    belong to the page, not the component. It is also not sticky and not
+    scrollable: a scroll container owes the keyboard a `tabindex` and a label,
+    and that is a real cost to impose on every sidebar for the sake of the tall
+    ones.
+  - Contrast measured on `--cy-surface` rather than assumed from the token
+    check, which only covers `--cy-bg`: the worst pairing is the current item's
+    cyan on its own tint at 5.51:1 in the light theme, against a 4.5 floor.
+
+- **`--cy-neon-gold`** and its `--cy-gold-rgb` twin, with `.cy-text-glow--gold`
+  and `.cy-glow--gold`. A brass gold in the Deus Ex register rather than the
+  neon one — `#d4af37` dark (9.41:1), `#7d5800` light (5.66:1), both
+  contrast-checked as text.
+  - The gold halo is **not** the neon one recoloured: 6px at higher opacity and
+    a dimmer far shadow, because a warm low-saturation hue smears at the 10px
+    radius that makes cyan look lit.
+  - Kept distinct from `--cy-warning`, which is a pale caution yellow with a
+    meaning attached. A heading painted in the status colour announces nothing
+    but looks like a problem.
+
+- **`--cy-font-terminal`**, used only by `.cy-terminal`. Names Nerd Fonts
+  first — patched monospaces carrying powerline separators and file icons —
+  and falls through to `--cy-font-mono`. Nothing is shipped: the patched builds
+  run to tens of megabytes against a kit measured in kilobytes.
+  - It is kept out of the shared mono stack on purpose. Hack is widely
+    installed among developers, and putting it first there would silently
+    repaint nav, badges, inputs and breadcrumb on most of their machines.
+  - The fallback path is verified; the Nerd Font path is **not**. Both browsers
+    available here are sandboxed away from user-installed fonts — canvas
+    metrics for `Hack Nerd Font Mono` come back identical to Menlo, which is
+    the fallback signature.
 - **`scripts/check-conventions.js`**, running in CI alongside the contrast
   check. Enforces the rules in `docs/STATE.md` that a generic CSS linter cannot
   know: `-rgb` twins existing and agreeing with their base colour about being

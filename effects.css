@@ -4,10 +4,18 @@
 .cy-glow         { box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb),   0.5), 0 0 30px rgba(var(--cy-cyan-rgb),   0.25); }
 .cy-glow--pink   { box-shadow: 0 0 12px rgba(var(--cy-pink-rgb),   0.5), 0 0 30px rgba(var(--cy-pink-rgb),   0.25); }
 .cy-glow--purple { box-shadow: 0 0 12px rgba(var(--cy-purple-rgb), 0.5), 0 0 30px rgba(var(--cy-purple-rgb), 0.25); }
+.cy-glow--gold   { box-shadow: 0 0 12px rgba(var(--cy-gold-rgb),   0.5), 0 0 30px rgba(var(--cy-gold-rgb),   0.25); }
 
 /* ── 2. Text glow ─────────────────────────────────────────────── */
 .cy-text-glow       { text-shadow: 0 0 10px var(--cy-neon-cyan), 0 0 24px rgba(var(--cy-cyan-rgb), 0.5); }
 .cy-text-glow--pink { text-shadow: 0 0 10px var(--cy-neon-pink), 0 0 24px rgba(var(--cy-pink-rgb), 0.5); }
+
+/* Gold reads differently from the neon pair and the numbers say why: it is a
+   warm hue at a lower saturation, so the same 10px halo that makes cyan look
+   lit makes gold look smeared. The near shadow is tightened and the far one
+   dimmed — the effect is a machined edge catching light rather than a tube
+   glowing, which is the register this colour belongs to. */
+.cy-text-glow--gold { text-shadow: 0 0 6px rgba(var(--cy-gold-rgb), 0.9), 0 0 18px rgba(var(--cy-gold-rgb), 0.35); }
 
 /* ── 3. Glitch text (RGB split) ───────────────────────────────── */
 .cy-glitch {
@@ -95,10 +103,12 @@
 @media (forced-colors: active) {
   .cy-glow,
   .cy-glow--pink,
-  .cy-glow--purple { box-shadow: none; }
+  .cy-glow--purple,
+  .cy-glow--gold { box-shadow: none; }
 
   .cy-text-glow,
   .cy-text-glow--pink,
+  .cy-text-glow--gold,
   .cy-glitch { text-shadow: none; }
 
   /* The RGB split is drawn entirely in text-shadow, so with the shadow

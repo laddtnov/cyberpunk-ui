@@ -14,6 +14,9 @@ const TEXT_TOKENS = [
   '--cy-heading',
   '--cy-neon-cyan',
   '--cy-neon-pink',
+  // Gold is a text colour, not only a glow: .cy-text-glow--gold is meant to be
+  // paired with it, so it is held to the text floor in both themes.
+  '--cy-neon-gold',
   '--cy-success',
   '--cy-warning',
   '--cy-danger',

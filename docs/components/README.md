@@ -7,7 +7,7 @@ One page per stylesheet, because that is the boundary you actually import:
 | [effects.md](effects.md) | `/effects` | glow, text glow, glitch, scanlines, grid, cursor |
 | [components.md](components.md) | `/components` | button, card |
 | [containers.md](containers.md) | `/containers` | accordion, modal, terminal |
-| [navigation.md](navigation.md) | `/navigation` | nav bar, breadcrumb |
+| [navigation.md](navigation.md) | `/navigation` | nav bar, breadcrumb, sidebar |
 | [table.md](table.md) | `/table` | data table |
 | [forms.md](forms.md) | `/forms` | field, label, input, select, textarea, checkbox, radio, hint, error |
 | [feedback.md](feedback.md) | `/feedback` | alert, toast, badge, spinner, progress, screen-reader utility |

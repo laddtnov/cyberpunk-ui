@@ -143,10 +143,12 @@ A form and a status message:
 | Custom property | Purpose |
 |-----------------|---------|
 | `--cy-neon-cyan` / `--cy-neon-pink` / `--cy-neon-purple` | accent hues |
+| `--cy-neon-gold` | brass-gold accent — warm, unlit, and carries no status meaning (unlike `--cy-warning`) |
 | `--cy-bg` / `--cy-surface` | background & card surfaces |
 | `--cy-text` / `--cy-heading` | body & heading text |
-| `--cy-cyan-rgb` / `--cy-pink-rgb` / `--cy-purple-rgb` | raw RGB triplets for theme-aware `rgba()` glows |
+| `--cy-cyan-rgb` / `--cy-pink-rgb` / `--cy-purple-rgb` / `--cy-gold-rgb` | raw RGB triplets for theme-aware `rgba()` glows |
 | `--cy-font-display` / `--cy-font-body` / `--cy-font-mono` | type stacks (you load the fonts) |
+| `--cy-font-terminal` | `.cy-terminal` only — asks for a Nerd Font (powerline separators, file icons), falls through to `--cy-font-mono` |
 | `--cy-ease` | shared easing curve |
 | `--cy-radius-sm` / `--cy-radius` / `--cy-radius-lg` | corner radii |
 | `--cy-border-width` | shared border thickness |
@@ -160,8 +162,8 @@ A form and a status message:
 
 | Class | Effect |
 |-------|--------|
-| `.cy-glow` · `--pink` · `--purple` | neon box-shadow glow |
-| `.cy-text-glow` · `--pink` | neon text-shadow glow |
+| `.cy-glow` · `--pink` · `--purple` · `--gold` | neon box-shadow glow |
+| `.cy-text-glow` · `--pink` · `--gold` | neon text-shadow glow |
 | `.cy-glitch` | RGB-split glitch on text |
 | `.cy-scanlines` | CRT scanline overlay (on any container) |
 | `.cy-grid-bg` | animated moving grid backdrop |
@@ -229,6 +231,7 @@ non-modal box with none of it, and nothing for the kit to paint.
 | `.cy-sr-only` | visually-hidden text |
 | `.cy-nav` · `.cy-nav__brand` | top navigation bar; current item via `aria-current` |
 | `.cy-breadcrumb` | breadcrumb trail on an `<ol>` |
+| `.cy-sidebar` · `.cy-sidebar__title` | vertical section nav on a `<ul>`; the page owns its width |
 | `.cy-table` | data table (+ `--striped` `--compact`), plus `.cy-table-scroll` |
 
 Prefer native elements over ARIA roles where one exists — the browser gets

@@ -137,7 +137,7 @@
   padding: var(--cy-space-xs) var(--cy-space-md);
   background: rgba(var(--cy-cyan-rgb), 0.08);
   border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
-  font-family: var(--cy-font-mono);
+  font-family: var(--cy-font-terminal);
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -149,7 +149,7 @@
   margin: 0;
   padding: var(--cy-space-md);
   overflow-x: auto;
-  font-family: var(--cy-font-mono);
+  font-family: var(--cy-font-terminal);
   font-size: 0.85rem;
   line-height: 1.6;
   color: var(--cy-text);

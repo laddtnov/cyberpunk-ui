@@ -8,16 +8,16 @@ read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1457 lines of CSS.
+Zero dependencies, zero JavaScript, no build step. 1592 lines of CSS.
 
 | File | Lines | Contains |
 | --- | --- | --- |
-| `tokens.css` | 134 | every custom property, plus the `[data-theme="light"]` overrides |
-| `effects.css` | 114 | glow, glitch, scanlines, grid, cursor |
+| `tokens.css` | 146 | every custom property, plus the `[data-theme="light"]` overrides |
+| `effects.css` | 124 | glow, glitch, scanlines, grid, cursor |
 | `components.css` | 159 | `.cy-btn`, `.cy-card` |
 | `containers.css` | 198 | accordion, modal, terminal — all on native elements |
-| `navigation.css` | 167 | nav bar, breadcrumb |
-| `table.css` | 126 | data table, scroll container |
+| `navigation.css` | 267 | nav bar, breadcrumb, sidebar |
+| `table.css` | 139 | data table, scroll container |
 | `forms.css` | 296 | field, label, input, select, textarea, checkbox, radio, hint, error |
 | `feedback.css` | 254 | alert, toast, badge, spinner, progress, sr-only |
 | `cyberpunk-ui.css` | 9 | `@import`s all of the above |
@@ -74,13 +74,14 @@ version explicitly, or wait a day.
 
 Colour
 : `--cy-bg` `--cy-surface` `--cy-text` `--cy-heading` `--cy-neon-cyan`
-  `--cy-neon-pink` `--cy-neon-purple`
+  `--cy-neon-pink` `--cy-neon-purple` `--cy-neon-gold`
 
 Status
 : `--cy-success` `--cy-warning` `--cy-danger` `--cy-info`
 
 RGB channel twins
-: `--cy-cyan-rgb` `--cy-pink-rgb` `--cy-purple-rgb` `--cy-success-rgb`
+: `--cy-cyan-rgb` `--cy-pink-rgb` `--cy-purple-rgb` `--cy-gold-rgb`
+  `--cy-success-rgb`
   `--cy-warning-rgb` `--cy-danger-rgb`
 
 Geometry
@@ -94,7 +95,22 @@ Focus
 : `--cy-focus-width` `--cy-focus-offset` `--cy-focus-color`
 
 Type
-: `--cy-font-body` `--cy-font-display` `--cy-font-mono`
+: `--cy-font-body` `--cy-font-display` `--cy-font-mono` `--cy-font-terminal`
+  — the last is used only by `.cy-terminal`, and names Nerd Fonts first so a
+  fake terminal can draw powerline separators and file icons on a machine that
+  has one. Nothing is shipped: patched Nerd Font builds run to tens of
+  megabytes against a kit measured in kilobytes, so the token asks and falls
+  through to `--cy-font-mono` when the answer is no. It is kept out of the
+  shared mono stack deliberately — Hack is widely installed among developers,
+  and putting it first there would repaint nav, badges, inputs and breadcrumb
+  on most of their machines.
+
+  **Unverified in a browser that can see it.** Both browsers available here —
+  the in-app pane and ego-browser — are sandboxed away from user-installed
+  fonts: canvas metrics for `Hack Nerd Font Mono` come back byte-identical to
+  Menlo (60.2051px/char at 100px, against Hack's own 60.0), which is the
+  fallback signature. What *is* verified is the fallback path, which is the one
+  every user without the font takes.
 
 Scrim
 : `--cy-backdrop` — the modal backdrop, a finished `rgba()` rather than a hue
@@ -112,7 +128,8 @@ twin** or nothing can fade it.
 
 ## Components
 
-**Effects** — `.cy-glow` (`--pink`, `--purple`), `.cy-text-glow` (`--pink`),
+**Effects** — `.cy-glow` (`--pink`, `--purple`, `--gold`), `.cy-text-glow`
+(`--pink`, `--gold`),
 `.cy-glitch`, `.cy-scanlines`, `.cy-grid-bg`, `.cy-cursor`
 
 **Button** — `.cy-btn` with `--secondary` `--danger` `--pink` `--sm` `--lg`,
@@ -134,7 +151,8 @@ styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
 `.cy-spinner`, `.cy-progress`, `.cy-sr-only`
 
 **Navigation** — `.cy-nav` + `.cy-nav__brand` (current item styled from
-`[aria-current]`, never a modifier class), `.cy-breadcrumb`
+`[aria-current]`, never a modifier class), `.cy-breadcrumb`, `.cy-sidebar` +
+`.cy-sidebar__title` (requires a `<ul>`; sets no width of its own)
 
 **Table** — `.cy-table` (`--striped` `--compact`), `.cy-table-scroll`
 
