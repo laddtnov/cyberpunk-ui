@@ -87,28 +87,29 @@ async function capture(clip) {
   return shot.data
 }
 
-// Capture until two in a row agree.
+// How many captures a region gets before it is called changed.
 //
-// Across 28 region-runs while this was being built, 27 were pixel-identical
-// and one was not — and the odd one out repeated the *same* 1181 pixels at the
-// same delta on a later run. An identical repeat is not antialiasing noise, it
-// is a second discrete state: the freeze occasionally lands a frame after the
-// page has already painted something moving.
+// The page has **two rasterisations of identical content**, and they were
+// finally pinned down by diffing the two states rather than counting them:
+//   - rows 315 and 321, 575 pixels each — the top and bottom edge of the
+//     progress fill (575 ≈ 66% of 880, which is its value), differing in edge
+//     antialiasing;
+//   - a handful of pixels on the alert accent borders, success green landing
+//     on 82,254,153 in one state and 80,246,149 in the other.
+// Both are the signature of the same content rasterised down two different
+// paths, and which one a capture gets is not under this script's control.
 //
-// Settling costs one extra capture and keeps the comparison exact, which is
-// the right trade. Loosening the tolerance instead would have hidden a real
-// 1181-pixel change to buy off a flake.
-async function settledCapture(clip, slug) {
-  let previous = await capture(clip)
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const next = await capture(clip)
-    if (next === previous) return next
-    cliLog(`  settling ${slug} (attempt ${attempt})`)
-    await wait(1)
-    previous = next
-  }
-  throw new Error(`${slug}: the page never stopped changing — something is still animating`)
-}
+// The earlier answer was to capture until two agreed. That was wrong in a way
+// worth recording: it proves the page is *quiet*, not that it matches, so a
+// pair could settle onto the second state and report a change that was not
+// one. Twice it did, both times at exactly 1179 pixels.
+//
+// Comparing each capture against the baseline instead is strictly stronger.
+// Passing needs one exact match; failing needs every attempt to differ. A real
+// regression changes the content, so it differs in both rasterisations and
+// cannot pass by luck — which is precisely what the tolerance-widening
+// alternative would have given up.
+const ATTEMPTS = 3
 
 // The comparison happens in the page: two data URLs go in, a summary comes
 // back. A bounding box is included because "something changed" is a worse
@@ -188,17 +189,29 @@ try {
     const clip = await js(rectOf(heading))
     if (!clip) { failures.push(`${slug}: no section titled "${heading}" in the demo`); continue }
 
-    const actual = await settledCapture(clip, slug)
     const file = path.join(BASELINES, `${slug}.png`)
 
     if (UPDATE || !fss.existsSync(file)) {
-      await fsp.writeFile(file, Buffer.from(actual, 'base64'))
+      await fsp.writeFile(file, Buffer.from(await capture(clip), 'base64'))
       written.push(`${slug} (${clip.width}x${clip.height})`)
       continue
     }
 
+    // Up to ATTEMPTS captures, each compared against the baseline. The first
+    // exact match wins; only a region that differs every time is reported, and
+    // the last attempt's diff is what gets reported.
     const baseline = (await fsp.readFile(file)).toString('base64')
-    const d = await diff(baseline, actual)
+    let actual
+    let d
+    for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
+      actual = await capture(clip)
+      d = await diff(baseline, actual)
+      if (!d.resized && d.differing === 0) break
+      if (attempt < ATTEMPTS) {
+        cliLog(`  retry    ${slug} (attempt ${attempt}: ${d.resized ? 'size changed' : `${d.differing} px`})`)
+        await wait(1)
+      }
+    }
 
     if (REPORT) {
       cliLog(`  report   ${slug}: differing=${d.differing ?? '-'} maxDelta=${d.maxDelta ?? '-'} ` +

@@ -217,12 +217,30 @@ captures at 2x, so an unpinned baseline is not portable), and web fonts
 confirmed applied before shooting — the run aborts rather than baseline a page
 rendered in fallback fonts.
 
-Even so, captures **settle** rather than being trusted first time. Each region
-is shot twice and only a matching pair is compared. That came from measurement:
-27 of 28 region-runs were pixel-identical, and the one that was not repeated
-the *same* 1181 pixels later, which is a second discrete state rather than
-noise. Loosening the tolerance would have hidden a real 1181-pixel change to
-buy off a flake.
+Even so, a region gets up to **three captures, each compared against the
+baseline**, and the first exact match wins. Only a region that differs on every
+attempt is reported.
+
+That is the second design for this, and the first one was wrong in an
+instructive way. It captured until two agreed — which proves the page is
+*quiet*, not that it matches. The page turns out to have two rasterisations of
+identical content, so a pair could settle onto the wrong one and report a
+change that was not one. Twice it did, both times at exactly 1179 pixels.
+
+The two states were pinned down by diffing them rather than counting them:
+rows 315 and 321 at 575 pixels each — the top and bottom edge of the progress
+fill, 575 being 66% of 880, its value — plus a few pixels on the alert accent
+borders where success green lands on `82,254,153` in one state and
+`80,246,149` in the other. Edge antialiasing and colour rounding: the same
+content down two rasterisation paths.
+
+Comparing against the baseline is strictly stronger than settling. Passing
+needs one exact match, failing needs every attempt to differ, and a real
+regression differs in *both* states so it cannot pass by luck. Verified by
+reintroducing the square progress edge: three attempts, all differing, reported
+as `1156 px (max delta 150) at 581x7+0+315`. Widening the tolerance instead
+would have had to swallow a max delta of 59 to absorb the noise, and the real
+regression sits at 150 — too close to be safe.
 
 If a run ever hangs in `Page.captureScreenshot`, the cause is almost certainly
 a browser task space left over from an earlier aborted run: the space is looked
