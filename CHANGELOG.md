@@ -18,6 +18,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   - It found real drift on first run: the README still documented
     `.cy-progress__fill`, which 0.5.0 removed, and had never been updated to
     list the `/navigation` and `/table` imports.
+  - The bare-element check now descends into at-rules. Both earlier versions of
+    the prelude walk stopped at the first `{`, so everything inside `@media`
+    was skipped in silence — and the reduced-motion, `prefers-contrast` and
+    `forced-colors` blocks are where much of this kit's CSS lives.
 
 ### Fixed
 - **README** no longer documents the removed `.cy-progress__fill`, lists all
