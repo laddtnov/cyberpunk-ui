@@ -23,6 +23,23 @@ This project adheres to [Semantic Versioning](https://semver.org/).
     was skipped in silence — and the reduced-motion, `prefers-contrast` and
     `forced-colors` blocks are where much of this kit's CSS lives.
 
+- **`scripts/check-visual.js`** — region-based visual regression, driving
+  ego-browser. Captures one PNG per demo section, compares against
+  `docs/baselines/`, and reports the bounding box of what moved. Verified
+  against the defect that motivated it: reintroducing the square trailing edge
+  on the progress bar is caught as 1154 px at delta 150, located to
+  `581x7+0+315` — the fill itself.
+  - **Not in CI**, deliberately: ego-browser is a desktop browser and GitHub's
+    runners cannot start it. It belongs to the release routine instead, and
+    `npm run check` still covers what CI enforces.
+  - Reproducibility needs animations frozen, `deviceScaleFactor` pinned, and
+    fonts confirmed applied — the run aborts rather than baseline a page in
+    fallback fonts. Captures also settle: each region is shot twice and only a
+    matching pair is compared, which came from measuring 28 region-runs rather
+    than picking a tolerance.
+  - The diff runs in the page through a canvas, so the Node side never decodes
+    an image. Baselines total ~160 kB.
+
 ### Fixed
 - **README** no longer documents the removed `.cy-progress__fill`, lists all
   eight stylesheet subpaths, and its version-pin example names a current

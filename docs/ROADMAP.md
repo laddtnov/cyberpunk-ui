@@ -253,17 +253,33 @@ Still open here: nothing blocking. Persisting a theme across reloads and
 sharing one by URL are both obvious next steps and neither is needed for the
 page to make its point.
 
-### 1. Stylelint and visual regression
+### Closed: linting and visual regression
 
-Stylelint first — it is an afternoon, and it enforces the `cy-` prefix and the
-`--variant` modifier convention mechanically instead of by review.
+Both halves landed, and neither is what the item described.
 
-Then visual regression, which is the only automated check that can see a broken
-glow gradient. Note what it also covers: the existing contrast script checks
-**tokens against backgrounds only** and is blind to component colour pairings —
-a hardcoded `color: #000` on `.cy-btn:hover` sat at 3.62:1 and shipped, because
-no token was involved. Pairing coverage is a real hole; a snapshot diff is the
-cheapest thing that would have caught it.
+**Stylelint was rejected on evidence** — 123 problems, zero bugs, almost all of
+it house style contradicting deliberate choices. `scripts/check-conventions.js`
+enforces what only this project knows instead, dependency-free, and found real
+README drift on its first run.
+
+**Visual regression is region-based and local**, driven by ego-browser:
+`scripts/check-visual.js`, one PNG per demo section, compared through a canvas
+in the page so nothing on the Node side decodes an image. It catches the
+square-edge progress defect that motivated the item — 1154 px at delta 150,
+located to the fill.
+
+The part the roadmap got wrong was assuming this could be a CI gate. ego-browser
+is a desktop browser and GitHub's runners cannot start it, so it is a release-time
+check documented in STATE.md rather than an automated one. That is a real
+limitation and worth stating plainly: it runs when someone runs it.
+
+Two findings worth keeping. Reproducibility needs three things together —
+frozen animations, a pinned `deviceScaleFactor`, and fonts confirmed applied —
+and missing any one produces a diff that has nothing to do with the CSS. And
+captures have to **settle**: 27 of 28 region-runs were pixel-identical, while
+the odd one out repeated the *same* 1181 pixels later. That is a second
+discrete state, not noise, so the answer was shooting each region twice rather
+than widening the tolerance and going blind to a real 1181-pixel change.
 
 ## Waiting on a decision
 
