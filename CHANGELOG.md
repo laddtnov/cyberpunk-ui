@@ -5,6 +5,23 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **The visual check compared the wrong thing.** Each region was captured until
+  two attempts agreed, which proves the page is quiet rather than that it
+  matches — so a settled pair could land on the wrong rasterisation and report
+  a change that was not one. It now takes up to three captures and compares
+  each against the baseline, passing on the first exact match.
+  - The page has **two rasterisations of identical content**, found by diffing
+    the states rather than counting them: rows 315 and 321 at 575 pixels each
+    (the top and bottom edge of the progress fill, 575 being its 66% value),
+    plus a few pixels on the alert accent borders where success green lands on
+    `82,254,153` in one state and `80,246,149` in the other.
+  - Detection is unaffected, and that was verified rather than assumed:
+    reintroducing the square progress edge fails all three attempts and is
+    reported as `1156 px (max delta 150) at 581x7+0+315`. Widening the
+    tolerance would have had to swallow a max delta of 59, against a real
+    regression at 150.
+
 ## [0.6.0] — 2026-08-07
 
 ### Added
