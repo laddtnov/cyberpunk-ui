@@ -40,6 +40,12 @@ const CHANNEL_TOLERANCE = 2
 // Everything that moves, plus the two things that float. The sticky topbar and
 // the fixed toast container both render over whatever section is beneath them,
 // which would make a region's picture depend on scroll position.
+//
+// This is the one template here that needs String.raw, and it needs it: the
+// `\n` below has to reach the page as two characters. Untagged, the template
+// would interpolate a real newline inside a single-quoted string literal and
+// the page would fail to parse it. The other templates in this file carry no
+// backslash and are therefore untagged.
 const FREEZE = String.raw`(() => {
   let s = document.getElementById('vr-freeze');
   if (!s) { s = document.createElement('style'); s.id = 'vr-freeze'; document.head.appendChild(s); }
@@ -50,7 +56,7 @@ const FREEZE = String.raw`(() => {
   return true;
 })()`
 
-const rectOf = (heading) => String.raw`(() => {
+const rectOf = (heading) => `(() => {
   const h2 = [...document.querySelectorAll('h2')].find((el) => el.textContent.trim() === ${JSON.stringify(heading)});
   if (!h2) return null;
   const section = h2.closest('section');
@@ -97,7 +103,7 @@ async function settledCapture(clip, slug) {
 async function diff(baselineB64, actualB64) {
   await js(`window.__vrA=${JSON.stringify('data:image/png;base64,' + baselineB64)};` +
            `window.__vrB=${JSON.stringify('data:image/png;base64,' + actualB64)};true`)
-  return js(String.raw`(async () => {
+  return js(`(async () => {
     const load = (src) => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
     const [a, b] = await Promise.all([load(window.__vrA), load(window.__vrB)]);
     if (a.width !== b.width || a.height !== b.height) {
@@ -128,8 +134,16 @@ async function diff(baselineB64, actualB64) {
 const failures = []
 const written = []
 
+// The task space is closed in a finally, not at the end of the happy path.
+//
+// The space is looked up by name, so a run that dies partway leaves its tabs
+// behind for the next run to inherit — and those tabs point at the previous
+// run's port, which is dead. Two aborted runs were enough to make every
+// following run hang in `Page.captureScreenshot` until the space was closed by
+// hand. Cleaning up on the way out keeps a single failure from poisoning
+// everything after it.
 const task = await useOrCreateTaskSpace('cyberpunk visual regression')
-{
+try {
   await openOrReuseTab(`http://127.0.0.1:${PORT}/demo/index.html`, { wait: true, timeout: 30 })
 
   // Pinning the ratio is what makes a baseline portable: this machine captures
@@ -140,7 +154,7 @@ const task = await useOrCreateTaskSpace('cyberpunk visual regression')
 
   // Web fonts arrive over the network and shift metrics when they land. A
   // capture taken before then is a different picture of the same CSS.
-  const fonts = await js(String.raw`(async () => {
+  const fonts = await js(`(async () => {
     await document.fonts.ready;
     const probe = (family) => {
       const s = document.createElement('span');
@@ -193,6 +207,7 @@ const task = await useOrCreateTaskSpace('cyberpunk visual regression')
   }
 
   await cdp('Emulation.clearDeviceMetricsOverride', {})
+} finally {
   await completeTaskSpace(task.id, { keep: false })
 }
 

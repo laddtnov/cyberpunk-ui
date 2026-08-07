@@ -206,6 +206,13 @@ the *same* 1181 pixels later, which is a second discrete state rather than
 noise. Loosening the tolerance would have hidden a real 1181-pixel change to
 buy off a flake.
 
+If a run ever hangs in `Page.captureScreenshot`, the cause is almost certainly
+a browser task space left over from an earlier aborted run: the space is looked
+up by name, and its stale tabs point at the previous run's port, which is dead.
+The run now closes its space in a `finally` for exactly this reason, so one
+failure no longer poisons every run after it. Should it happen anyway, listing
+the spaces and closing `cyberpunk visual regression` by hand clears it.
+
 The comparison runs in the page through a canvas, so nothing on the Node side
 decodes an image and the tools stay dependency-free. Baselines total ~160 kB.
 
