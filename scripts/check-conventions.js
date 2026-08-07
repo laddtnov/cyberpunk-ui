@@ -81,7 +81,13 @@ function checkRgbTwins() {
 // ── 2. Class naming ───────────────────────────────────────────────
 // cy- prefix on every class; modifiers are --variant; a __element child only
 // where one is unavoidable.
-const CLASS_RE = /^cy-[a-z0-9]+(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)?(?:--[a-z0-9]+(?:-[a-z0-9]+)*)?$/;
+//
+// One segment is lowercase alphanumerics joined by single hyphens — no leading,
+// trailing or doubled ones, since `--` is what separates a modifier. The block,
+// the element and the modifier are all that same shape, so it is written once
+// and composed rather than spelled out three times.
+const SEGMENT = '[a-z0-9]+(?:-[a-z0-9]+)*';
+const CLASS_RE = new RegExp(`^cy-${SEGMENT}(?:__${SEGMENT})?(?:--${SEGMENT})?$`);
 
 function checkClassNames() {
   for (const f of sources) {
@@ -98,18 +104,49 @@ function checkClassNames() {
 // moment they import the kit. Styling a native element is fine — required,
 // even — but only scoped to one of ours: `.cy-accordion > summary`,
 // `.cy-terminal > pre`, `select.cy-input`.
+// At-rule preludes, :root, and keyframe stops are not component selectors and
+// have nothing to scope.
+function isSelector(sel) {
+  if (!sel || sel.startsWith('@') || sel.startsWith('%')) return false;
+  if (sel.startsWith(':root')) return false;
+  if (sel === 'from' || sel === 'to' || /^\d/.test(sel)) return false;
+  return true;
+}
+
+// Every prelude in the sheet: the text before each `{`, with the cursor reset
+// at every brace so a block's declarations are never mistaken for one.
+//
+// A plain linear scan rather than a regex. The first version used a lazy
+// quantifier between two `\s*` groups — the shape that backtracks
+// super-linearly, which this project has now had to fix three times.
+//
+// It also has to descend into at-rules. Both earlier attempts stopped at the
+// first `{` of a chunk, so everything inside `@media` was skipped silently —
+// and the reduced-motion, prefers-contrast and forced-colors blocks are where
+// much of this kit's CSS lives.
+function* preludes(css) {
+  let start = 0;
+  for (let i = 0; i < css.length; i += 1) {
+    const ch = css[i];
+    if (ch === '{') {
+      yield css.slice(start, i).trim();
+      start = i + 1;
+    } else if (ch === '}') {
+      start = i + 1;
+    }
+  }
+}
+
 function checkNoBareElements() {
   for (const f of sources) {
-    const css = strip(read(f));
-    // Selectors sit before a { that is not part of an at-rule preamble.
-    for (const m of css.matchAll(/(^|[},])\s*([^{}@]+?)\s*\{/g)) {
-      for (const sel of m[2].split(',')) {
+    for (const prelude of preludes(strip(read(f)))) {
+      for (const sel of prelude.split(',')) {
         const s = sel.trim();
-        if (!s || s.startsWith('@') || s.startsWith('%')) continue;
-        if (s.startsWith(':root') || s === 'from' || s === 'to' || /^\d/.test(s)) continue;
-        // Anything anchored to one of our classes, or to a custom pseudo of
-        // one, is scoped. Bare element chains are not.
-        if (!s.includes('.cy-')) fail(`${f}: "${s}" styles elements without a cy- class to scope it`);
+        // Anything anchored to one of our classes is scoped; a bare element
+        // chain would style every such element on a consumer's page.
+        if (isSelector(s) && !s.includes('.cy-')) {
+          fail(`${f}: "${s}" styles elements without a cy- class to scope it`);
+        }
       }
     }
   }
@@ -139,28 +176,37 @@ function checkWiring() {
 // was renamed or removed leaves prose that is confidently wrong, and nothing
 // about the page looks broken. This check was run by hand twice while the
 // reference was being written, which is the argument for automating it.
-function checkDocsMatchCss() {
-  const allCss = sources.map(read).join('\n');
-  const classes = new Set([...strip(allCss).matchAll(/\.(cy-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
-  const tokens = new Set([...strip(allCss).matchAll(/(--cy-[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
-
+// README plus every page of the component reference.
+function docFiles() {
   const docs = ['README.md'];
   const dir = path.join(ROOT, 'docs', 'components');
   if (fs.existsSync(dir)) {
     for (const f of fs.readdirSync(dir)) docs.push(path.join('docs', 'components', f));
   }
+  return docs;
+}
 
-  for (const doc of docs) {
-    const text = read(doc);
-    for (const m of text.matchAll(/`\.(cy-[a-zA-Z0-9_-]+)`/g)) {
-      if (!classes.has(m[1])) fail(`${doc}: documents .${m[1]}, which no stylesheet defines`);
-    }
-    for (const m of text.matchAll(/`(--cy-[a-z0-9-]+)`/g)) {
-      // Wildcards like --cy-space-* are prose, not references.
-      if (m[1].endsWith('-')) continue;
-      if (!tokens.has(m[1])) fail(`${doc}: documents ${m[1]}, which tokens.css does not declare`);
+function checkOneDoc(doc, classes, tokens) {
+  const text = read(doc);
+
+  for (const m of text.matchAll(/`\.(cy-[a-zA-Z0-9_-]+)`/g)) {
+    if (!classes.has(m[1])) fail(`${doc}: documents .${m[1]}, which no stylesheet defines`);
+  }
+
+  for (const m of text.matchAll(/`(--cy-[a-z0-9-]+)`/g)) {
+    // Wildcards like --cy-space-* are prose, not references.
+    if (!m[1].endsWith('-') && !tokens.has(m[1])) {
+      fail(`${doc}: documents ${m[1]}, which tokens.css does not declare`);
     }
   }
+}
+
+function checkDocsMatchCss() {
+  const allCss = strip(sources.map(read).join('\n'));
+  const classes = new Set([...allCss.matchAll(/\.(cy-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+  const tokens = new Set([...allCss.matchAll(/(--cy-[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
+
+  for (const doc of docFiles()) checkOneDoc(doc, classes, tokens);
 }
 
 // ── 6. The README's cherry-pick list must match the exports ───────
@@ -207,7 +253,7 @@ function main() {
 
   if (failures.length) {
     console.error(`\n${failures.length} convention failure(s):`);
-    for (const f of [...new Set(failures)]) console.error('  - ' + f);
+    for (const f of new Set(failures)) console.error('  - ' + f);
     process.exit(1);
   }
   console.log(`Conventions OK — ${sources.length} stylesheets checked.`);
