@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-08-07
+
 ### Added
 - **`.cy-sidebar`** and `.cy-sidebar__title` in `/navigation` — a vertical
   section nav, the last of the components from the original roadmap worth
