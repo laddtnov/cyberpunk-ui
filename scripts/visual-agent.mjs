@@ -208,7 +208,8 @@ try {
       d = await diff(baseline, actual)
       if (!d.resized && d.differing === 0) break
       if (attempt < ATTEMPTS) {
-        cliLog(`  retry    ${slug} (attempt ${attempt}: ${d.resized ? 'size changed' : `${d.differing} px`})`)
+        const why = d.resized ? 'size changed' : `${d.differing} px`
+        cliLog(`  retry    ${slug} (attempt ${attempt}: ${why})`)
         await wait(1)
       }
     }
