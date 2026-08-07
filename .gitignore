@@ -3,3 +3,7 @@ npm-debug.log*
 .DS_Store
 *.tgz
 .npmrc
+
+# Written beside a baseline when a visual region differs, so the two can be
+# opened side by side. Diagnostic output, not a record.
+docs/baselines/*.actual.png

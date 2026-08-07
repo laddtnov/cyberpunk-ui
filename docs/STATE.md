@@ -180,6 +180,40 @@ that no selector styles a bare element without a `cy-` class scoping it, that
 every stylesheet is wired into both the barrel and the `exports` map, and that
 the docs only name classes and tokens which exist.
 
+`scripts/check-visual.js` is the third, and the one that is **not in CI**:
+it drives ego-browser, which is a desktop browser GitHub's runners cannot
+start. It captures one PNG per demo section, compares each against
+`docs/baselines/`, and reports the bounding box of anything that moved.
+
+Run it before releasing, and after any CSS change you believe is invisible:
+
+```sh
+npm run check:visual              # compare
+npm run check:visual -- --update  # re-record, after an intended change
+npm run check:visual -- --report  # print every region's diff without failing
+```
+
+Three things make a capture reproducible, and all three are required: every
+animation and transition frozen, `deviceScaleFactor` pinned to 1 (this machine
+captures at 2x, so an unpinned baseline is not portable), and web fonts
+confirmed applied before shooting — the run aborts rather than baseline a page
+rendered in fallback fonts.
+
+Even so, captures **settle** rather than being trusted first time. Each region
+is shot twice and only a matching pair is compared. That came from measurement:
+27 of 28 region-runs were pixel-identical, and the one that was not repeated
+the *same* 1181 pixels later, which is a second discrete state rather than
+noise. Loosening the tolerance would have hidden a real 1181-pixel change to
+buy off a flake.
+
+The comparison runs in the page through a canvas, so nothing on the Node side
+decodes an image and the tools stay dependency-free. Baselines total ~160 kB.
+
+Two known limits. The sticky topbar and the fixed toast container are hidden
+during capture, because a floating element makes a region's picture depend on
+scroll position — so `.cy-toast` is not covered. And the whole check is
+local-only, which is why it is not part of `npm run check`.
+
 **Stylelint was tried first and rejected on evidence.** Against this codebase it
 reported 123 problems and zero bugs — it wanted `rgb()` over `rgba()`, which is
 the kit's entire glow mechanism, `#f0f` over `#ff00ff`, which `check-contrast.js`
