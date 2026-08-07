@@ -5,6 +5,25 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`scripts/check-conventions.js`**, running in CI alongside the contrast
+  check. Enforces the rules in `docs/STATE.md` that a generic CSS linter cannot
+  know: `-rgb` twins existing and agreeing with their base colour about being
+  themed, class naming, no unscoped bare element selectors, every stylesheet
+  wired into both the barrel and `exports`, and docs naming only things that
+  exist. Dependency-free, like the package.
+  - **Stylelint was tried first and rejected on evidence** — 123 problems, zero
+    bugs, almost all of it house style contradicting deliberate choices. Recorded
+    in `docs/STATE.md` so it is not re-proposed.
+  - It found real drift on first run: the README still documented
+    `.cy-progress__fill`, which 0.5.0 removed, and had never been updated to
+    list the `/navigation` and `/table` imports.
+
+### Fixed
+- **README** no longer documents the removed `.cy-progress__fill`, lists all
+  eight stylesheet subpaths, and its version-pin example names a current
+  version rather than 0.2.2.
+
 ### Changed
 - **`release.yml` can be run by hand** — Actions → Release → Run workflow, with
   the tag as an input. A tag push is a single event, so if Actions is degraded

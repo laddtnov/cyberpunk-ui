@@ -26,14 +26,14 @@ Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both validation paths, and it is the OG image
 source), `demo/playground.js` (the live token editor; demo-only, and never
 published — `files` ships `*.css`, `README.md` and `LICENSE` only),
-`scripts/check-contrast.js`
+`scripts/check-contrast.js` and `scripts/check-conventions.js`
 (dev-only, not published), `docs/superpowers/` (specs and plans),
 `.github/workflows/`.
 
 **A new CSS file needs a matching entry in `package.json`'s `exports` map**
 and an `@import` in `cyberpunk-ui.css`. Current subpaths: `.`, `/tokens`,
-`/effects`, `/components`, `/containers`, `/forms`, `/feedback`, and
-`./package.json`.
+`/effects`, `/components`, `/containers`, `/navigation`, `/table`, `/forms`,
+`/feedback`, and `./package.json`.
 
 That last one is not a stylesheet. Once a package declares `exports`, anything
 absent from the map is unreachable — including `package.json` itself, which
@@ -46,11 +46,11 @@ Verified against the **published** package, not a local tarball, on
 
 | Manager | Version | Result |
 | --- | --- | --- |
-| npm | 10.9.8 | installs, all 6 subpaths resolve |
-| pnpm | 11.18.0 | installs, all 6 resolve — **24h cooldown**, see below |
-| Yarn Classic | 1.22.22 | installs, all 6 resolve |
-| Yarn Berry | 4.18.0 | installs, all 6 resolve — under **Plug'n'Play too**, with no `node_modules` on disk. **24h cooldown** |
-| Bun | 1.3.14 | installs, all 6 resolve |
+| npm | 10.9.8 | installs, all 6 stylesheet subpaths resolved at the time |
+| pnpm | 11.18.0 | installs, all 6 resolved — **24h cooldown**, see below |
+| Yarn Classic | 1.22.22 | installs, all 6 resolved |
+| Yarn Berry | 4.18.0 | installs, all 6 resolved — under **Plug'n'Play too**, with no `node_modules` on disk. **24h cooldown** |
+| Bun | 1.3.14 | installs, all 6 resolved |
 
 Nothing had to change for any of them. The kit is plain CSS with no
 dependencies, no postinstall and no build step, so there is very little for a
@@ -166,9 +166,26 @@ styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
 
 ## Accessibility floors
 
-`scripts/check-contrast.js` runs in CI and fails the build on regression. It is
-**role-aware**: 4.5:1 for tokens that render as text, 3.0:1 for non-text UI
-(`--cy-neon-purple` is glow-only and clears 4.5 in neither theme).
+Two scripts run in CI and fail the build on regression. Both are dependency-free,
+like the package.
+
+`scripts/check-contrast.js` is **role-aware**: 4.5:1 for tokens that render as
+text, 3.0:1 for non-text UI (`--cy-neon-purple` is glow-only and clears 4.5 in
+neither theme).
+
+`scripts/check-conventions.js` enforces the rules in this file that a generic
+CSS linter cannot know: that every `-rgb` twin exists and agrees with its base
+colour about being themed, that class names match `cy-block__element--modifier`,
+that no selector styles a bare element without a `cy-` class scoping it, that
+every stylesheet is wired into both the barrel and the `exports` map, and that
+the docs only name classes and tokens which exist.
+
+**Stylelint was tried first and rejected on evidence.** Against this codebase it
+reported 123 problems and zero bugs — it wanted `rgb()` over `rgba()`, which is
+the kit's entire glow mechanism, `#f0f` over `#ff00ff`, which `check-contrast.js`
+parses, and no blank lines between token groups. `selector-class-pattern`, the
+one rule worth having, found nothing, because that convention has never been
+broken. The cost would have been 103 packages, a lockfile and a CI install step.
 
 It checks **tokens against backgrounds only**. It cannot see a component's
 colour *pairings* — a hardcoded `color: #000` on `.cy-btn:hover` sat at 3.62:1
