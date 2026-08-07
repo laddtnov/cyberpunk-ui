@@ -28,8 +28,9 @@ A neon halo, as a `box-shadow`.
 | `.cy-glow` | cyan |
 | `.cy-glow--pink` | pink |
 | `.cy-glow--purple` | purple |
+| `.cy-glow--gold` | brass gold |
 
-**Tokens** — `--cy-cyan-rgb` `--cy-pink-rgb` `--cy-purple-rgb`
+**Tokens** — `--cy-cyan-rgb` `--cy-pink-rgb` `--cy-purple-rgb` `--cy-gold-rgb`
 
 These are the `-rgb` twins, not the colour tokens: a glow is
 `rgba(var(--cy-*-rgb), α)` because it needs to fade. Override the twin and the
@@ -44,7 +45,23 @@ The same idea as `text-shadow`.
 ```html
 <span class="cy-text-glow">NEON CYAN</span>
 <span class="cy-text-glow--pink">NEON PINK</span>
+<span class="cy-text-glow--gold" style="color: var(--cy-neon-gold)">NEON GOLD</span>
 ```
+
+These classes set the halo, not the text colour — pair them with a `color` so
+the two agree. `--cy-neon-gold` (`#d4af37` dark, `#7d5800` light) is the one
+meant for the gold variant, and it is contrast-checked as text in both themes.
+
+**Gold is a different register**, and the halo reflects it. The neon pair use a
+10px near-shadow; gold uses 6px at higher opacity and a dimmer far shadow,
+because a warm low-saturation hue smears at the radius that makes cyan look
+lit. It reads as a machined edge catching light rather than a tube glowing —
+the Deus Ex look rather than the *Blade Runner* one.
+
+Do not reach for `--cy-warning` to get a yellow. It is a pale caution colour
+with a meaning attached, and a heading painted in it announces nothing but
+looks like a problem. Gold carries no meaning, which is what makes it safe as
+decoration.
 
 **Accessibility** — a heavy glow reduces the effective contrast of the text
 underneath it. The kit's contrast floors are enforced on the *token*, not on

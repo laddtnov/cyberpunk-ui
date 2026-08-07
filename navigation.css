@@ -138,15 +138,105 @@
   cursor: default;
 }
 
+/* ── Sidebar ──────────────────────────────────────────────────────
+   <nav class="cy-sidebar" aria-labelledby="sectors">
+     <h2 class="cy-sidebar__title" id="sectors">Sectors</h2>
+     <ul>
+       <li><a href="/grid">Grid</a></li>
+       <li><a href="/node" aria-current="page">Node</a></li>
+     </ul>
+   </nav>
+
+   The <ul> is required, and for the same reason the breadcrumb's <ol> is: it
+   is what makes a screen reader say "list, 5 items" and count the way through
+   them. A stack of bare links in a column looks identical and announces as a
+   run of loose links.
+
+   The title should be a heading, not a <span>. It is a real section heading in
+   the document, so it belongs in the heading outline that people use to skip
+   around a page — and pairing it with aria-labelledby names the landmark
+   without repeating the text. A <span> styles the same and announces nothing;
+   that is the whole difference, and it is not visible.
+
+   The sidebar sets no width. Where a sidebar sits and how wide it is are
+   layout decisions belonging to the page, not to the component — a kit that
+   picks 16rem here is a kit you fight in a grid. It fills whatever column it
+   is given. Nor is it sticky or scrollable by default: making it a scroll
+   container would oblige it to be keyboard-reachable and labelled (the same
+   contract .cy-table-scroll carries), and that is a real cost to impose on
+   every sidebar for the sake of the tall ones. */
+.cy-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cy-space-sm);
+  padding: var(--cy-space-lg);
+  background: var(--cy-surface);
+  border-left: 2px solid rgba(var(--cy-cyan-rgb), 0.3);
+  font-family: var(--cy-font-mono);
+}
+
+.cy-sidebar__title {
+  margin: 0 0 var(--cy-space-xs);
+  color: var(--cy-neon-cyan);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.cy-sidebar ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cy-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cy-sidebar a {
+  display: block;
+  color: var(--cy-text);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  padding: var(--cy-space-xs) var(--cy-space-sm);
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--cy-radius) var(--cy-radius) 0;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.cy-sidebar a:hover {
+  color: var(--cy-neon-cyan);
+  border-left-color: rgba(var(--cy-cyan-rgb), 0.5);
+  background: rgba(var(--cy-cyan-rgb), 0.06);
+}
+
+.cy-sidebar a:focus-visible {
+  outline: var(--cy-focus-width) solid var(--cy-focus-color);
+  outline-offset: var(--cy-focus-offset);
+}
+
+/* Same rule as the nav above: the current item is styled from the attribute
+   that announces it. A marker on the left edge rather than an underline,
+   because in a vertical stack an underline reads as a separator between items
+   rather than as a mark on one. */
+.cy-sidebar a[aria-current] {
+  color: var(--cy-neon-cyan);
+  border-left-color: var(--cy-neon-cyan);
+  background: rgba(var(--cy-cyan-rgb), 0.1);
+}
+
 /* ── Reduced motion ───────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .cy-nav a,
+  .cy-sidebar a,
   .cy-breadcrumb a { transition: none; }
 }
 
 /* ── Increased contrast ───────────────────────────────────────── */
 @media (prefers-contrast: more) {
   .cy-nav { border-bottom-color: var(--cy-neon-cyan); }
+  .cy-sidebar { border-left-color: var(--cy-neon-cyan); }
   .cy-breadcrumb li + li::before { opacity: 1; }
 }
 
@@ -159,6 +249,16 @@
    gains weight so it does not rely on hue at all. */
 @media (forced-colors: active) {
   .cy-nav a[aria-current] { border-bottom-color: LinkText; }
+
+  /* The sidebar's current item leans on three signals, and forced colours
+     takes two of them: the cyan goes to the one link colour, and the faint
+     tint behind it goes to the page background. The left marker is all that
+     survives, so it is pinned to a system colour and the label is given weight
+     — two signals again, neither of them hue. */
+  .cy-sidebar a[aria-current] {
+    border-left-color: LinkText;
+    font-weight: 700;
+  }
 
   .cy-breadcrumb a[aria-current] {
     color: CanvasText;

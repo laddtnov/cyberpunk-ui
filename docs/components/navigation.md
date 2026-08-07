@@ -94,3 +94,65 @@ looks identical without them.
 - Under `forced-colors` the current crumb also gains weight, because colour
   alone is what distinguishes it and forced colours collapses every link to one
   value.
+
+---
+
+## `.cy-sidebar`
+
+```html
+<nav class="cy-sidebar" aria-labelledby="sectors">
+  <h2 class="cy-sidebar__title" id="sectors">Sectors</h2>
+  <ul>
+    <li><a href="/overview">Overview</a></li>
+    <li><a href="/reactor" aria-current="page">Reactor core</a></li>
+    <li><a href="/archive">Archive</a></li>
+  </ul>
+</nav>
+```
+
+**The `<ul>` is required**, for the same reason the breadcrumb's `<ol>` is: it
+is what makes a screen reader announce "list, 5 items" and count the way
+through them. A column of bare links looks identical and announces as a run of
+loose links.
+
+**The title should be a heading.** It is a real section heading in the
+document, so it belongs in the outline people use to skip around a page, and
+`aria-labelledby` then names the landmark from it without repeating the text. A
+`<span>` styles the same and announces nothing — that is the entire difference,
+and none of it is visible. Pick the level that fits the page (`<h2>` under an
+`<h1>`, `<h3>` inside an `<h2>` section); the class does not care.
+
+**The sidebar sets no width.** Where it sits and how wide it is are the page's
+decisions, not the component's — a kit that hardcodes `16rem` is a kit you
+fight inside a grid. Give it a column:
+
+```css
+.layout { display: grid; grid-template-columns: 14rem 1fr; gap: 1.5rem; }
+```
+
+It is also **not sticky and not scrollable** by default. Making it a scroll
+container would oblige it to be keyboard-reachable and labelled — the contract
+`.cy-table-scroll` carries — and that is a real cost to impose on every sidebar
+for the sake of the tall ones. Add `position: sticky; top: 0; align-self:
+start;` in your own layout when you want it, or the `tabindex="0"` plus
+`aria-label` pair if you also make it scroll.
+
+**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan` `--cy-cyan-rgb`
+`--cy-font-mono` `--cy-radius` `--cy-space-*` `--cy-focus-*`
+
+**Accessibility**
+
+- Label the landmark, with `aria-labelledby` pointing at the title when there
+  is one and `aria-label` when there is not. A page with a nav bar, a
+  breadcrumb and a sidebar has three `<nav>` landmarks, and unlabelled they are
+  three identical entries in a jump list.
+- Mark the current item with `aria-current="page"`. There is no `--active`
+  class, deliberately — see the top of this page.
+- The current item carries three signals: colour, a left marker and a faint
+  tint. Under `forced-colors` two of them go — the cyan collapses to the one
+  link colour and the tint to the page background — so the marker is pinned to
+  `LinkText` and the label gains weight. Two signals again, neither of them
+  hue.
+- The marker sits on the left edge rather than under the label because in a
+  vertical stack an underline reads as a separator between items rather than as
+  a mark on one.

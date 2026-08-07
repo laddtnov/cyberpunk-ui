@@ -281,6 +281,41 @@ the odd one out repeated the *same* 1181 pixels later. That is a second
 discrete state, not noise, so the answer was shooting each region twice rather
 than widening the tolerance and going blind to a real 1181-pixel change.
 
+### Closed: sidebar, gold, and a terminal font
+
+The last component from the original Phase 6 list worth building, plus two
+things that came out of the same pass.
+
+**`.cy-sidebar`** completes navigation. It requires a `<ul>` and takes its
+current item from `[aria-current]`, both for reasons the rest of
+`/navigation` already establishes. What it deliberately does *not* do is more
+interesting: it sets no width, no sticky position and no scrolling. Each of
+those is a page decision, and the scrolling one carries an accessibility bill —
+a scroll container owes the keyboard a `tabindex` and a label, which is not a
+cost to impose on every sidebar for the sake of the tall ones.
+
+**`--cy-neon-gold`** adds the Deus Ex register to a kit that only had the
+*Blade Runner* one. The halo is not the neon one recoloured — 6px at higher
+opacity rather than 10px, because a warm low-saturation hue smears at the
+radius that makes cyan look lit. It is kept away from `--cy-warning`, which is
+a caution colour with a meaning attached; decoration painted in a status hue
+looks like a problem and announces nothing.
+
+**`--cy-font-terminal`** names Nerd Fonts for `.cy-terminal` only, and ships
+none of them. The patched builds are tens of megabytes against a kit measured
+in kilobytes, so the token asks for what a machine may already have and falls
+through to `--cy-font-mono`. It is kept out of the shared mono stack because
+Hack is widely installed and would otherwise repaint half the kit on a
+developer's machine without being asked.
+
+Two things this taught the visual check, both about machine variance rather
+than about CSS: locally installed fonts have to be pinned during capture or a
+baseline is only comparable on the machine that recorded it, and text
+rasterisation has to be forced to grayscale, because whether a box gets its own
+compositing layer decides its antialiasing and layer promotion is not stable
+between captures. That second one was the ~1180-pixel "second state" the settle
+loop had been absorbing since the check was built.
+
 ## Waiting on a decision
 
 **Tabs.** No JavaScript means the radio-input hack or `:target`. Both produce a
@@ -400,7 +435,10 @@ state management, not before. Revisit after v0.3.
 already listed above — Firefox verification, visual regression, and pairing
 contrast.
 
-**Performance testing.** 741 lines of CSS, zero dependencies, zero JavaScript.
+**Avatar.** It is `border-radius: 50%` on an `<img>`. A class that wraps one
+declaration earns nothing and adds a name to remember.
+
+**Performance testing.** 1,592 lines of CSS, zero dependencies, zero JavaScript.
 There is nothing to measure that the bundle-size badge does not already say.
 
 ## How to use this file

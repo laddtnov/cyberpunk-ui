@@ -52,6 +52,19 @@ const FREEZE = String.raw`(() => {
   s.textContent = [
     '*, *::before, *::after { animation: none !important; transition: none !important; }',
     '.topbar, .cy-toast-container { visibility: hidden !important; }',
+    // --cy-font-terminal names Nerd Fonts, which are installed on some
+    // machines and not others. Left alone, a baseline recorded on a machine
+    // with Hack cannot be compared on one without it. The web fonts are
+    // required and checked for; local fonts are exactly the machine variance
+    // this pinning exists to remove.
+    ':root { --cy-font-terminal: var(--cy-font-mono) !important; }',
+    // Text rasterisation is the other machine variance, and the subtler one.
+    // Whether a box gets its own compositing layer decides whether its text is
+    // drawn with subpixel or grayscale antialiasing, and layer promotion is
+    // not stable between captures — which is what produced the ~1180-pixel
+    // second state the settle loop kept catching in the feedback region.
+    // Forcing grayscale everywhere removes the choice.
+    '* { -webkit-font-smoothing: antialiased !important; }',
   ].join('\n');
   return true;
 })()`

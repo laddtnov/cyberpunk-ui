@@ -6,6 +6,13 @@
   --cy-neon-pink:   #ff00ff;
   --cy-neon-purple: #9d00ff;
 
+  /* Brass gold, the Deus Ex register rather than the neon one: a warmer,
+     lower-saturation accent for text that should read as machined rather
+     than lit. Deliberately not --cy-warning, which is a pale yellow with a
+     meaning attached — this one carries none, and mixing them would make a
+     decorative heading look like a caution. */
+  --cy-neon-gold:   #d4af37;
+
   /* ── Surfaces ─────────────────────────────────────────────── */
   --cy-bg:      #0a0a0c;
   --cy-surface: #151518;
@@ -20,6 +27,7 @@
   --cy-cyan-rgb:   0, 242, 255;
   --cy-pink-rgb:   255, 0, 255;
   --cy-purple-rgb: 157, 0, 255;
+  --cy-gold-rgb:   212, 175, 55;
 
   /* ── Scrim ───────────────────────────────────────────────────
      The modal backdrop, and deliberately NOT derived from --cy-bg: a
@@ -37,6 +45,24 @@
   --cy-font-display: 'Orbitron', system-ui, sans-serif;
   --cy-font-body:    'Rajdhani', system-ui, sans-serif;
   --cy-font-mono:    'Share Tech Mono', ui-monospace, monospace;
+
+  /* The terminal's own stack, and the only place the kit asks for a Nerd
+     Font. Those are patched builds of ordinary monospaces carrying an extra
+     few thousand glyphs — powerline separators, file-type and branch icons —
+     which is exactly what makes a fake terminal look like a real one.
+
+     They are named first and never shipped. The patched TTFs run to tens of
+     megabytes against a kit measured in kilobytes, so this token asks for what
+     a developer machine very often already has and falls through to
+     --cy-font-mono when it does not. Nothing breaks without them; the icons
+     simply are not there.
+
+     Kept separate from --cy-font-mono on purpose: Hack is widely installed,
+     and putting it first in the shared stack would quietly repaint every mono
+     surface in the kit — nav, badges, inputs, breadcrumb — on most developer
+     machines, which is not a font choice this kit should make for you. */
+  --cy-font-terminal: 'Hack Nerd Font Mono', 'JetBrainsMono Nerd Font',
+                      'FiraCode Nerd Font', var(--cy-font-mono);
 
   /* ── Motion ───────────────────────────────────────────────── */
   --cy-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -84,6 +110,9 @@
      normal text. #00707f measures 5.10. */
   --cy-neon-cyan: #00707f;
   --cy-neon-pink: #b3009e;
+  /* #d4af37 measures 1.85 on the light background — invisible. This is the
+     same hue taken down until it clears the text floor: 5.66. */
+  --cy-neon-gold: #7d5800;
 
   --cy-bg:      #f0f0f5;
   --cy-surface: #ffffff;
@@ -92,6 +121,7 @@
 
   --cy-cyan-rgb: 0, 112, 127;
   --cy-pink-rgb: 179, 0, 158;
+  --cy-gold-rgb: 125, 88, 0;
 
   /* Neon status hues fail contrast on a light background. */
   --cy-success: #0a7d43;

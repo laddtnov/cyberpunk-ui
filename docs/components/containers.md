@@ -129,7 +129,35 @@ are separate classes so the frame can also be used plain:
 ```
 
 **Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan` `--cy-cyan-rgb`
-`--cy-font-mono` `--cy-radius` `--cy-border-width` `--cy-space-*`
+`--cy-font-terminal` `--cy-radius` `--cy-border-width` `--cy-space-*`
+
+### Nerd Font glyphs
+
+This is the one component with its own type token. `--cy-font-terminal` names
+[Nerd Fonts](https://www.nerdfonts.com/) first — patched builds of ordinary
+monospaces carrying a few thousand extra glyphs, the powerline separators and
+file-type and branch icons that make a fake terminal look like a real one —
+then falls through to `--cy-font-mono`:
+
+```css
+--cy-font-terminal: 'Hack Nerd Font Mono', 'JetBrainsMono Nerd Font',
+                    'FiraCode Nerd Font', var(--cy-font-mono);
+```
+
+**Nothing is shipped and nothing is required.** The patched builds run to tens
+of megabytes against a kit measured in kilobytes, so the token asks for what a
+developer machine often already has. Without one the terminal renders in
+`--cy-font-mono` exactly as before; the icons are simply absent. Point the
+token at your own font to change that:
+
+```css
+:root { --cy-font-terminal: 'JetBrainsMono Nerd Font', monospace; }
+```
+
+If you put icon glyphs in the markup, remember they are **private-use
+codepoints**: a screen reader will announce nothing useful and a machine
+without the font shows a box. Treat them as decoration —
+`aria-hidden="true"` — and never as the only carrier of meaning.
 
 **Accessibility**
 

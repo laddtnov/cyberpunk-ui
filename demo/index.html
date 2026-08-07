@@ -244,6 +244,8 @@
       <div class="row">
         <span class="cy-text-glow mono" style="font-size:1.4rem">NEON CYAN</span>
         <span class="cy-text-glow--pink mono" style="font-size:1.4rem">NEON PINK</span>
+        <span class="cy-text-glow--gold mono"
+              style="font-size:1.4rem;color:var(--cy-neon-gold)">NEON GOLD</span>
       </div>
     </section>
 
@@ -285,6 +287,29 @@
           <li><a href="#" aria-current="page">Reactor core</a></li>
         </ol>
       </nav>
+
+      <!-- The sidebar sets no width of its own — the grid below decides that,
+           which is the point. The title is a heading so it lands in the page
+           outline, and aria-labelledby names the landmark from it rather than
+           repeating the text. Heading level follows the page, not the
+           component: h3 here because the section's own heading is an h2. -->
+      <div style="display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:1.5rem">
+        <nav class="cy-sidebar" aria-labelledby="demo-sidebar-title" style="flex:0 1 14rem">
+          <h3 class="cy-sidebar__title" id="demo-sidebar-title">Sectors</h3>
+          <ul>
+            <li><a href="#">Overview</a></li>
+            <li><a href="#" aria-current="page">Reactor core</a></li>
+            <li><a href="#">Coolant loop</a></li>
+            <li><a href="#">Archive</a></li>
+          </ul>
+        </nav>
+        <p class="cy-hint" style="flex:1 1 18rem;margin:0;align-self:center">
+          Page owns the column width — the sidebar sets none, so this row can
+          wrap it to full width when there is no room beside it. The current
+          item is marked with aria-current, and that attribute is what styles
+          it.
+        </p>
+      </div>
 
       <!-- A section with an accessible name already carries the region role,
            so the role attribute is redundant — prefer the element, as the kit
