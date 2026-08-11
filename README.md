@@ -19,18 +19,70 @@ Every component on one page — themes, forms, feedback, effects.
 
 ---
 
-No build step, no JavaScript, no runtime. Just CSS custom properties and a set
-of classes, extracted from the [laddtnov.xyz](https://laddtnov.xyz) portfolio.
+Neon glow, CRT scanlines, glitching headlines, a terminal window that looks
+like it belongs in a Netrunner's rig. 63 kB of CSS, 38 design tokens, zero
+dependencies, and nothing to build. Drop in one stylesheet and start writing
+class names. Extracted from the [laddtnov.xyz](https://laddtnov.xyz) portfolio.
 
-Buttons, cards, inputs, checkboxes, radios, alerts, toasts, badges, a spinner,
-a progress bar, and containers built on native elements — an accordion, a
-modal and a terminal window. All driven by a token substrate you can override
-to reskin the whole kit.
+## Two minutes to a glowing page
 
-Accessibility is treated as part of the design, not a footnote: a **WCAG-aware
-light theme** dims the neon hues so text keeps its contrast, every contrast
-ratio is enforced in CI, focus rings are consistent across every control, and
-animations respect `prefers-reduced-motion`.
+One `<link>`, no install, no build:
+
+```html
+<!doctype html>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@laddtnov/cyberpunk-ui/cyberpunk-ui.css">
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&display=swap">
+
+<body style="background: var(--cy-bg); padding: 3rem; font-family: var(--cy-font-body)">
+  <section class="cy-grid-bg cy-scanlines" style="padding: 3rem">
+    <h1 class="cy-glitch">NIGHT CITY</h1>
+
+    <div class="cy-card">
+      <p>Reactor online <span class="cy-cursor"></span></p>
+      <progress class="cy-progress" value="66" max="100"></progress>
+      <a href="#" class="cy-btn cy-glow">Launch</a>
+      <a href="#" class="cy-btn cy-btn--pink">Abort</a>
+    </div>
+  </section>
+</body>
+```
+
+That is the whole setup. The grid drifts, the headline splits its channels,
+the cursor blinks, the button lights up on hover.
+
+Want a different world? Change one line:
+
+```css
+:root { --cy-neon-cyan: #39ff14; }  /* the whole kit turns acid-green */
+```
+
+Or flip to the light theme, where the neon dims itself to keep text readable:
+
+```html
+<html data-theme="light">
+```
+
+Play with every token live in the
+[demo's theme editor](https://laddtnov.github.io/cyberpunk-ui/demo/), then copy
+the CSS it generates.
+
+## What you get
+
+Buttons, cards, inputs, checkboxes, radios, alerts, toasts, badges, a spinner
+and a progress bar. Navigation: a top bar, a breadcrumb, a sidebar, a data
+table. Containers built on real HTML elements: an accordion on `<details>`, a
+modal on `<dialog>`, a terminal window with a title bar. Six effects that do
+the heavy visual lifting: glow, text-glow, glitch, scanlines, animated grid,
+blinking cursor.
+
+Accessibility is part of the design here. Every contrast ratio is checked in
+CI and fails the build if it drops below WCAG AA. Focus rings are identical
+across every control. Animations back off under `prefers-reduced-motion`, and
+the kit answers `prefers-contrast: more` and Windows High Contrast too. Where
+HTML already has an element for the job, the kit styles that element instead
+of faking it with ARIA.
 
 ## Install
 
@@ -82,15 +134,6 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 @import "@laddtnov/cyberpunk-ui/feedback";
 ```
 
-### No build? Use the CDN
-
-```html
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@laddtnov/cyberpunk-ui/cyberpunk-ui.css">
-
-<button class="cy-btn cy-glow">&gt;_ ENTER</button>
-```
-
 ## Documentation
 
 Per-component reference, one page per subpath — markup, modifiers, the tokens
@@ -106,18 +149,6 @@ enforce for you:
 · [feedback](docs/components/feedback.md)
 
 ## Usage
-
-```html
-<h1 class="cy-glitch">GALAXY MAP</h1>
-
-<div class="cy-card">
-  <p>Deep space observatory <span class="cy-cursor"></span></p>
-  <a href="#" class="cy-btn cy-glow">Launch</a>
-  <a href="#" class="cy-btn cy-btn--pink">Abort</a>
-</div>
-
-<section class="cy-grid-bg cy-scanlines"> … </section>
-```
 
 A form and a status message:
 
@@ -229,10 +260,6 @@ non-modal box with none of it, and nothing for the kit to paint.
 | `.cy-spinner` | indeterminate loader |
 | `.cy-progress` | determinate bar, on the native `<progress>` element |
 | `.cy-sr-only` | visually-hidden text |
-| `.cy-nav` · `.cy-nav__brand` | top navigation bar; current item via `aria-current` |
-| `.cy-breadcrumb` | breadcrumb trail on an `<ol>` |
-| `.cy-sidebar` · `.cy-sidebar__title` | vertical section nav on a `<ul>`; the page owns its width |
-| `.cy-table` | data table (+ `--striped` `--compact`), plus `.cy-table-scroll` |
 
 Prefer native elements over ARIA roles where one exists — the browser gets
 the semantics right for free. `<output>` has an implicit `role="status"`,
@@ -275,16 +302,53 @@ container.append(toast);
 setTimeout(() => toast.remove(), 4000);
 ```
 
-## Theming
+### Navigation (`navigation.css`)
 
-Everything reads from CSS custom properties, so override a token to reskin the
-whole kit:
+| Class | Purpose |
+|-------|---------|
+| `.cy-nav` · `.cy-nav__brand` | top navigation bar |
+| `.cy-breadcrumb` | breadcrumb trail on an `<ol>` |
+| `.cy-sidebar` · `.cy-sidebar__title` | vertical section nav on a `<ul>`; the page owns its width |
 
-```css
-:root { --cy-neon-cyan: #39ff14; } /* go acid-green */
+None of the three has an `--active` modifier, deliberately. Mark the current
+item with `aria-current="page"` and the kit styles it from that attribute, so
+what a screen reader announces and what the eye sees cannot drift apart.
+
+### Table (`table.css`)
+
+| Class | Purpose |
+|-------|---------|
+| `.cy-table` | data table (+ `--striped` `--compact`) |
+| `.cy-table-scroll` | horizontal scroll container for a wide table |
+
+A scrollable box needs to be reachable without a mouse, so give the container
+`tabindex="0"` and a label:
+
+```html
+<section class="cy-table-scroll" tabindex="0" aria-label="Reactor readings">
+  <table class="cy-table cy-table--striped">…</table>
+</section>
 ```
 
-Flip to the accessible light theme by setting an attribute on `<html>`:
+## Theming
+
+Every colour, space, radius and font in the kit comes from a custom property,
+so one override reaches every rule that uses it:
+
+```css
+:root {
+  --cy-neon-cyan: #39ff14;   /* acid green */
+  --cy-cyan-rgb: 57, 255, 20;  /* the glows read this one */
+}
+```
+
+Colours come in pairs. `--cy-neon-cyan` paints text and borders;
+`--cy-cyan-rgb` is the raw triplet the glows fade with
+(`rgba(var(--cy-cyan-rgb), 0.5)`). Override only the first and the glow keeps
+the old hue, which is the one theming mistake worth knowing up front.
+
+The light theme is a second palette rather than an inversion. Each neon hue is
+darkened until it clears WCAG AA against a pale background:
 
 ```html
 <html data-theme="light">
