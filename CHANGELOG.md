@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.1] — 2026-08-13
+
 ### Added
 - **Support links.** `.github/FUNDING.yml` puts a Sponsor button on the
   repository, a `funding` field in `package.json` gives npm a Funding link and
