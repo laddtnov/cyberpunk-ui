@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.2] — 2026-08-13
+
+### Changed
+- **The support button moved above the fold**, from the bottom of the README to
+  directly under the live-demo link in the header block. A link at the foot of a
+  400-line file is a link nobody reaches.
+  - It is the official Buy Me a Coffee button image rather than a seventh
+    shields badge, which was the first attempt and the wrong one: last in a row
+    of six flat badges is barely more visible than the bottom of the file.
+  - The PNG is deliberate over the SVG that `button-api` serves, which could
+    have matched `--cy-neon-gold`. GitHub proxies README images through camo and
+    does not reliably render externally hosted SVG, so the on-palette version
+    risked rendering nothing at all.
+
 ## [0.6.1] — 2026-08-13
 
 ### Added

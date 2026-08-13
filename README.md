@@ -121,7 +121,7 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > exact version skips the gate, so use whichever one you are actually after:
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.6.1
+> pnpm add @laddtnov/cyberpunk-ui@0.6.2
 > ```
 
 ```css
