@@ -5,6 +5,25 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Support links.** `.github/FUNDING.yml` puts a Sponsor button on the
+  repository, a `funding` field in `package.json` gives npm a Funding link and
+  makes the project visible to `npm fund`, and the README and demo each carry
+  one link. Four places, one URL, no CSS involved.
+
+### Changed
+- **The README leads with what the kit renders**, not with how to install it.
+  It opens on a complete copy-paste page — CDN link, fonts, glitching headline,
+  grid, scanlines, card, progress bar, buttons — which was tested by extracting
+  it verbatim and loading it against the live CDN. That test caught a missing
+  Rajdhani in the font link, which would have dropped body text to `system-ui`
+  for anyone who copied it.
+  - Fixes a filing error: `.cy-nav`, `.cy-breadcrumb`, `.cy-sidebar` and
+    `.cy-table` were documented under Feedback (`feedback.css`). They live in
+    `navigation.css` and `table.css`.
+  - Documents the theming trap: colours come in pairs, and overriding
+    `--cy-neon-cyan` without `--cy-cyan-rgb` leaves every glow on the old hue.
+
 ### Fixed
 - **The visual check compared the wrong thing.** Each region was captured until
   two attempts agreed, which proves the page is quiet rather than that it

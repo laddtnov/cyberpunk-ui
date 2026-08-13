@@ -5,6 +5,10 @@
   "license": "MIT",
   "author": "Vladyslav Novytskyi <novytskiyvladislav@gmail.com> (https://laddtnov.xyz)",
   "homepage": "https://github.com/laddtnov/cyberpunk-ui#readme",
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://buymeacoffee.com/laddtnov"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/laddtnov/cyberpunk-ui.git"
