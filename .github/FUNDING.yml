@@ -1,0 +1,3 @@
+# Puts a "Sponsor" button on the repository page. The username is the tail of
+# the profile URL, not the full link — GitHub builds the URL itself.
+buy_me_a_coffee: laddtnov
