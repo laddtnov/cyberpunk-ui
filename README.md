@@ -368,6 +368,16 @@ darkened until it clears WCAG AA against a pale background:
 already exists, the conventions an addition has to follow, how releases work,
 and the known debt. Read it before adding a component.
 
+## Support
+
+The kit is MIT and stays that way. If it saved you an afternoon of fighting
+`box-shadow`, there is a tip jar:
+
+[![Buy Me a Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-d4af37?style=flat-square&logo=buymeacoffee&logoColor=16161d)](https://buymeacoffee.com/laddtnov)
+
+Starring the repo or passing it to someone who builds dark interfaces helps
+just as much and costs nothing.
+
 ## License
 
 MIT © [Vladyslav Novytskyi](https://laddtnov.xyz)
