@@ -15,6 +15,11 @@
 
 Every component on one page — themes, forms, feedback, effects.
 
+<a href="https://buymeacoffee.com/laddtnov">
+  <img height="40" alt="Buy me a coffee"
+       src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png">
+</a>
+
 </div>
 
 ---
@@ -371,12 +376,9 @@ and the known debt. Read it before adding a component.
 ## Support
 
 The kit is MIT and stays that way. If it saved you an afternoon of fighting
-`box-shadow`, there is a tip jar:
-
-[![Buy Me a Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-d4af37?style=flat-square&logo=buymeacoffee&logoColor=16161d)](https://buymeacoffee.com/laddtnov)
-
-Starring the repo or passing it to someone who builds dark interfaces helps
-just as much and costs nothing.
+`box-shadow`, there is a [tip jar](https://buymeacoffee.com/laddtnov) — and
+starring the repo or passing it to someone who builds dark interfaces helps
+just as much for free.
 
 ## License
 
