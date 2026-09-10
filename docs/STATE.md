@@ -406,6 +406,24 @@ npm version patch   # or minor
 git push --follow-tags
 ```
 
+**Use `npm version`. Do not tag by hand.** Two release bugs came from ignoring
+that, and both were silent:
+
+- `npm version` runs the **`preversion`** hook, which is `npm run check &&
+  npm run check:visual`. A failing check aborts the bump — no commit, no tag.
+  v0.9.0 was tagged seconds after the visual check failed, because the tag push
+  had been chained onto a `grep` whose exit code said nothing about the check.
+  Running the checks by hand first is not a gate; this is.
+- `npm version` creates an **annotated** tag, which is what `git push
+  --follow-tags` pushes. A hand-made `git tag v0.7.0` is lightweight, and
+  `--follow-tags` skipped it while reporting "Everything up-to-date" — the tag
+  sat local until it was pushed by name.
+
+`CY_SKIP_VISUAL=1 npm version …` gets past the visual half, and prints that it
+skipped rather than passed. It is for a broken browser — ego-browser's capture
+pipeline once hung for an entire session, which would otherwise have blocked a
+docs-only release — never for a diff you do not want to look at.
+
 To confirm the release landed, ask npm — `npm view @laddtnov/cyberpunk-ui
 version`. A bare `pnpm add` or `yarn add` will report the *previous* version
 for the first 24 hours because of the release cooldown described above, which
