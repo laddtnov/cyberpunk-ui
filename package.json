@@ -31,9 +31,11 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "build:css": "node scripts/build-bundle.js",
     "check:contrast": "node scripts/check-contrast.js",
     "check:conventions": "node scripts/check-conventions.js",
-    "check": "npm run check:contrast && npm run check:conventions",
+    "check:bundle": "node scripts/build-bundle.js --check",
+    "check": "npm run check:bundle && npm run check:contrast && npm run check:conventions",
     "check:visual": "node scripts/check-visual.js"
   },
   "files": [

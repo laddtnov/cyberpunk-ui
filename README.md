@@ -124,6 +124,9 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > pnpm add @laddtnov/cyberpunk-ui@0.6.2
 > ```
 
+`cyberpunk-ui.css` is one concatenated stylesheet, so a `<link>` to it is a
+single request. Cherry-picking still works — each part ships as its own file:
+
 ```css
 /* everything */
 @import "@laddtnov/cyberpunk-ui";

@@ -20,13 +20,14 @@ Zero dependencies, zero JavaScript, no build step. 1610 lines of CSS.
 | `table.css` | 139 | data table, scroll container |
 | `forms.css` | 296 | field, label, input, select, textarea, checkbox, radio, hint, error |
 | `feedback.css` | 254 | alert, toast, badge, spinner, progress, sr-only |
-| `cyberpunk-ui.css` | 9 | `@import`s all of the above |
+| `cyberpunk-ui.css` | generated | all of the above concatenated, in that order |
 
 Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both validation paths, and it is the OG image
 source), `demo/playground.js` (the live token editor; demo-only, and never
 published — `files` ships `*.css`, `README.md` and `LICENSE` only),
-`scripts/check-contrast.js`, `scripts/check-conventions.js`,
+`scripts/build-bundle.js`, `scripts/check-contrast.js`,
+`scripts/check-conventions.js`,
 `scripts/check-visual.js` and its browser half `scripts/visual-agent.mjs`
 (dev-only, not published), `.github/workflows/`.
 
@@ -36,8 +37,15 @@ eleven and ended at version 0.2.0, so they had become a finished checklist
 rather than a record — and CHANGELOG.md already says what shipped. Recover
 them from git history if a decision ever needs re-reading.
 
+`cyberpunk-ui.css` is **generated and committed** — `npm run build:css` writes
+it, `npm run check:bundle` fails when a part was edited without a rebuild, and
+CI runs that check first. It was eight `@import` lines until 0.6.2: correct for
+a bundler, wrong for a browser, because a `<link>` fetched 276 bytes and only
+then discovered eight more files to fetch in series. One request now, 63.5 kB
+raw and 16 kB gzipped.
+
 **A new CSS file needs a matching entry in `package.json`'s `exports` map**
-and an `@import` in `cyberpunk-ui.css`. Current subpaths: `.`, `/tokens`,
+and an entry in `PARTS` in `scripts/build-bundle.js`. Current subpaths: `.`, `/tokens`,
 `/effects`, `/components`, `/containers`, `/navigation`, `/table`, `/forms`,
 `/feedback`, and `./package.json`.
 

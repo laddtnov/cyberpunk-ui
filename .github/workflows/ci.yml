@@ -21,6 +21,11 @@ jobs:
         with:
           node-version: 20
 
+      # cyberpunk-ui.css is generated and committed, so a part edited without a
+      # rebuild would ship a bundle missing the change. This is that guard.
+      - name: Bundle is up to date
+        run: npm run check:bundle
+
       - name: WCAG contrast check
         run: npm run check:contrast
 
