@@ -27,7 +27,7 @@
 .cy-btn:focus-visible {
   color: var(--cy-bg);
   background: var(--cy-neon-cyan);
-  box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px rgba(var(--cy-cyan-rgb), 0.5);
+  box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
   transform: translateY(-1px);
 }
 
@@ -44,25 +44,25 @@
 .cy-btn--pink:hover,
 .cy-btn--pink:focus-visible {
   background: var(--cy-neon-pink);
-  box-shadow: 0 0 14px var(--cy-neon-pink), 0 0 30px rgba(var(--cy-pink-rgb), 0.5);
+  box-shadow: 0 0 14px var(--cy-neon-pink), 0 0 30px color-mix(in srgb, var(--cy-neon-pink) 50%, transparent);
 }
 
 /* ── Holo card (glassmorphism + edge glow) ────────────────────── */
 .cy-card {
-  background: rgba(var(--cy-cyan-rgb), 0.03);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 3%, transparent);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
   border-radius: var(--cy-radius-lg);
   padding: var(--cy-space-xl);
   color: var(--cy-text);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 0 24px rgba(var(--cy-cyan-rgb), 0.12);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--cy-neon-cyan) 12%, transparent);
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
 }
 
 .cy-card:hover {
-  border-color: rgba(var(--cy-cyan-rgb), 0.6);
-  box-shadow: 0 0 32px rgba(var(--cy-cyan-rgb), 0.3);
+  border-color: color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--cy-neon-cyan) 30%, transparent);
   transform: translateY(-2px);
 }
 
@@ -100,7 +100,7 @@
   color: var(--cy-bg);
   background: var(--cy-danger);
   box-shadow: 0 0 14px var(--cy-danger),
-              0 0 30px rgba(var(--cy-danger-rgb), 0.5);
+              0 0 30px color-mix(in srgb, var(--cy-danger) 50%, transparent);
 }
 
 /* ── Button sizes ─────────────────────────────────────────────── */

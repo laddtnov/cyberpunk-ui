@@ -33,47 +33,18 @@ const strip = (css) =>
 const failures = [];
 const fail = (msg) => failures.push(msg);
 
-// ── 1. Every colour token needs its -rgb twin ─────────────────────
-// Every translucent glow is rgba(var(--cy-*-rgb), α); color-mix() is
-// deliberately unused, for reach. A colour token without its twin cannot be
-// faded, which means it cannot glow, which means half the kit cannot use it.
-function checkRgbTwins() {
-  const tokens = strip(read('tokens.css'));
-  const declared = new Set([...tokens.matchAll(/(--cy-[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
-
-  // Which -rgb twins are actually consumed anywhere in the kit?
-  const usedTwins = new Set();
+// ── 1. Every glow mixes from a real colour token ──────────────────
+// Glows were rgba(var(--cy-*-rgb), α) until 0.8.0, which meant every colour
+// token needed a hand-maintained -rgb twin and a check that the two agreed.
+// color-mix() reads the colour token directly, so the twins are gone and so is
+// that check. What is still worth catching is a glow mixing from a property
+// that was never declared — a typo produces a transparent glow rather than an
+// error.
+function checkGlowSources() {
+  const declared = new Set([...strip(read('tokens.css')).matchAll(/(--cy-[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
   for (const f of sources) {
-    for (const m of strip(read(f)).matchAll(/var\((--cy-[a-z0-9-]+-rgb)\)/g)) usedTwins.add(m[1]);
-  }
-  for (const twin of usedTwins) {
-    if (!declared.has(twin)) fail(`${twin} is used but never declared in tokens.css`);
-  }
-
-  // A twin needs a light-theme value only when its base colour has one. Where
-  // the base is deliberately not themed — --cy-neon-purple is glow-only and
-  // identical in both themes — a twin without one is correct, not missing.
-  // What must never happen is the pair disagreeing: a hue that shifts on
-  // toggle while its glow stays behind, or the reverse.
-  // Located by prefix, not by the full selector: strip() blanks quoted
-  // strings, so `[data-theme="light"]` has become `[data-theme=""]` by the
-  // time this runs. Matching the literal selector silently returned -1, and
-  // slice(-1) left `light` as one character — which made every check below it
-  // pass unconditionally. A dead check is worse than no check, since it
-  // reports success.
-  const lightAt = tokens.indexOf(':root[data-theme=');
-  if (lightAt === -1) fail('tokens.css has no [data-theme] block — the light theme checks cannot run');
-  const light = lightAt === -1 ? '' : tokens.slice(lightAt);
-  const hasLight = (token) => new RegExp(`\\${token}\\s*:`).test(light);
-  for (const twin of usedTwins) {
-    const base = twin.replace(/-rgb$/, '');
-    const candidates = [base, base.replace('--cy-', '--cy-neon-')];
-    const themedBase = candidates.find((c) => declared.has(c) && hasLight(c));
-    if (themedBase && !hasLight(twin)) {
-      fail(`${themedBase} has a light-theme value but ${twin} does not — the glow will keep the dark hue`);
-    }
-    if (!themedBase && hasLight(twin)) {
-      fail(`${twin} has a light-theme value but its base colour does not — they will disagree`);
+    for (const m of strip(read(f)).matchAll(/color-mix\([^)]*var\((--cy-[a-z0-9-]+)\)/g)) {
+      if (!declared.has(m[1])) fail(`${f}: color-mix() reads ${m[1]}, which tokens.css never declares`);
     }
   }
 }
@@ -305,7 +276,7 @@ function checkReadmeImports() {
 }
 
 function main() {
-  checkRgbTwins();
+  checkGlowSources();
   checkLightThemeParity();
   checkClassNames();
   checkNoBareElements();

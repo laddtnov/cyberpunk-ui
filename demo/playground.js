@@ -23,16 +23,9 @@ const outCss = document.getElementById('pg-out-css');
 // deltas rather than a dump of every token at its default.
 const overrides = new Map();
 
-// Both shorthand expansions use replace rather than spreading the string into
-// an array to map over it — same result, one fewer allocation, and it is the
-// pattern the scanner flags.
+// replace rather than spreading the string into an array to map over it —
+// same result, one fewer allocation, and it is the pattern the scanner flags.
 const expandShorthand = (digits) => digits.replace(/./g, (c) => c + c);
-
-const hexToRgb = (hex) => {
-  const h = hex.replace('#', '');
-  const full = h.length === 3 ? expandShorthand(h) : h;
-  return [0, 2, 4].map((i) => Number.parseInt(full.slice(i, i + 2), 16)).join(', ');
-};
 
 // getComputedStyle returns whatever the cascade resolved, which is what the
 // colour input needs — but it can come back as `rgb(0, 242, 255)` rather than
@@ -67,16 +60,13 @@ const say = (msg) => {
 };
 
 // ── Colours ───────────────────────────────────────────────────────
-// A colour token and its -rgb twin are written together, always. Every
-// translucent glow in the kit is rgba(var(--cy-*-rgb), α), so setting the hue
-// alone recolours borders and text and leaves every glow on the old hue — the
-// single most visible way to get this wrong.
+// One custom property per colour. Glows read the same token through
+// color-mix(), so setting the hue carries every glow with it — this used to
+// write an -rgb twin alongside, and forgetting it was the single most visible
+// way to get a theme wrong.
 for (const input of colours) {
   input.addEventListener('input', () => {
-    const token = input.dataset.var;
-    const twin = input.dataset.rgb;
-    setToken(token, input.value);
-    if (twin) setToken(twin, hexToRgb(input.value));
+    setToken(input.dataset.var, input.value);
   });
 }
 

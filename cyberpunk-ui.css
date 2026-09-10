@@ -30,14 +30,6 @@
   --cy-text:    #d1d1d1;
   --cy-heading: #ffffff;
 
-  /* ── Glow channels ────────────────────────────────────────────
-     Raw RGB triplets so glows can be built with rgba(var(--x), a)
-     and still track the active theme. */
-  --cy-cyan-rgb:   0, 242, 255;
-  --cy-pink-rgb:   255, 0, 255;
-  --cy-purple-rgb: 157, 0, 255;
-  --cy-gold-rgb:   212, 175, 55;
-
   /* ── Scrim ───────────────────────────────────────────────────
      The modal backdrop, and deliberately NOT derived from --cy-bg: a
      scrim's job is to push the page behind it away, so it stays dark in
@@ -102,10 +94,6 @@
   --cy-danger:  #ff4d4d;
   --cy-info:    var(--cy-neon-cyan);
 
-  --cy-success-rgb: 82, 255, 154;
-  --cy-warning-rgb: 255, 200, 87;
-  --cy-danger-rgb:  255, 77, 77;
-
   --cy-disabled-opacity: 0.45;
 }
 
@@ -128,18 +116,11 @@
   --cy-text:    #3a3a45;
   --cy-heading: #16161d;
 
-  --cy-cyan-rgb: 0, 112, 127;
-  --cy-pink-rgb: 179, 0, 158;
-  --cy-gold-rgb: 125, 88, 0;
-
   /* Neon status hues fail contrast on a light background. */
   --cy-success: #0a7d43;
   --cy-warning: #8a5a00;
   --cy-danger:  #c2110f;
 
-  --cy-success-rgb: 10, 125, 67;
-  --cy-warning-rgb: 138, 90, 0;
-  --cy-danger-rgb:  194, 17, 15;
 }
 
 /* ── Light theme, chosen by the operating system ──────────────────
@@ -179,18 +160,11 @@
     --cy-text:    #3a3a45;
     --cy-heading: #16161d;
 
-    --cy-cyan-rgb: 0, 112, 127;
-    --cy-pink-rgb: 179, 0, 158;
-    --cy-gold-rgb: 125, 88, 0;
-
     /* Neon status hues fail contrast on a light background. */
     --cy-success: #0a7d43;
     --cy-warning: #8a5a00;
     --cy-danger:  #c2110f;
 
-    --cy-success-rgb: 10, 125, 67;
-    --cy-warning-rgb: 138, 90, 0;
-    --cy-danger-rgb:  194, 17, 15;
   }
 }
 
@@ -235,33 +209,33 @@
 @layer cyberpunk-ui {
 
 /* ── 1. Box glow ──────────────────────────────────────────────── */
-.cy-glow         { box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb),   0.5), 0 0 30px rgba(var(--cy-cyan-rgb),   0.25); }
-.cy-glow--pink   { box-shadow: 0 0 12px rgba(var(--cy-pink-rgb),   0.5), 0 0 30px rgba(var(--cy-pink-rgb),   0.25); }
-.cy-glow--purple { box-shadow: 0 0 12px rgba(var(--cy-purple-rgb), 0.5), 0 0 30px rgba(var(--cy-purple-rgb), 0.25); }
-.cy-glow--gold   { box-shadow: 0 0 12px rgba(var(--cy-gold-rgb),   0.5), 0 0 30px rgba(var(--cy-gold-rgb),   0.25); }
+.cy-glow         { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent); }
+.cy-glow--pink   { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-pink) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-pink) 25%, transparent); }
+.cy-glow--purple { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-purple) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-purple) 25%, transparent); }
+.cy-glow--gold   { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-gold) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-gold) 25%, transparent); }
 
 /* ── 2. Text glow ─────────────────────────────────────────────── */
-.cy-text-glow       { text-shadow: 0 0 10px var(--cy-neon-cyan), 0 0 24px rgba(var(--cy-cyan-rgb), 0.5); }
-.cy-text-glow--pink { text-shadow: 0 0 10px var(--cy-neon-pink), 0 0 24px rgba(var(--cy-pink-rgb), 0.5); }
+.cy-text-glow       { text-shadow: 0 0 10px var(--cy-neon-cyan), 0 0 24px color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent); }
+.cy-text-glow--pink { text-shadow: 0 0 10px var(--cy-neon-pink), 0 0 24px color-mix(in srgb, var(--cy-neon-pink) 50%, transparent); }
 
 /* Gold reads differently from the neon pair and the numbers say why: it is a
    warm hue at a lower saturation, so the same 10px halo that makes cyan look
    lit makes gold look smeared. The near shadow is tightened and the far one
    dimmed — the effect is a machined edge catching light rather than a tube
    glowing, which is the register this colour belongs to. */
-.cy-text-glow--gold { text-shadow: 0 0 6px rgba(var(--cy-gold-rgb), 0.9), 0 0 18px rgba(var(--cy-gold-rgb), 0.35); }
+.cy-text-glow--gold { text-shadow: 0 0 6px color-mix(in srgb, var(--cy-neon-gold) 90%, transparent), 0 0 18px color-mix(in srgb, var(--cy-neon-gold) 35%, transparent); }
 
 /* ── 3. Glitch text (RGB split) ───────────────────────────────── */
 .cy-glitch {
   color: var(--cy-neon-cyan);
-  text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4);
+  text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent);
   animation: cy-glitch 2.5s infinite;
 }
 
 @keyframes cy-glitch {
-  0%, 90%, 100% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4); }
+  0%, 90%, 100% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent); }
   92% { text-shadow: -3px 0 var(--cy-neon-pink), 3px 0 var(--cy-neon-purple); }
-  94% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4); }
+  94% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent); }
   96% { text-shadow:  3px 0 var(--cy-neon-pink), -3px 0 var(--cy-neon-purple); }
 }
 
@@ -289,8 +263,8 @@
    without hijacking its transform. */
 .cy-grid-bg {
   background-image:
-    linear-gradient(rgba(var(--cy-cyan-rgb), 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--cy-cyan-rgb), 0.1) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: cy-grid-move 20s linear infinite;
 }
@@ -387,7 +361,7 @@
 .cy-btn:focus-visible {
   color: var(--cy-bg);
   background: var(--cy-neon-cyan);
-  box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px rgba(var(--cy-cyan-rgb), 0.5);
+  box-shadow: 0 0 14px var(--cy-neon-cyan), 0 0 30px color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
   transform: translateY(-1px);
 }
 
@@ -404,25 +378,25 @@
 .cy-btn--pink:hover,
 .cy-btn--pink:focus-visible {
   background: var(--cy-neon-pink);
-  box-shadow: 0 0 14px var(--cy-neon-pink), 0 0 30px rgba(var(--cy-pink-rgb), 0.5);
+  box-shadow: 0 0 14px var(--cy-neon-pink), 0 0 30px color-mix(in srgb, var(--cy-neon-pink) 50%, transparent);
 }
 
 /* ── Holo card (glassmorphism + edge glow) ────────────────────── */
 .cy-card {
-  background: rgba(var(--cy-cyan-rgb), 0.03);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 3%, transparent);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
   border-radius: var(--cy-radius-lg);
   padding: var(--cy-space-xl);
   color: var(--cy-text);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 0 24px rgba(var(--cy-cyan-rgb), 0.12);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--cy-neon-cyan) 12%, transparent);
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
 }
 
 .cy-card:hover {
-  border-color: rgba(var(--cy-cyan-rgb), 0.6);
-  box-shadow: 0 0 32px rgba(var(--cy-cyan-rgb), 0.3);
+  border-color: color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--cy-neon-cyan) 30%, transparent);
   transform: translateY(-2px);
 }
 
@@ -460,7 +434,7 @@
   color: var(--cy-bg);
   background: var(--cy-danger);
   box-shadow: 0 0 14px var(--cy-danger),
-              0 0 30px rgba(var(--cy-danger-rgb), 0.5);
+              0 0 30px color-mix(in srgb, var(--cy-danger) 50%, transparent);
 }
 
 /* ── Button sizes ─────────────────────────────────────────────── */
@@ -557,7 +531,7 @@
    that is not the summary" that stays readable. */
 .cy-accordion {
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
   border-radius: var(--cy-radius);
   margin-bottom: var(--cy-space-sm);
   overflow: hidden;
@@ -585,7 +559,7 @@
 .cy-accordion > summary::-webkit-details-marker { display: none; }
 
 .cy-accordion > summary:hover {
-  background: rgba(var(--cy-cyan-rgb), 0.06);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 6%, transparent);
 }
 
 /* The ring is not negotiable — a disclosure is keyboard-operated by
@@ -613,7 +587,7 @@
 .cy-accordion[open] > summary::after { rotate: 225deg; }
 
 .cy-accordion[open] > summary {
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.2);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 20%, transparent);
 }
 
 .cy-accordion__body {
@@ -633,9 +607,9 @@
   max-width: min(90vw, 32rem);
   background: var(--cy-surface);
   color: var(--cy-text);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.5);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
   border-radius: var(--cy-radius-lg);
-  box-shadow: 0 0 30px rgba(var(--cy-cyan-rgb), 0.25);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
 }
 
 /* The fallback is not belt-and-braces: ::backdrop has historically not
@@ -659,9 +633,9 @@
    CRT treatment — they are kept separate so the frame can be used plain. */
 .cy-terminal {
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
   border-radius: var(--cy-radius);
-  box-shadow: 0 0 18px rgba(var(--cy-cyan-rgb), 0.12);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--cy-neon-cyan) 12%, transparent);
   overflow: hidden;
 }
 
@@ -670,8 +644,8 @@
   align-items: center;
   gap: var(--cy-space-sm);
   padding: var(--cy-space-xs) var(--cy-space-md);
-  background: rgba(var(--cy-cyan-rgb), 0.08);
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 8%, transparent);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
   font-family: var(--cy-font-terminal);
   font-size: 0.7rem;
   letter-spacing: 0.14em;
@@ -771,7 +745,7 @@
   gap: var(--cy-space-sm) var(--cy-space-lg);
   padding: var(--cy-space-sm) var(--cy-space-lg);
   background: var(--cy-surface);
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.3);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 30%, transparent);
   font-family: var(--cy-font-mono);
 }
 
@@ -787,7 +761,7 @@
 
 .cy-nav a:hover {
   color: var(--cy-neon-cyan);
-  border-bottom-color: rgba(var(--cy-cyan-rgb), 0.5);
+  border-bottom-color: color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
 }
 
 .cy-nav a:focus-visible {
@@ -913,7 +887,7 @@
   gap: var(--cy-space-sm);
   padding: var(--cy-space-lg);
   background: var(--cy-surface);
-  border-inline-start: 2px solid rgba(var(--cy-cyan-rgb), 0.3);
+  border-inline-start: 2px solid color-mix(in srgb, var(--cy-neon-cyan) 30%, transparent);
   font-family: var(--cy-font-mono);
 }
 
@@ -950,8 +924,8 @@
 
 .cy-sidebar a:hover {
   color: var(--cy-neon-cyan);
-  border-inline-start-color: rgba(var(--cy-cyan-rgb), 0.5);
-  background: rgba(var(--cy-cyan-rgb), 0.06);
+  border-inline-start-color: color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 6%, transparent);
 }
 
 .cy-sidebar a:focus-visible {
@@ -966,7 +940,7 @@
 .cy-sidebar a[aria-current] {
   color: var(--cy-neon-cyan);
   border-inline-start-color: var(--cy-neon-cyan);
-  background: rgba(var(--cy-cyan-rgb), 0.1);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent);
 }
 
 /* ── Reduced motion ───────────────────────────────────────────── */
@@ -1052,7 +1026,7 @@
 .cy-table td {
   padding: var(--cy-space-sm) var(--cy-space-md);
   text-align: start;
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.15);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 15%, transparent);
 }
 
 .cy-table thead th {
@@ -1060,7 +1034,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border-bottom-color: rgba(var(--cy-cyan-rgb), 0.4);
+  border-bottom-color: color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent);
 }
 
 /* A row header — <th scope="row"> — is the label for its row, so it reads as
@@ -1075,7 +1049,7 @@
 }
 
 .cy-table tbody tr:hover {
-  background: rgba(var(--cy-cyan-rgb), 0.06);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 6%, transparent);
 }
 
 /* ── Variants ─────────────────────────────────────────────────── */
@@ -1083,7 +1057,7 @@
 /* Zebra striping is decoration, not information: it helps the eye track a row
    across a wide table and means nothing on its own. */
 .cy-table--striped tbody tr:nth-child(even) {
-  background: rgba(var(--cy-cyan-rgb), 0.03);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 3%, transparent);
 }
 
 .cy-table--compact th,
@@ -1136,9 +1110,9 @@
 /* ── Increased contrast ───────────────────────────────────────── */
 @media (prefers-contrast: more) {
   .cy-table th,
-  .cy-table td { border-bottom-color: rgba(var(--cy-cyan-rgb), 0.5); }
+  .cy-table td { border-bottom-color: color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent); }
   .cy-table thead th { border-bottom-color: var(--cy-neon-cyan); }
-  .cy-table--striped tbody tr:nth-child(even) { background: rgba(var(--cy-cyan-rgb), 0.1); }
+  .cy-table--striped tbody tr:nth-child(even) { background: color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent); }
 }
 
 /* ── Forced colours ───────────────────────────────────────────────
@@ -1192,7 +1166,7 @@
   font-size: 0.95rem;
   color: var(--cy-text);
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
   border-radius: var(--cy-radius);
   padding: var(--cy-space-sm) var(--cy-space-md);
   width: 100%;
@@ -1207,14 +1181,14 @@
 }
 
 .cy-input:hover {
-  border-color: rgba(var(--cy-cyan-rgb), 0.6);
+  border-color: color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent);
 }
 
 .cy-input:focus-visible {
   outline: var(--cy-focus-width) solid var(--cy-focus-color);
   outline-offset: var(--cy-focus-offset);
   border-color: var(--cy-neon-cyan);
-  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.3);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-cyan) 30%, transparent);
 }
 
 /* Native dropdown arrows cannot be styled consistently, so draw our own.
@@ -1275,7 +1249,7 @@ textarea.cy-input {
 .cy-input:user-invalid,
 .cy-input[aria-invalid="true"] {
   border-color: var(--cy-danger);
-  box-shadow: 0 0 10px rgba(var(--cy-danger-rgb), 0.25);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cy-danger) 25%, transparent);
 }
 
 .cy-error {
@@ -1317,7 +1291,7 @@ textarea.cy-input {
      not remove this as redundant. */
   vertical-align: middle;
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.5);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -1374,7 +1348,7 @@ textarea.cy-input {
 .cy-checkbox:checked,
 .cy-radio:checked {
   border-color: var(--cy-neon-cyan);
-  box-shadow: 0 0 10px rgba(var(--cy-cyan-rgb), 0.45);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cy-neon-cyan) 45%, transparent);
 }
 
 /* A checked checkbox fills solid, matching how a checked radio fills with a
@@ -1500,8 +1474,8 @@ textarea.cy-input {
 }
 
 /* ── Alerts ───────────────────────────────────────────────────────
-   Status colour on a 3px left border plus a faint tint of the same
-   hue — which is why the substrate publishes -rgb channels. */
+   Status colour on a 3px inline-start border plus a faint tint of the
+   same hue, mixed from the status token itself. */
 .cy-alert {
   display: block;
   font-family: var(--cy-font-mono);
@@ -1511,13 +1485,13 @@ textarea.cy-input {
   padding: var(--cy-space-md) var(--cy-space-lg);
   border-radius: var(--cy-radius);
   border-inline-start: 3px solid var(--cy-info);
-  background: rgba(var(--cy-cyan-rgb), 0.08);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 8%, transparent);
 }
 
-.cy-alert--info    { border-inline-start-color: var(--cy-info);    background: rgba(var(--cy-cyan-rgb),    0.08); }
-.cy-alert--success { border-inline-start-color: var(--cy-success); background: rgba(var(--cy-success-rgb), 0.08); }
-.cy-alert--warning { border-inline-start-color: var(--cy-warning); background: rgba(var(--cy-warning-rgb), 0.08); }
-.cy-alert--danger  { border-inline-start-color: var(--cy-danger);  background: rgba(var(--cy-danger-rgb),  0.08); }
+.cy-alert--info    { border-inline-start-color: var(--cy-info);    background: color-mix(in srgb, var(--cy-neon-cyan) 8%, transparent); }
+.cy-alert--success { border-inline-start-color: var(--cy-success); background: color-mix(in srgb, var(--cy-success) 8%, transparent); }
+.cy-alert--warning { border-inline-start-color: var(--cy-warning); background: color-mix(in srgb, var(--cy-warning) 8%, transparent); }
+.cy-alert--danger  { border-inline-start-color: var(--cy-danger);  background: color-mix(in srgb, var(--cy-danger) 8%, transparent); }
 
 /* ── Toasts ───────────────────────────────────────────────────────
    Styling only — no JavaScript ships. Consumers append and remove
@@ -1548,11 +1522,11 @@ textarea.cy-input {
   font-size: 0.85rem;
   color: var(--cy-text);
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.4);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent);
   border-inline-start: 3px solid var(--cy-info);
   border-radius: var(--cy-radius);
   padding: var(--cy-space-md) var(--cy-space-lg);
-  box-shadow: 0 0 24px rgba(var(--cy-cyan-rgb), 0.18);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--cy-neon-cyan) 18%, transparent);
   animation: cy-toast-in 0.25s var(--cy-ease);
 }
 
@@ -1597,7 +1571,7 @@ textarea.cy-input {
   display: inline-block;
   width: 1.5rem;
   height: 1.5rem;
-  border: 2px solid rgba(var(--cy-cyan-rgb), 0.25);
+  border: 2px solid color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
   border-top-color: var(--cy-neon-cyan);
   border-radius: 50%;
   animation: cy-spin 0.8s linear infinite,
@@ -1609,15 +1583,15 @@ textarea.cy-input {
 }
 
 @keyframes cy-spin-glow {
-  0%, 100% { box-shadow: 0 0 6px rgba(var(--cy-cyan-rgb), 0.4); }
-  50%      { box-shadow: 0 0 16px rgba(var(--cy-cyan-rgb), 0.8); }
+  0%, 100% { box-shadow: 0 0 6px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent); }
+  50%      { box-shadow: 0 0 16px color-mix(in srgb, var(--cy-neon-cyan) 80%, transparent); }
 }
 
 /* ── Progress ─────────────────────────────────────────────────── */
 .cy-progress {
   width: 100%;
   height: 6px;
-  background: rgba(var(--cy-cyan-rgb), 0.15);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 15%, transparent);
   border-radius: var(--cy-radius-lg);
   overflow: hidden;
 }
@@ -1644,7 +1618,7 @@ progress.cy-progress {
 }
 
 progress.cy-progress::-webkit-progress-bar {
-  background: rgba(var(--cy-cyan-rgb), 0.15);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 15%, transparent);
   border-radius: var(--cy-radius-lg);
 }
 
@@ -1654,13 +1628,13 @@ progress.cy-progress::-webkit-progress-bar {
    nothing except suggest it works. */
 progress.cy-progress::-webkit-progress-value {
   background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
-  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent);
   border-radius: var(--cy-radius-lg);
 }
 
 progress.cy-progress::-moz-progress-bar {
   background: linear-gradient(90deg, var(--cy-neon-cyan), var(--cy-neon-pink));
-  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.6);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent);
   border-radius: var(--cy-radius-lg);
 }
 
@@ -1683,16 +1657,16 @@ progress.cy-progress::-moz-progress-bar {
   .cy-toast,
   .cy-badge { border-color: var(--cy-neon-cyan); }
 
-  .cy-spinner { border-color: rgba(var(--cy-cyan-rgb), 0.6); border-top-color: var(--cy-neon-cyan); }
+  .cy-spinner { border-color: color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent); border-top-color: var(--cy-neon-cyan); }
 
   /* The alert tints sit at 0.08 so the hue reads without competing with the
      text on top. Doubling that keeps the variants distinguishable from each
      other, which is the only job the fill has. */
-  .cy-alert            { background: rgba(var(--cy-cyan-rgb),    0.16); }
-  .cy-alert--info      { background: rgba(var(--cy-cyan-rgb),    0.16); }
-  .cy-alert--success   { background: rgba(var(--cy-success-rgb), 0.16); }
-  .cy-alert--warning   { background: rgba(var(--cy-warning-rgb), 0.16); }
-  .cy-alert--danger    { background: rgba(var(--cy-danger-rgb),  0.16); }
+  .cy-alert            { background: color-mix(in srgb, var(--cy-neon-cyan) 16%, transparent); }
+  .cy-alert--info      { background: color-mix(in srgb, var(--cy-neon-cyan) 16%, transparent); }
+  .cy-alert--success   { background: color-mix(in srgb, var(--cy-success) 16%, transparent); }
+  .cy-alert--warning   { background: color-mix(in srgb, var(--cy-warning) 16%, transparent); }
+  .cy-alert--danger    { background: color-mix(in srgb, var(--cy-danger) 16%, transparent); }
 }
 
 /* ── Forced colours ───────────────────────────────────────────────

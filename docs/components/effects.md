@@ -30,11 +30,12 @@ A neon halo, as a `box-shadow`.
 | `.cy-glow--purple` | purple |
 | `.cy-glow--gold` | brass gold |
 
-**Tokens** — `--cy-cyan-rgb` `--cy-pink-rgb` `--cy-purple-rgb` `--cy-gold-rgb`
+**Tokens** —
 
-These are the `-rgb` twins, not the colour tokens: a glow is
-`rgba(var(--cy-*-rgb), α)` because it needs to fade. Override the twin and the
-glow follows; override only `--cy-neon-cyan` and it will not.
+A glow is `color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent)` — mixed
+from the colour token itself, so overriding the hue moves the glow with it.
+Before 0.8.0 this needed a separate `--cy-*-rgb` twin, and overriding the hue
+alone left the glow on the old colour.
 
 ---
 

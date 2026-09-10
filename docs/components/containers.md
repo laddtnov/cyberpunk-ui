@@ -39,7 +39,7 @@ there is no readable way to select "everything that is not the summary".
 | `<summary>` as first child | yes — it is the trigger |
 | `.cy-accordion__body` | for padding; the accordion works without it |
 
-**Tokens** — `--cy-surface` `--cy-neon-cyan` `--cy-cyan-rgb` `--cy-text`
+**Tokens** — `--cy-surface` `--cy-neon-cyan` `--cy-text`
 `--cy-font-mono` `--cy-radius` `--cy-border-width` `--cy-space-*` `--cy-ease`
 
 **Accessibility**
@@ -85,10 +85,9 @@ document.getElementById('confirm').showModal();
 to style — so the kit's scrim silently does not appear, and the page behind
 stays fully interactive. Everything this component paints assumes `showModal()`.
 
-**Tokens** — `--cy-surface` `--cy-text` `--cy-backdrop` `--cy-neon-cyan`
-`--cy-cyan-rgb` `--cy-radius-lg` `--cy-border-width` `--cy-space-lg`
+**Tokens** — `--cy-surface` `--cy-text` `--cy-backdrop` `--cy-neon-cyan` `--cy-radius-lg` `--cy-border-width` `--cy-space-lg`
 
-`--cy-backdrop` is a finished `rgba()` rather than a hue plus an `-rgb` twin,
+`--cy-backdrop` is a finished `rgba()` rather than a hue mixed at some alpha,
 because the alpha *is* the value. It deliberately does not follow the theme: a
 scrim derived from `--cy-bg` washed near-white over near-white in the light
 theme and separated nothing.
@@ -128,7 +127,7 @@ are separate classes so the frame can also be used plain:
 </div>
 ```
 
-**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan` `--cy-cyan-rgb`
+**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan`
 `--cy-font-terminal` `--cy-radius` `--cy-border-width` `--cy-space-*`
 
 ### Nerd Font glyphs

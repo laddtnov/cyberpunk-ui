@@ -29,7 +29,7 @@
    that is not the summary" that stays readable. */
 .cy-accordion {
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
   border-radius: var(--cy-radius);
   margin-bottom: var(--cy-space-sm);
   overflow: hidden;
@@ -57,7 +57,7 @@
 .cy-accordion > summary::-webkit-details-marker { display: none; }
 
 .cy-accordion > summary:hover {
-  background: rgba(var(--cy-cyan-rgb), 0.06);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 6%, transparent);
 }
 
 /* The ring is not negotiable — a disclosure is keyboard-operated by
@@ -85,7 +85,7 @@
 .cy-accordion[open] > summary::after { rotate: 225deg; }
 
 .cy-accordion[open] > summary {
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.2);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 20%, transparent);
 }
 
 .cy-accordion__body {
@@ -105,9 +105,9 @@
   max-width: min(90vw, 32rem);
   background: var(--cy-surface);
   color: var(--cy-text);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.5);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
   border-radius: var(--cy-radius-lg);
-  box-shadow: 0 0 30px rgba(var(--cy-cyan-rgb), 0.25);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
 }
 
 /* The fallback is not belt-and-braces: ::backdrop has historically not
@@ -131,9 +131,9 @@
    CRT treatment — they are kept separate so the frame can be used plain. */
 .cy-terminal {
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
   border-radius: var(--cy-radius);
-  box-shadow: 0 0 18px rgba(var(--cy-cyan-rgb), 0.12);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--cy-neon-cyan) 12%, transparent);
   overflow: hidden;
 }
 
@@ -142,8 +142,8 @@
   align-items: center;
   gap: var(--cy-space-sm);
   padding: var(--cy-space-xs) var(--cy-space-md);
-  background: rgba(var(--cy-cyan-rgb), 0.08);
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.25);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 8%, transparent);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
   font-family: var(--cy-font-terminal);
   font-size: 0.7rem;
   letter-spacing: 0.14em;

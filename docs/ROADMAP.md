@@ -39,10 +39,14 @@ Two notes on that table, because both get proposed again:
 change for every consumer, and the author's own portfolio pins an exact version
 over CDN. The cost is a coordinated update for a cosmetic gain.
 
-**A new colour token needs its `-rgb` twin.** Every translucent glow in the kit
-is `rgba(var(--cy-*-rgb), α)`; `color-mix()` is deliberately unused, for reach.
-A colour token without its twin cannot be faded, which means it cannot glow,
-which means it is not usable by half the kit.
+**A new colour token needs nothing but itself.** Every translucent glow is
+`color-mix(in srgb, var(--cy-token) α%, transparent)`, mixed from the colour
+token directly.
+
+This constraint used to read the other way: glows were
+`rgba(var(--cy-*-rgb), α)`, so every colour needed a hand-maintained `-rgb`
+twin, and `color-mix()` was ruled out for reach. It became Baseline in 2023 and
+the twins were retired in 0.8.0.
 
 ## Next
 
@@ -237,6 +241,10 @@ makes but could not previously *show*:
 on every change. Writing only the hue recolours borders and text and leaves
 every glow on the old colour — the rule is documented, and this is the first
 place it is demonstrable in one drag.
+
+*(Superseded in 0.8.0: `color-mix()` reads the colour token directly, the twins
+are gone, and the editor writes one property per colour. The demonstration
+outlived the problem it demonstrated.)*
 
 **Inline styles on `:root` outrank the theme.** An override set in dark mode
 survives into `:root[data-theme="light"]` and pins, say, a near-black

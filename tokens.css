@@ -28,14 +28,6 @@
   --cy-text:    #d1d1d1;
   --cy-heading: #ffffff;
 
-  /* ── Glow channels ────────────────────────────────────────────
-     Raw RGB triplets so glows can be built with rgba(var(--x), a)
-     and still track the active theme. */
-  --cy-cyan-rgb:   0, 242, 255;
-  --cy-pink-rgb:   255, 0, 255;
-  --cy-purple-rgb: 157, 0, 255;
-  --cy-gold-rgb:   212, 175, 55;
-
   /* ── Scrim ───────────────────────────────────────────────────
      The modal backdrop, and deliberately NOT derived from --cy-bg: a
      scrim's job is to push the page behind it away, so it stays dark in
@@ -100,10 +92,6 @@
   --cy-danger:  #ff4d4d;
   --cy-info:    var(--cy-neon-cyan);
 
-  --cy-success-rgb: 82, 255, 154;
-  --cy-warning-rgb: 255, 200, 87;
-  --cy-danger-rgb:  255, 77, 77;
-
   --cy-disabled-opacity: 0.45;
 }
 
@@ -126,18 +114,11 @@
   --cy-text:    #3a3a45;
   --cy-heading: #16161d;
 
-  --cy-cyan-rgb: 0, 112, 127;
-  --cy-pink-rgb: 179, 0, 158;
-  --cy-gold-rgb: 125, 88, 0;
-
   /* Neon status hues fail contrast on a light background. */
   --cy-success: #0a7d43;
   --cy-warning: #8a5a00;
   --cy-danger:  #c2110f;
 
-  --cy-success-rgb: 10, 125, 67;
-  --cy-warning-rgb: 138, 90, 0;
-  --cy-danger-rgb:  194, 17, 15;
 }
 
 /* ── Light theme, chosen by the operating system ──────────────────
@@ -177,18 +158,11 @@
     --cy-text:    #3a3a45;
     --cy-heading: #16161d;
 
-    --cy-cyan-rgb: 0, 112, 127;
-    --cy-pink-rgb: 179, 0, 158;
-    --cy-gold-rgb: 125, 88, 0;
-
     /* Neon status hues fail contrast on a light background. */
     --cy-success: #0a7d43;
     --cy-warning: #8a5a00;
     --cy-danger:  #c2110f;
 
-    --cy-success-rgb: 10, 125, 67;
-    --cy-warning-rgb: 138, 90, 0;
-    --cy-danger-rgb:  194, 17, 15;
   }
 }
 

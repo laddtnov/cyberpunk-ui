@@ -5,6 +5,51 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-09-10
+
+### Removed
+- **The seven `--cy-*-rgb` twin tokens.** `--cy-cyan-rgb`, `--cy-pink-rgb`,
+  `--cy-purple-rgb`, `--cy-gold-rgb`, `--cy-success-rgb`, `--cy-warning-rgb`
+  and `--cy-danger-rgb` are gone.
+
+  **Migration:** if you overrode a hue you had to override its twin as well, or
+  the glows kept the old colour. Now there is nothing to keep in sync — delete
+  the twin and keep the hue:
+
+  ```css
+  /* before */                        /* after */
+  :root {                             :root { --cy-neon-cyan: #39ff14; }
+    --cy-neon-cyan: #39ff14;
+    --cy-cyan-rgb: 57, 255, 20;
+  }
+  ```
+
+  If you overrode *only* twins and never the hues, those overrides now do
+  nothing and the kit will render its own colours.
+
+### Changed
+- **Glows are `color-mix()` instead of `rgba()` on a raw channel triplet.** All
+  72 call sites moved from `rgba(var(--cy-cyan-rgb), 0.5)` to
+  `color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent)`, which reads the
+  colour token directly.
+  - The twins existed because `color-mix()` was not safe to rely on. It reached
+    Baseline in 2023, so the reason expired; **the floor is now Chrome 111,
+    Safari 16.2, Firefox 113.**
+  - Equivalence was measured, not assumed: `rgba(0, 242, 255, 0.25)` and
+    `color(srgb 0 0.94902 1 / 0.25)` are the same colour by two computed
+    representations (0.94902 × 255 = 242).
+  - This deletes more than it adds — the twin declarations, the checker rule
+    that policed them, the playground's `hexToRgb` helper and its twin-writing
+    branch, and the "colours come in pairs" warning from four documents.
+    84 lines out, 19 in.
+
+### Fixed
+- **The visual check retries six times instead of three.** Moving to
+  `color-mix()` gave the page a second stable rasterisation — both states
+  repeat exactly, so matching a baseline became a question of how many tries it
+  takes to see the right one rather than of loosening what counts as a match.
+  Three consecutive clean runs after the change.
+
 ### Fixed
 - **The contrast check only tested the easier background.** Every text token was
   measured against `--cy-bg` and nothing was measured against `--cy-surface` —

@@ -109,7 +109,13 @@ async function capture(clip) {
 // regression changes the content, so it differs in both rasterisations and
 // cannot pass by luck — which is precisely what the tolerance-widening
 // alternative would have given up.
-const ATTEMPTS = 3
+// Raised from 3 to 6 in 0.8.0. Moving glows from rgba() to color-mix() changed
+// how the browser reports and composites them — computed values come back as
+// `color(srgb …)` rather than `rgba(…)`, the same colour by a different path —
+// and the page gained a second stable rasterisation. Both states repeat
+// exactly, so matching the baseline is a question of how many tries it takes to
+// see the right one, not of loosening what counts as a match.
+const ATTEMPTS = 6
 
 // The comparison happens in the page: two data URLs go in, a summary comes
 // back. A bounding box is included because "something changed" is a worse

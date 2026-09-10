@@ -8,33 +8,33 @@
 @layer cyberpunk-ui {
 
 /* ── 1. Box glow ──────────────────────────────────────────────── */
-.cy-glow         { box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb),   0.5), 0 0 30px rgba(var(--cy-cyan-rgb),   0.25); }
-.cy-glow--pink   { box-shadow: 0 0 12px rgba(var(--cy-pink-rgb),   0.5), 0 0 30px rgba(var(--cy-pink-rgb),   0.25); }
-.cy-glow--purple { box-shadow: 0 0 12px rgba(var(--cy-purple-rgb), 0.5), 0 0 30px rgba(var(--cy-purple-rgb), 0.25); }
-.cy-glow--gold   { box-shadow: 0 0 12px rgba(var(--cy-gold-rgb),   0.5), 0 0 30px rgba(var(--cy-gold-rgb),   0.25); }
+.cy-glow         { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent); }
+.cy-glow--pink   { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-pink) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-pink) 25%, transparent); }
+.cy-glow--purple { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-purple) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-purple) 25%, transparent); }
+.cy-glow--gold   { box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-gold) 50%, transparent), 0 0 30px color-mix(in srgb, var(--cy-neon-gold) 25%, transparent); }
 
 /* ── 2. Text glow ─────────────────────────────────────────────── */
-.cy-text-glow       { text-shadow: 0 0 10px var(--cy-neon-cyan), 0 0 24px rgba(var(--cy-cyan-rgb), 0.5); }
-.cy-text-glow--pink { text-shadow: 0 0 10px var(--cy-neon-pink), 0 0 24px rgba(var(--cy-pink-rgb), 0.5); }
+.cy-text-glow       { text-shadow: 0 0 10px var(--cy-neon-cyan), 0 0 24px color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent); }
+.cy-text-glow--pink { text-shadow: 0 0 10px var(--cy-neon-pink), 0 0 24px color-mix(in srgb, var(--cy-neon-pink) 50%, transparent); }
 
 /* Gold reads differently from the neon pair and the numbers say why: it is a
    warm hue at a lower saturation, so the same 10px halo that makes cyan look
    lit makes gold look smeared. The near shadow is tightened and the far one
    dimmed — the effect is a machined edge catching light rather than a tube
    glowing, which is the register this colour belongs to. */
-.cy-text-glow--gold { text-shadow: 0 0 6px rgba(var(--cy-gold-rgb), 0.9), 0 0 18px rgba(var(--cy-gold-rgb), 0.35); }
+.cy-text-glow--gold { text-shadow: 0 0 6px color-mix(in srgb, var(--cy-neon-gold) 90%, transparent), 0 0 18px color-mix(in srgb, var(--cy-neon-gold) 35%, transparent); }
 
 /* ── 3. Glitch text (RGB split) ───────────────────────────────── */
 .cy-glitch {
   color: var(--cy-neon-cyan);
-  text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4);
+  text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent);
   animation: cy-glitch 2.5s infinite;
 }
 
 @keyframes cy-glitch {
-  0%, 90%, 100% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4); }
+  0%, 90%, 100% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent); }
   92% { text-shadow: -3px 0 var(--cy-neon-pink), 3px 0 var(--cy-neon-purple); }
-  94% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px rgba(var(--cy-cyan-rgb), 0.4); }
+  94% { text-shadow: 0 0 24px var(--cy-neon-cyan), 0 0 60px color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent); }
   96% { text-shadow:  3px 0 var(--cy-neon-pink), -3px 0 var(--cy-neon-purple); }
 }
 
@@ -62,8 +62,8 @@
    without hijacking its transform. */
 .cy-grid-bg {
   background-image:
-    linear-gradient(rgba(var(--cy-cyan-rgb), 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--cy-cyan-rgb), 0.1) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: cy-grid-move 20s linear infinite;
 }
