@@ -5,6 +5,28 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- **`cyberpunk-ui.css` is one concatenated stylesheet instead of eight
+  `@import` lines.** The barrel was the right shape for a bundler and the wrong
+  one for a browser: fetched over a CDN it was 276 bytes, and the eight imports
+  inside it could not be discovered until that response landed and parsed. One
+  `<link>` cost **nine serialised, render-blocking round trips** — on the
+  no-build-step path the README recommends, to the audience least able to work
+  around it. It is now a single request: 63.5 kB raw, 16 kB gzipped.
+  - Rendering is unchanged, and that is measured rather than assumed: the seven
+    visual-regression regions all match baselines recorded before the change.
+  - Bundler users are unaffected either way — webpack, Vite and friends inline
+    `@import` at build time. Cherry-picking is unaffected too; every part still
+    ships as its own file and its own `exports` subpath.
+  - No minifier and no dependency: concatenation is the whole build, and
+    jsDelivr already serves a clean-css copy at `/cyberpunk-ui.min.css`.
+- **The convention checker's wiring rule follows.** "Wired in" used to mean an
+  `@import` in the barrel; it now means membership of `PARTS` in
+  `scripts/build-bundle.js`, which `check-conventions.js` reads from that file
+  so the list has one home. Both halves were proven by mutation: an unlisted
+  stylesheet fails the check, and an edited part with a stale bundle fails
+  `check:bundle`.
+
 ### Removed
 - **`docs/superpowers/`** — the v0.2 implementation plan and design spec,
   1,505 lines between them, against 1,610 lines of shipped CSS. The plan was a
