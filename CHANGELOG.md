@@ -5,6 +5,26 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **The release checks are now a gate rather than a habit.** `npm version` runs
+  them through the `preversion` hook, so a failing check aborts the bump before
+  any commit or tag exists.
+  - This is a fix for a real miss: **v0.9.0 was tagged seconds after the visual
+    check failed**, because the tag push had been chained onto a `grep` whose
+    exit code said nothing about the check. The diff was the known flake and two
+    re-runs passed, so the release was correct — by luck, not by the check.
+  - Proven end to end rather than assumed. With a stale bundle committed,
+    `npm version patch` exits 1, the version stays put, and **no tag is
+    created** — which is precisely what did not happen at 0.9.0.
+  - `CY_SKIP_VISUAL=1` gets past the visual half and says loudly that it
+    skipped rather than passed. It exists because the browser is a dependency
+    that has broken before, not as a way around a diff.
+- **Documented why `git push --follow-tags` silently pushed nothing** at 0.7.0:
+  it only pushes annotated tags, and a hand-made `git tag` is lightweight.
+  `npm version` annotates — confirmed by `git for-each-ref`, which reports the
+  object type as `tag` rather than `commit`. The routine now says not to tag by
+  hand.
+
 ## [0.9.0] — 2026-09-10
 
 ### Added

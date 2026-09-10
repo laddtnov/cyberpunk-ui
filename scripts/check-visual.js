@@ -22,6 +22,24 @@ const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 
+// The one way past this check, and it is deliberately loud.
+//
+// `npm version` runs it through the preversion hook, so a failing visual check
+// blocks a release. That is the point: 0.9.0 was tagged seconds after this
+// check failed, because the tag push was chained onto a grep whose exit code
+// said nothing about the check. The flake was harmless and two re-runs passed,
+// but the gate had never actually held.
+//
+// It needs an escape because the browser itself is a dependency that has
+// broken before — ego-browser's capture pipeline hung for an entire working
+// session, which would have blocked a documentation-only release for a reason
+// that had nothing to do with the package.
+if (process.env.CY_SKIP_VISUAL === '1') {
+  console.warn('CY_SKIP_VISUAL=1 — visual regression SKIPPED, not passed.');
+  console.warn('Only legitimate when the browser is broken, never to get past a real diff.');
+  process.exit(0);
+}
+
 const ROOT = path.join(__dirname, '..');
 const AGENT = path.join(__dirname, 'visual-agent.mjs');
 const update = process.argv.slice(2).includes('--update');

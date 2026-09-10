@@ -36,7 +36,8 @@
     "check:conventions": "node scripts/check-conventions.js",
     "check:bundle": "node scripts/build-bundle.js --check",
     "check": "npm run check:bundle && npm run check:contrast && npm run check:conventions",
-    "check:visual": "node scripts/check-visual.js"
+    "check:visual": "node scripts/check-visual.js",
+    "preversion": "npm run check && npm run check:visual"
   },
   "files": [
     "*.css",
