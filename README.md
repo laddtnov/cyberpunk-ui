@@ -57,6 +57,13 @@ One `<link>`, no install, no build:
 That is the whole setup. The grid drifts, the headline splits its channels,
 the cursor blinks, the button lights up on hover.
 
+> That URL has no version in it, so it tracks whatever is newest — fine while
+> you are trying the kit, worth pinning once you ship. Add `@0.9.0` after the
+> package name to freeze it (and an `integrity` hash if you want the browser to
+> reject a tampered response). Unpinned means a breaking release reaches your
+> page the day it lands: 0.8.0 removed the `--cy-*-rgb` tokens, so a site that
+> had overridden only those quietly went back to the kit's own colours.
+
 Want a different world? Change one line:
 
 ```css
