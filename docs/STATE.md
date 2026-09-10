@@ -1,21 +1,21 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.8.0**.
+Current as of **0.9.0**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1712 lines of CSS across the parts.
+Zero dependencies, zero JavaScript, no build step. 1787 lines of CSS across the parts.
 
 | File | Lines | Contains |
 | --- | --- | --- |
 | `tokens.css` | 199 | every custom property, plus the `[data-theme="light"]` overrides |
 | `effects.css` | 133 | glow, glitch, scanlines, grid, cursor |
 | `components.css` | 168 | `.cy-btn`, `.cy-card` |
-| `containers.css` | 207 | accordion, modal, terminal — all on native elements |
+| `containers.css` | 282 | accordion, modal, terminal — all on native elements |
 | `navigation.css` | 277 | nav bar, breadcrumb, sidebar |
 | `table.css` | 148 | data table, scroll container |
 | `forms.css` | 317 | field, label, input, select, textarea, checkbox, radio, hint, error |
@@ -165,7 +165,8 @@ plus disabled styling
 
 **Containers** — `.cy-accordion` + `.cy-accordion__body` (on `<details>`;
 styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
-`::backdrop`), `.cy-terminal` + `.cy-terminal__bar` (styles a scoped `<pre>`)
+`::backdrop`), `.cy-terminal` + `.cy-terminal__bar` (styles a scoped `<pre>`),
+`.cy-popover` (on `[popover]`; a toggle-tip, never a hover tooltip)
 
 **Feedback** — `.cy-alert` (`--success` `--warning` `--danger` `--info`),
 `.cy-toast` (`--success` `--warning` `--danger`), `.cy-toast-container`
@@ -357,7 +358,25 @@ inset shadow.
 
 **Verification status, stated plainly:** `prefers-contrast` was verified by
 applying the same declarations unwrapped and measuring the computed result.
-`forced-colors` was **not** verified visually — it needs Windows High Contrast
+`forced-colors` has had an **emulated** pass and still has no real-hardware
+check. Under Chrome's `forced-colors: active` emulation every component
+resolves to system colours as intended: buttons and current-nav items take
+`LinkText`, text and borders `CanvasText`, the progress fill `Highlight`, and
+the spinner keeps two distinct border colours so its rotation stays visible.
+Glows, text-shadows and the scanline wash are all dropped.
+
+Two things that pass emulation are worth knowing anyway. Translucent tints
+survive as system colours at low alpha — a card's 3% wash becomes 3% of Canvas
+over Canvas, which is invisible rather than wrong. And the four alert variants
+become indistinguishable from one another, because forced colours collapses
+their accent borders to one value; that is inherent to the mode, and the reason
+the docs require `role="alert"` rather than leaving colour to carry the
+meaning.
+
+Emulation is not the hardware check. It approximates one theme, and real
+Windows High Contrast ships several, with Firefox and Edge mapping them
+differently. Verification on a real display remains open. The original note
+read: `forced-colors` was **not** verified visually — it needs Windows High Contrast
 Mode, which is not available here. What was confirmed is that both media
 blocks parse and are live in the CSSOM, that every selector in them matches a
 real element in the demo, and that every system colour keyword used is

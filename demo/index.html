@@ -383,6 +383,18 @@ $ _</pre>
 
       <div class="row" style="margin-top:1.5rem">
         <button class="cy-btn cy-glow" id="d-modal-open">OPEN MODAL</button>
+
+        <!-- A toggle-tip, not a tooltip: the trigger is a real button, so it
+             is reachable by keyboard, activatable by Enter and Space, and
+             announced with its expanded state. The browser handles Escape,
+             light-dismiss and the top layer; no script runs here. -->
+        <button class="cy-btn cy-btn--secondary" popovertarget="d-tip">
+          WHAT IS A DECK?
+        </button>
+        <div class="cy-popover" popover id="d-tip">
+          A cyberdeck is the rig you jack in with. Everything on this page is
+          styling only — this panel is a native popover.
+        </div>
       </div>
 
       <!-- Opened with showModal(), never show(): only showModal() traps

@@ -105,7 +105,71 @@ theme and separated nothing.
 
 ---
 
-## `.cy-terminal`
+## `.cy-popover` — toggle-tip
+
+```html
+<button class="cy-btn cy-btn--sm" popovertarget="tip">?</button>
+<div class="cy-popover" popover id="tip">
+  Visible to other operatives.
+</div>
+```
+
+**A toggle-tip, not a tooltip**, and that distinction is the whole point. A
+CSS-only tooltip fires on `:hover`, which means keyboard users never see it,
+touch users never see it, and a screen reader is never told it exists. The kit
+declined tooltips for four versions on exactly that basis.
+
+The Popover API makes the trigger a real button: focusable, activatable by
+Enter and Space, and announced with its state. Measured in the accessibility
+tree — the invoker reports `expanded=false` closed and `expanded=true` open,
+set by the browser, with no ARIA in your markup. The browser also handles
+Escape, light-dismiss and the top layer. No JavaScript ships.
+
+**Positioning.** The browser centres a popover in the viewport, which works
+everywhere and is a reasonable place for a short explanation. Where CSS anchor
+positioning exists, the kit pins it above the trigger instead — an enhancement
+behind `@supports`, because anchor positioning is Chrome-only today. Anchoring
+applies when the trigger carries `.cy-btn`.
+
+**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan` `--cy-font-mono`
+`--cy-radius` `--cy-border-width` `--cy-space-*`
+
+**Accessibility**
+
+- Requires `popover` support: Baseline since January 2025 (Chrome 116,
+  Firefox 125, Safari 17). Older browsers show the panel inline, unstyled and
+  always visible — degraded but not broken.
+- **Not a hover affordance, deliberately.** Hover-triggered popovers need
+  interest invokers, which are Chrome-only at the time of writing, and a
+  hover-only tooltip is the failure this component was built to avoid.
+- Give the trigger a real label. `?` alone reads as "question mark button".
+
+---
+
+## Tabs: use `<details name>`
+
+The kit ships no tab component, and this is the recommended substitute rather
+than a placeholder for one.
+
+```html
+<details class="cy-accordion" name="panels" open>
+  <summary>Overview</summary>
+  <div class="cy-accordion__body">…</div>
+</details>
+<details class="cy-accordion" name="panels">
+  <summary>Reactor</summary>
+  <div class="cy-accordion__body">…</div>
+</details>
+```
+
+A shared `name` makes the group exclusive: opening one closes the others, which
+is the behaviour people reach for tabs to get. Baseline since September 2024.
+
+Real tabs need `role="tablist"`, roving `tabindex`, and arrow-key navigation
+between tabs. None of that is expressible in CSS, and the CSS-only imitations —
+hidden radio inputs, `:target` — produce a control that announces itself as
+something it is not. That has not changed, and it is why the kit ships no tab
+component at all.
 
 A code or console window. The bar is optional.
 
