@@ -1,5 +1,12 @@
 /*! @laddtnov/cyberpunk-ui — effects.css | MIT */
 
+/* Everything below is in the `cyberpunk-ui` cascade layer. Any rule you write
+   outside a layer beats it regardless of specificity, so overriding the kit
+   never needs !important and never needs a longer selector than the one you
+   would write anyway. The body is not re-indented: a layer wrapper is not a
+   nesting level worth 1,600 lines of churn. */
+@layer cyberpunk-ui {
+
 /* ── 1. Box glow ──────────────────────────────────────────────── */
 .cy-glow         { box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb),   0.5), 0 0 30px rgba(var(--cy-cyan-rgb),   0.25); }
 .cy-glow--pink   { box-shadow: 0 0 12px rgba(var(--cy-pink-rgb),   0.5), 0 0 30px rgba(var(--cy-pink-rgb),   0.25); }
@@ -121,4 +128,6 @@
     background-image: none;
     animation: none;
   }
+}
+
 }

@@ -155,6 +155,61 @@ function checkNoBareElements() {
 // ── 4. A new stylesheet needs wiring in two places ────────────────
 // A file nobody imports is dead, and a file with no exports entry cannot be
 // reached by consumers who cherry-pick. Both are silent failures.
+// The light palette is declared twice: once for :root[data-theme="light"] and
+// once inside @media (prefers-color-scheme: light), because a media query
+// cannot join a selector list. Duplication invites drift, and drift here means
+// a colour that passes contrast when a user picks light and fails when their
+// OS does — the kind of bug nobody sees until a stranger reports it.
+//
+// check-contrast.js only parses the data-theme block, so this check is also
+// what makes checking one of the two sufficient.
+function checkLightThemeParity() {
+  const css = read('tokens.css');
+  const declarations = (block) => {
+    const map = new Map();
+    for (const line of block.split('\n')) {
+      const m = /(--cy-[a-z0-9-]+)\s*:([^;]+);/i.exec(line);
+      if (m) map.set(m[1], m[2].trim());
+    }
+    return map;
+  };
+
+  // Read to the matching brace rather than to a particular indentation. The
+  // first version of this looked for "\n  }", which found a closing brace
+  // belonging to a later block and swallowed the tokens in between — reporting
+  // three failures that were artefacts of the search, not drift in the CSS.
+  const blockAfter = (marker) => {
+    const at = css.indexOf(marker);
+    if (at === -1) return null;
+    let depth = 0;
+    for (let i = css.indexOf('{', at); i < css.length; i += 1) {
+      if (css[i] === '{') depth += 1;
+      else if (css[i] === '}' && (depth -= 1) === 0) return css.slice(at, i);
+    }
+    return null;
+  };
+
+  const explicitBlock = blockAfter(':root[data-theme="light"] {');
+  const autoBlock = blockAfter(':root[data-theme="auto"] {');
+  if (!explicitBlock || !autoBlock) {
+    fail('tokens.css is missing one of the two light-theme blocks');
+    return;
+  }
+
+  const explicit = declarations(explicitBlock);
+  const auto = declarations(autoBlock);
+
+  for (const [token, value] of explicit) {
+    if (!auto.has(token)) fail(`${token} is set for data-theme="light" but not for data-theme="auto"`);
+    else if (auto.get(token) !== value) {
+      fail(`${token} disagrees between the two light blocks: "${value}" vs "${auto.get(token)}"`);
+    }
+  }
+  for (const token of auto.keys()) {
+    if (!explicit.has(token)) fail(`${token} is set for data-theme="auto" but not for data-theme="light"`);
+  }
+}
+
 function checkWiring() {
   const barrel = read(BARREL);
   const pkg = JSON.parse(read('package.json'));
@@ -251,6 +306,7 @@ function checkReadmeImports() {
 
 function main() {
   checkRgbTwins();
+  checkLightThemeParity();
   checkClassNames();
   checkNoBareElements();
   checkWiring();

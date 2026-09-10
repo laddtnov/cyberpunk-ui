@@ -1,5 +1,12 @@
 /*! @laddtnov/cyberpunk-ui — tokens.css | MIT */
 
+/* Everything below is in the `cyberpunk-ui` cascade layer. Any rule you write
+   outside a layer beats it regardless of specificity, so overriding the kit
+   never needs !important and never needs a longer selector than the one you
+   would write anyway. The body is not re-indented: a layer wrapper is not a
+   nesting level worth 1,600 lines of churn. */
+@layer cyberpunk-ui {
+
 :root {
   /* ── Neon accents ─────────────────────────────────────────── */
   --cy-neon-cyan:   #00f2ff;
@@ -133,6 +140,58 @@
   --cy-danger-rgb:  194, 17, 15;
 }
 
+/* ── Light theme, chosen by the operating system ──────────────────
+   The block above only fires when something sets data-theme="light" — a
+   script, or server-rendered markup. That leaves a visitor whose OS is in
+   light mode looking at neon-on-black, which is the one audience the light
+   palette exists for.
+
+   Opt in with data-theme="auto" on <html>, which is static markup, not a
+   script — the thing this block exists to avoid needing.
+
+   It is opt-in rather than automatic on purpose. `prefers-color-scheme: light`
+   matches when a user has expressed no preference at all, not only when they
+   have chosen light, so keying this off the absence of data-theme would have
+   flipped the kit to light for most visitors and silently restyled every site
+   already using it. A neon kit defaults to neon; the light palette is there
+   for people who ask, by attribute or by operating system.
+
+   The values are duplicated rather than shared, because a media query cannot
+   join a selector list — there is no way to say "this block, and also under
+   that condition". check-conventions.js compares the two declaration by
+   declaration and fails when they drift, so the cost of duplicating is paid
+   once in a checker rather than every time someone edits a colour. */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="auto"] {
+
+    /* #008099 measured 4.07 against --cy-bg — below the 4.5 AA floor for
+       normal text. #00707f measures 5.10. */
+    --cy-neon-cyan: #00707f;
+    --cy-neon-pink: #b3009e;
+    /* #d4af37 measures 1.85 on the light background — invisible. This is the
+       same hue taken down until it clears the text floor: 5.66. */
+    --cy-neon-gold: #7d5800;
+
+    --cy-bg:      #f0f0f5;
+    --cy-surface: #ffffff;
+    --cy-text:    #3a3a45;
+    --cy-heading: #16161d;
+
+    --cy-cyan-rgb: 0, 112, 127;
+    --cy-pink-rgb: 179, 0, 158;
+    --cy-gold-rgb: 125, 88, 0;
+
+    /* Neon status hues fail contrast on a light background. */
+    --cy-success: #0a7d43;
+    --cy-warning: #8a5a00;
+    --cy-danger:  #c2110f;
+
+    --cy-success-rgb: 10, 125, 67;
+    --cy-warning-rgb: 138, 90, 0;
+    --cy-danger-rgb:  194, 17, 15;
+  }
+}
+
 /* ── Increased contrast ───────────────────────────────────────────
    `prefers-contrast: more` is a request to make everything easier to see,
    and most of the answer belongs here rather than in the components: raising
@@ -161,4 +220,6 @@
   :root[data-theme="light"] {
     --cy-text: #16161d;
   }
+}
+
 }

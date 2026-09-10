@@ -1,5 +1,12 @@
 /*! @laddtnov/cyberpunk-ui — feedback.css | MIT */
 
+/* Everything below is in the `cyberpunk-ui` cascade layer. Any rule you write
+   outside a layer beats it regardless of specificity, so overriding the kit
+   never needs !important and never needs a longer selector than the one you
+   would write anyway. The body is not re-indented: a layer wrapper is not a
+   nesting level worth 1,600 lines of churn. */
+@layer cyberpunk-ui {
+
 /* ── Visually-hidden utility ──────────────────────────────────────
    Lives here because .cy-spinner requires a text label to be
    accessible, and a spinner without one is the common mistake. */
@@ -26,14 +33,14 @@
   color: var(--cy-text);
   padding: var(--cy-space-md) var(--cy-space-lg);
   border-radius: var(--cy-radius);
-  border-left: 3px solid var(--cy-info);
+  border-inline-start: 3px solid var(--cy-info);
   background: rgba(var(--cy-cyan-rgb), 0.08);
 }
 
-.cy-alert--info    { border-left-color: var(--cy-info);    background: rgba(var(--cy-cyan-rgb),    0.08); }
-.cy-alert--success { border-left-color: var(--cy-success); background: rgba(var(--cy-success-rgb), 0.08); }
-.cy-alert--warning { border-left-color: var(--cy-warning); background: rgba(var(--cy-warning-rgb), 0.08); }
-.cy-alert--danger  { border-left-color: var(--cy-danger);  background: rgba(var(--cy-danger-rgb),  0.08); }
+.cy-alert--info    { border-inline-start-color: var(--cy-info);    background: rgba(var(--cy-cyan-rgb),    0.08); }
+.cy-alert--success { border-inline-start-color: var(--cy-success); background: rgba(var(--cy-success-rgb), 0.08); }
+.cy-alert--warning { border-inline-start-color: var(--cy-warning); background: rgba(var(--cy-warning-rgb), 0.08); }
+.cy-alert--danger  { border-inline-start-color: var(--cy-danger);  background: rgba(var(--cy-danger-rgb),  0.08); }
 
 /* ── Toasts ───────────────────────────────────────────────────────
    Styling only — no JavaScript ships. Consumers append and remove
@@ -42,7 +49,7 @@
 .cy-toast-container {
   position: fixed;
   top: var(--cy-space-lg);
-  right: var(--cy-space-lg);
+  inset-inline-end: var(--cy-space-lg);
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -65,16 +72,16 @@
   color: var(--cy-text);
   background: var(--cy-surface);
   border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.4);
-  border-left: 3px solid var(--cy-info);
+  border-inline-start: 3px solid var(--cy-info);
   border-radius: var(--cy-radius);
   padding: var(--cy-space-md) var(--cy-space-lg);
   box-shadow: 0 0 24px rgba(var(--cy-cyan-rgb), 0.18);
   animation: cy-toast-in 0.25s var(--cy-ease);
 }
 
-.cy-toast--success { border-left-color: var(--cy-success); }
-.cy-toast--warning { border-left-color: var(--cy-warning); }
-.cy-toast--danger  { border-left-color: var(--cy-danger); }
+.cy-toast--success { border-inline-start-color: var(--cy-success); }
+.cy-toast--warning { border-inline-start-color: var(--cy-warning); }
+.cy-toast--danger  { border-inline-start-color: var(--cy-danger); }
 
 @keyframes cy-toast-in {
   from { opacity: 0; transform: translateX(1rem); }
@@ -251,4 +258,6 @@ progress.cy-progress::-moz-progress-bar {
   }
 
   progress.cy-progress::-webkit-progress-bar { background: Canvas; }
+}
+
 }

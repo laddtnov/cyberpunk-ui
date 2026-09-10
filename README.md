@@ -66,7 +66,7 @@ Want a different world? Change one line:
 Or flip to the light theme, where the neon dims itself to keep text readable:
 
 ```html
-<html data-theme="light">
+<html data-theme="light">   <!-- or "auto" to follow the operating system -->
 ```
 
 Play with every token live in the
@@ -121,7 +121,7 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > exact version skips the gate, so use whichever one you are actually after:
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.6.2
+> pnpm add @laddtnov/cyberpunk-ui@0.7.0
 > ```
 
 `cyberpunk-ui.css` is one concatenated stylesheet, so a `<link>` to it is a
@@ -361,6 +361,39 @@ darkened until it clears WCAG AA against a pale background:
 ```html
 <html data-theme="light">
 ```
+
+| `data-theme` | Result |
+| --- | --- |
+| absent | dark, always — the kit's default look |
+| `"auto"` | follows `prefers-color-scheme` |
+| `"light"` / `"dark"` | that theme, whatever the OS says |
+
+Following the OS is opt-in rather than automatic, and that is deliberate:
+`prefers-color-scheme: light` matches when a visitor has expressed *no*
+preference, not only when they have chosen light. Keying off the absence of the
+attribute would flip a neon kit to light for most visitors and restyle every
+site already using it. `"auto"` is static markup, so it still costs no
+JavaScript.
+
+## Overriding the kit
+
+Every rule ships inside the `cyberpunk-ui` cascade layer, and anything you write
+outside a layer beats a layered rule regardless of specificity:
+
+```css
+.cy-btn { border-radius: 0; }   /* wins. No !important, no longer selector. */
+```
+
+That also means the kit loses to your framework's utilities by default, which is
+the behaviour you want when you are the one composing the page.
+
+## Right-to-left
+
+Accent bars, the sidebar marker, the chevron and the table alignment are all
+written with logical properties, so they mirror on their own under
+`dir="rtl"` — no separate stylesheet. The one exception is the `<select>`
+arrow: `background-position` has no inline-axis keyword, so the kit ships a
+`[dir="rtl"]` rule to move it.
 
 ## Accessibility
 

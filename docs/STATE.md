@@ -1,25 +1,25 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.6.2**.
+Current as of **0.7.0**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1610 lines of CSS.
+Zero dependencies, zero JavaScript, no build step. 1738 lines of CSS across the parts.
 
 | File | Lines | Contains |
 | --- | --- | --- |
-| `tokens.css` | 164 | every custom property, plus the `[data-theme="light"]` overrides |
-| `effects.css` | 124 | glow, glitch, scanlines, grid, cursor |
-| `components.css` | 159 | `.cy-btn`, `.cy-card` |
-| `containers.css` | 198 | accordion, modal, terminal — all on native elements |
-| `navigation.css` | 267 | nav bar, breadcrumb, sidebar |
-| `table.css` | 139 | data table, scroll container |
-| `forms.css` | 296 | field, label, input, select, textarea, checkbox, radio, hint, error |
-| `feedback.css` | 254 | alert, toast, badge, spinner, progress, sr-only |
+| `tokens.css` | 225 | every custom property, plus the `[data-theme="light"]` overrides |
+| `effects.css` | 133 | glow, glitch, scanlines, grid, cursor |
+| `components.css` | 168 | `.cy-btn`, `.cy-card` |
+| `containers.css` | 207 | accordion, modal, terminal — all on native elements |
+| `navigation.css` | 277 | nav bar, breadcrumb, sidebar |
+| `table.css` | 148 | data table, scroll container |
+| `forms.css` | 317 | field, label, input, select, textarea, checkbox, radio, hint, error |
+| `feedback.css` | 263 | alert, toast, badge, spinner, progress, sr-only |
 | `cyberpunk-ui.css` | generated | all of the above concatenated, in that order |
 
 Supporting files: `demo/index.html` (the live demo — every component is
@@ -191,7 +191,25 @@ styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
   screen-reader-announced element and we simply paint it. No JavaScript ships,
   ever — if a component needs behaviour, it is built on `<dialog>`,
   `<details>`, or an existing native element.
-- **Light theme** is `:root[data-theme="light"]`.
+- **Light theme** is `:root[data-theme="light"]`. `data-theme="auto"` follows
+  `prefers-color-scheme`, and the absence of the attribute is always dark.
+  Following the OS is opt-in because `prefers-color-scheme: light` also matches
+  visitors who have expressed no preference — keying off the attribute's
+  absence would have flipped the kit to light for most of them. The light
+  palette is therefore declared twice, and `check-conventions.js` compares the
+  two blocks declaration by declaration so they cannot drift.
+- **Every rule ships inside `@layer cyberpunk-ui`.** A consumer's unlayered
+  rule beats the kit at any specificity, so overriding never needs
+  `!important`. The wrapper is added per file rather than around the bundle, so
+  cherry-picked imports cascade the same way. File bodies are deliberately not
+  re-indented inside it.
+- **Directional properties are logical**, so the kit mirrors under `dir="rtl"`
+  without a second stylesheet: `border-inline-start`, `inset-inline-end`,
+  `margin-inline-*`, `text-align: start`. Two exceptions are intentional — the
+  `<select>` arrow, because `background-position` has no inline-axis keyword
+  (it gets a `[dir="rtl"]` rule), and the rotated-border glyphs for the
+  checkbox tick and accordion chevron, which are shapes rather than layout and
+  would be flipped by mirroring.
 - **`:user-invalid`, not `:invalid`** — `:invalid` matches empty required
   fields before the user types, so forms load pre-shouting in red.
   `[aria-invalid="true"]` is the hook for JS-driven validation.
