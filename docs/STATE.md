@@ -8,11 +8,11 @@ read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1592 lines of CSS.
+Zero dependencies, zero JavaScript, no build step. 1610 lines of CSS.
 
 | File | Lines | Contains |
 | --- | --- | --- |
-| `tokens.css` | 146 | every custom property, plus the `[data-theme="light"]` overrides |
+| `tokens.css` | 164 | every custom property, plus the `[data-theme="light"]` overrides |
 | `effects.css` | 124 | glow, glitch, scanlines, grid, cursor |
 | `components.css` | 159 | `.cy-btn`, `.cy-card` |
 | `containers.css` | 198 | accordion, modal, terminal — all on native elements |
@@ -26,9 +26,15 @@ Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both validation paths, and it is the OG image
 source), `demo/playground.js` (the live token editor; demo-only, and never
 published — `files` ships `*.css`, `README.md` and `LICENSE` only),
-`scripts/check-contrast.js` and `scripts/check-conventions.js`
-(dev-only, not published), `docs/superpowers/` (specs and plans),
-`.github/workflows/`.
+`scripts/check-contrast.js`, `scripts/check-conventions.js`,
+`scripts/check-visual.js` and its browser half `scripts/visual-agent.mjs`
+(dev-only, not published), `.github/workflows/`.
+
+The v0.2 plan and design spec that used to sit in `docs/superpowers/` were
+deleted after 0.6.2. They described growing the kit from two components to
+eleven and ended at version 0.2.0, so they had become a finished checklist
+rather than a record — and CHANGELOG.md already says what shipped. Recover
+them from git history if a decision ever needs re-reading.
 
 **A new CSS file needs a matching entry in `package.json`'s `exports` map**
 and an `@import` in `cyberpunk-ui.css`. Current subpaths: `.`, `/tokens`,

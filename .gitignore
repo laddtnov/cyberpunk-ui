@@ -7,3 +7,6 @@ npm-debug.log*
 # Written beside a baseline when a visual region differs, so the two can be
 # opened side by side. Diagnostic output, not a record.
 docs/baselines/*.actual.png
+
+# Local tooling scratch, not part of the package.
+.omc/

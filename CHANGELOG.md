@@ -5,6 +5,24 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Removed
+- **`docs/superpowers/`** — the v0.2 implementation plan and design spec,
+  1,505 lines between them, against 1,610 lines of shipped CSS. The plan was a
+  checkbox list ending at version 0.2.0 and describing growth "from 2
+  components to 11"; the kit is at 0.6.2 with 60 classes. A finished checklist
+  is not a record, and CHANGELOG.md already holds what shipped. Git history
+  holds the rest.
+- **`id="pg-note"`** in the demo playground, referenced by nothing — no CSS, no
+  script, no `aria-*`. The only dead attribute of the demo's 33 ids.
+
+### Fixed
+- **The STATE.md line-count table had drifted** where 0.6.0 added the gold
+  tokens and `--cy-font-terminal`: `tokens.css` read 146 against an actual 164,
+  and the total read 1,592 against 1,610. Recomputed from `wc -l`.
+- **STATE.md listed three of the four dev scripts**, omitting
+  `scripts/visual-agent.mjs` — the browser half of the visual check, and half
+  its code.
+
 ## [0.6.2] — 2026-08-13
 
 ### Changed
