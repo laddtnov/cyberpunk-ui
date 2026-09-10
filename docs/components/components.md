@@ -72,7 +72,7 @@ Takes glow classes the same way the button does:
 <div class="cy-card cy-glow--purple">…</div>
 ```
 
-**Tokens** — `--cy-surface` `--cy-text` `--cy-cyan-rgb` `--cy-radius-lg`
+**Tokens** — `--cy-surface` `--cy-text` `--cy-radius-lg`
 `--cy-border-width` `--cy-space-*`
 
 **Accessibility**

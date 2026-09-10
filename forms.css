@@ -32,7 +32,7 @@
   font-size: 0.95rem;
   color: var(--cy-text);
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.35);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
   border-radius: var(--cy-radius);
   padding: var(--cy-space-sm) var(--cy-space-md);
   width: 100%;
@@ -47,14 +47,14 @@
 }
 
 .cy-input:hover {
-  border-color: rgba(var(--cy-cyan-rgb), 0.6);
+  border-color: color-mix(in srgb, var(--cy-neon-cyan) 60%, transparent);
 }
 
 .cy-input:focus-visible {
   outline: var(--cy-focus-width) solid var(--cy-focus-color);
   outline-offset: var(--cy-focus-offset);
   border-color: var(--cy-neon-cyan);
-  box-shadow: 0 0 12px rgba(var(--cy-cyan-rgb), 0.3);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cy-neon-cyan) 30%, transparent);
 }
 
 /* Native dropdown arrows cannot be styled consistently, so draw our own.
@@ -115,7 +115,7 @@ textarea.cy-input {
 .cy-input:user-invalid,
 .cy-input[aria-invalid="true"] {
   border-color: var(--cy-danger);
-  box-shadow: 0 0 10px rgba(var(--cy-danger-rgb), 0.25);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cy-danger) 25%, transparent);
 }
 
 .cy-error {
@@ -157,7 +157,7 @@ textarea.cy-input {
      not remove this as redundant. */
   vertical-align: middle;
   background: var(--cy-surface);
-  border: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.5);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent);
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -214,7 +214,7 @@ textarea.cy-input {
 .cy-checkbox:checked,
 .cy-radio:checked {
   border-color: var(--cy-neon-cyan);
-  box-shadow: 0 0 10px rgba(var(--cy-cyan-rgb), 0.45);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cy-neon-cyan) 45%, transparent);
 }
 
 /* A checked checkbox fills solid, matching how a checked radio fills with a

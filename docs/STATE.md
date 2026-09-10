@@ -1,18 +1,18 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.7.0**.
+Current as of **0.8.0**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1738 lines of CSS across the parts.
+Zero dependencies, zero JavaScript, no build step. 1712 lines of CSS across the parts.
 
 | File | Lines | Contains |
 | --- | --- | --- |
-| `tokens.css` | 225 | every custom property, plus the `[data-theme="light"]` overrides |
+| `tokens.css` | 199 | every custom property, plus the `[data-theme="light"]` overrides |
 | `effects.css` | 133 | glow, glitch, scanlines, grid, cursor |
 | `components.css` | 168 | `.cy-btn`, `.cy-card` |
 | `containers.css` | 207 | accordion, modal, terminal — all on native elements |
@@ -100,11 +100,6 @@ Colour
 Status
 : `--cy-success` `--cy-warning` `--cy-danger` `--cy-info`
 
-RGB channel twins
-: `--cy-cyan-rgb` `--cy-pink-rgb` `--cy-purple-rgb` `--cy-gold-rgb`
-  `--cy-success-rgb`
-  `--cy-warning-rgb` `--cy-danger-rgb`
-
 Geometry
 : `--cy-radius-sm` `--cy-radius` `--cy-radius-lg` `--cy-border-width`
 
@@ -143,9 +138,15 @@ Scrim
 Other
 : `--cy-ease` `--cy-disabled-opacity`
 
-Every translucent glow in the kit is `rgba(var(--cy-*-rgb), α)` — `color-mix()`
-is deliberately not used, for reach. So **a new colour token needs its `-rgb`
-twin** or nothing can fade it.
+Every translucent glow is `color-mix(in srgb, var(--cy-token) α%, transparent)`,
+which reads the colour token directly, so **a new colour token needs nothing
+beyond itself**.
+
+This replaced `rgba(var(--cy-*-rgb), α)` in 0.8.0. That form needed a
+hand-maintained `-rgb` twin per colour — seven of them, a checker rule proving
+each agreed with its base, and a documented trap where overriding a hue without
+its twin left the glow behind. `color-mix()` is Baseline 2023, and that is what
+changed: the twins existed for reach, and the reach argument expired.
 
 ## Components
 
@@ -231,7 +232,7 @@ text, 3.0:1 for non-text UI (`--cy-neon-purple` is glow-only and clears 4.5 in
 neither theme).
 
 `scripts/check-conventions.js` enforces the rules in this file that a generic
-CSS linter cannot know: that every `-rgb` twin exists and agrees with its base
+CSS linter cannot know: that every glow mixes from a token that exists
 colour about being themed, that class names match `cy-block__element--modifier`,
 that no selector styles a bare element without a `cy-` class scoping it, that
 every stylesheet is wired into both the barrel and the `exports` map, and that
@@ -317,7 +318,7 @@ focus rings to 3px, and `--cy-disabled-opacity` rises from 0.45 to 0.7 —
 dimming it toward invisible was never doing that work alone.
 
 What cannot be lifted centrally is the borders: each uses its own alpha
-(`rgba(var(--cy-cyan-rgb), 0.2)` through `0.6`), and those values are not
+(`color-mix()` at 20% through 60%), and those values are not
 interchangeable, so **every file raises its own to full strength**. The hint
 and placeholder opacities go to 1 — they sit at the lowest value that clears
 4.5:1, and clearing the floor is the minimum rather than the goal.

@@ -40,7 +40,7 @@
 .cy-table td {
   padding: var(--cy-space-sm) var(--cy-space-md);
   text-align: start;
-  border-bottom: var(--cy-border-width) solid rgba(var(--cy-cyan-rgb), 0.15);
+  border-bottom: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 15%, transparent);
 }
 
 .cy-table thead th {
@@ -48,7 +48,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border-bottom-color: rgba(var(--cy-cyan-rgb), 0.4);
+  border-bottom-color: color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent);
 }
 
 /* A row header — <th scope="row"> — is the label for its row, so it reads as
@@ -63,7 +63,7 @@
 }
 
 .cy-table tbody tr:hover {
-  background: rgba(var(--cy-cyan-rgb), 0.06);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 6%, transparent);
 }
 
 /* ── Variants ─────────────────────────────────────────────────── */
@@ -71,7 +71,7 @@
 /* Zebra striping is decoration, not information: it helps the eye track a row
    across a wide table and means nothing on its own. */
 .cy-table--striped tbody tr:nth-child(even) {
-  background: rgba(var(--cy-cyan-rgb), 0.03);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 3%, transparent);
 }
 
 .cy-table--compact th,
@@ -124,9 +124,9 @@
 /* ── Increased contrast ───────────────────────────────────────── */
 @media (prefers-contrast: more) {
   .cy-table th,
-  .cy-table td { border-bottom-color: rgba(var(--cy-cyan-rgb), 0.5); }
+  .cy-table td { border-bottom-color: color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent); }
   .cy-table thead th { border-bottom-color: var(--cy-neon-cyan); }
-  .cy-table--striped tbody tr:nth-child(even) { background: rgba(var(--cy-cyan-rgb), 0.1); }
+  .cy-table--striped tbody tr:nth-child(even) { background: color-mix(in srgb, var(--cy-neon-cyan) 10%, transparent); }
 }
 
 /* ── Forced colours ───────────────────────────────────────────────

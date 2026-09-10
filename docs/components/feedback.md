@@ -26,7 +26,7 @@ An inline message that stays on the page.
 | `--danger` | something failed |
 
 **Tokens** — `--cy-info` `--cy-success` `--cy-warning` `--cy-danger` and their
-`-rgb` twins, `--cy-text` `--cy-font-mono` `--cy-radius` `--cy-space-*`
+`--cy-text` `--cy-font-mono` `--cy-radius` `--cy-space-*`
 
 **Accessibility**
 

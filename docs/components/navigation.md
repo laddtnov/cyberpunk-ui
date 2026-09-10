@@ -43,7 +43,7 @@ Links are styled through the wrapper (`.cy-nav a`), so the markup contract is
 one class on the `<nav>`. `.cy-nav__brand` pushes everything after it to the
 right and takes the accent colour.
 
-**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan` `--cy-cyan-rgb`
+**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan`
 `--cy-font-mono` `--cy-border-width` `--cy-space-*` `--cy-focus-*`
 
 **Accessibility**
@@ -137,7 +137,7 @@ for the sake of the tall ones. Add `position: sticky; top: 0; align-self:
 start;` in your own layout when you want it, or the `tabindex="0"` plus
 `aria-label` pair if you also make it scroll.
 
-**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan` `--cy-cyan-rgb`
+**Tokens** — `--cy-surface` `--cy-text` `--cy-neon-cyan`
 `--cy-font-mono` `--cy-radius` `--cy-space-*` `--cy-focus-*`
 
 **Accessibility**

@@ -121,7 +121,7 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > exact version skips the gate, so use whichever one you are actually after:
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.7.0
+> pnpm add @laddtnov/cyberpunk-ui@0.8.0
 > ```
 
 `cyberpunk-ui.css` is one concatenated stylesheet, so a `<link>` to it is a
@@ -185,7 +185,7 @@ A form and a status message:
 | `--cy-neon-gold` | brass-gold accent — warm, unlit, and carries no status meaning (unlike `--cy-warning`) |
 | `--cy-bg` / `--cy-surface` | background & card surfaces |
 | `--cy-text` / `--cy-heading` | body & heading text |
-| `--cy-cyan-rgb` / `--cy-pink-rgb` / `--cy-purple-rgb` / `--cy-gold-rgb` | raw RGB triplets for theme-aware `rgba()` glows |
+| / / / | raw RGB triplets for theme-aware `rgba()` glows |
 | `--cy-font-display` / `--cy-font-body` / `--cy-font-mono` | type stacks (you load the fonts) |
 | `--cy-font-terminal` | `.cy-terminal` only — asks for a Nerd Font (powerline separators, file icons), falls through to `--cy-font-mono` |
 | `--cy-ease` | shared easing curve |
@@ -193,7 +193,7 @@ A form and a status message:
 | `--cy-border-width` | shared border thickness |
 | `--cy-space-xs` / `--cy-space-sm` / `--cy-space-md` / `--cy-space-lg` / `--cy-space-xl` | 4px-based spacing scale |
 | `--cy-focus-width` / `--cy-focus-offset` / `--cy-focus-color` | shared `:focus-visible` ring, used by every interactive element |
-| `--cy-success` / `--cy-warning` / `--cy-danger` / `--cy-info` | status colours (+ `-rgb` channels for theme-aware `rgba()`) |
+| `--cy-success` / `--cy-warning` / `--cy-danger` / `--cy-info` | status colours |
 | `--cy-backdrop` | modal scrim — stays dark in both themes, since a scrim's job is to push the page behind it away |
 | `--cy-disabled-opacity` | opacity applied to disabled controls |
 
@@ -344,16 +344,17 @@ Every colour, space, radius and font in the kit comes from a custom property,
 so one override reaches every rule that uses it:
 
 ```css
-:root {
-  --cy-neon-cyan: #39ff14;   /* acid green */
-  --cy-cyan-rgb: 57, 255, 20;  /* the glows read this one */
-}
+:root { --cy-neon-cyan: #39ff14; }   /* acid green, glows included */
 ```
 
-Colours come in pairs. `--cy-neon-cyan` paints text and borders;
-`--cy-cyan-rgb` is the raw triplet the glows fade with
-(`rgba(var(--cy-cyan-rgb), 0.5)`). Override only the first and the glow keeps
-the old hue, which is the one theming mistake worth knowing up front.
+One property per colour, and the glows follow it. Every translucent effect is
+`color-mix(in srgb, var(--cy-neon-cyan) 50%, transparent)` — mixed from the same
+token you just set, so a hue change carries its glow with it.
+
+Until 0.8.0 each colour needed a second `--cy-*-rgb` property holding its raw
+channels, and setting the hue without the twin left every glow on the old
+colour. Those are gone. If you were overriding them, drop the twin and keep the
+hue.
 
 The light theme is a second palette rather than an inversion. Each neon hue is
 darkened until it clears WCAG AA against a pale background:

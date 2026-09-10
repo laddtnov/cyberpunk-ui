@@ -38,7 +38,7 @@ table elsewhere on the page is untouched.
 | `--striped` | Alternating row tint |
 | `--compact` | Tighter cell padding |
 
-**Tokens** — `--cy-text` `--cy-heading` `--cy-neon-cyan` `--cy-cyan-rgb`
+**Tokens** — `--cy-text` `--cy-heading` `--cy-neon-cyan`
 `--cy-font-mono` `--cy-border-width` `--cy-space-*`
 
 ## The three things only your markup can do

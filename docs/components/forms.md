@@ -100,7 +100,7 @@ Checked states signal by fill: the checkbox fills solid with a knocked-out
 tick, the radio fills with a dot. Both then read as "selected" the same way,
 which is why they look consistent side by side.
 
-**Tokens** — `--cy-neon-cyan` `--cy-cyan-rgb` `--cy-bg` `--cy-surface`
+**Tokens** — `--cy-neon-cyan` `--cy-bg` `--cy-surface`
 `--cy-radius-sm` `--cy-border-width` `--cy-focus-*` `--cy-disabled-opacity`
 
 **Accessibility**
