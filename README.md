@@ -121,7 +121,7 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > exact version skips the gate, so use whichever one you are actually after:
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.8.0
+> pnpm add @laddtnov/cyberpunk-ui@0.9.0
 > ```
 
 `cyberpunk-ui.css` is one concatenated stylesheet, so a `<link>` to it is a
@@ -244,6 +244,7 @@ interacts — not on page load. Drive it manually with `aria-invalid="true"`.
 | `.cy-accordion` · `.cy-accordion__body` | disclosure on `<details>` — styles `summary` itself, so the wrapper class is the whole contract |
 | `.cy-modal` | dialog on `<dialog>`, with a blurred `::backdrop` |
 | `.cy-terminal` · `.cy-terminal__bar` | code window; styles a scoped `<pre>`. Add `.cy-scanlines` and `.cy-cursor` for the CRT treatment |
+| `.cy-popover` | toggle-tip on the native `popover` attribute — keyboard-reachable, no JavaScript |
 
 All three are native elements, so the behaviour is the browser's: `<details>`
 handles its own keyboard and open state, and `<dialog>` brings focus trapping,

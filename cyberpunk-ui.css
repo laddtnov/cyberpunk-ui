@@ -664,12 +664,79 @@
   color: var(--cy-text);
 }
 
+/* ── Toggle-tip ───────────────────────────────────────────────────
+   <button class="cy-btn cy-btn--sm" popovertarget="tip">?</button>
+   <div class="cy-popover" popover id="tip">
+     Visible to other operatives.
+   </div>
+
+   A tooltip you can actually reach. The kit declined tooltips for four
+   versions because the CSS-only version is hover-only: keyboard users never
+   see it, touch users never see it, and a screen reader is never told it
+   exists. None of that is fixable with :hover.
+
+   The Popover API fixes it by making this a *toggle*-tip instead — the
+   trigger is a real button, so it is focusable, activatable by Enter and
+   Space, and announced with its expanded state. The browser handles
+   light-dismiss, Escape, and the top layer. No JavaScript, which is what took
+   so long: `popover` only became Baseline in January 2025.
+
+   It is not a hover tooltip and will not become one here. That needs interest
+   invokers, which are Chrome-only at the time of writing — and a hover-only
+   affordance is the thing this component exists to avoid.
+
+   Positioning: the browser centres a popover in the viewport, which is a fine
+   place for a short explanation and works everywhere. Where CSS anchor
+   positioning is supported it is pinned above its trigger instead. That is an
+   enhancement rather than the design, because anchor positioning is still
+   Chrome-only. */
+.cy-popover {
+  margin: 0;
+  max-width: 32ch;
+  font-family: var(--cy-font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--cy-text);
+  background: var(--cy-surface);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 45%, transparent);
+  border-radius: var(--cy-radius);
+  padding: var(--cy-space-md) var(--cy-space-lg);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--cy-neon-cyan) 20%, transparent);
+}
+
+.cy-popover:popover-open {
+  animation: cy-popover-in 0.15s var(--cy-ease);
+}
+
+@keyframes cy-popover-in {
+  from { opacity: 0; transform: translateY(0.25rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Pinned to its trigger where the engine can do it, centred everywhere else.
+   position-area needs both halves of the anchor feature, so both are tested. */
+@supports (anchor-name: --x) and (position-area: top) {
+  /* Scoped to .cy-btn rather than to [popovertarget] alone. A bare attribute
+     selector would claim every popover trigger on a consumer's page, which is
+     the one thing this kit never does — and the convention checker caught it
+     here rather than in review. The trigger is a button either way. */
+  .cy-btn[popovertarget] { anchor-name: --cy-popover-anchor; }
+
+  .cy-popover {
+    position-anchor: --cy-popover-anchor;
+    position-area: top;
+    margin-bottom: var(--cy-space-sm);
+    position-try-fallbacks: flip-block;
+  }
+}
+
 /* ── Reduced motion ───────────────────────────────────────────────
    The chevron still turns — it reports the open state, so freezing it would
    remove information rather than decoration. Only the tween goes. */
 @media (prefers-reduced-motion: reduce) {
   .cy-accordion > summary,
   .cy-accordion > summary::after { transition: none; }
+  .cy-popover:popover-open { animation: none; }
   .cy-modal::backdrop { backdrop-filter: none; }
 }
 
@@ -697,7 +764,15 @@
    the blur — decoration, and expensive — goes. */
 @media (forced-colors: active) {
   .cy-modal,
+  .cy-popover,
   .cy-terminal { box-shadow: none; }
+
+  /* The border is what separates a popover from the page once the glow and
+     the surface tint are gone, so it is pinned rather than left translucent. */
+  .cy-popover {
+    background: Canvas;
+    border-color: CanvasText;
+  }
 
   .cy-modal::backdrop {
     background: Canvas;

@@ -5,6 +5,51 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-09-10
+
+### Added
+- **`.cy-popover` — a toggle-tip**, and the answer to a tooltip request that
+  had been declined since 0.3.0. The objection was never effort: a CSS-only
+  tooltip fires on `:hover`, so keyboard users, touch users and screen readers
+  are all excluded, and no amount of CSS fixes that.
+  - The Popover API removes the objection instead of working around it. The
+    trigger is a real button — focusable, activatable by Enter and Space — and
+    **the browser reports its expanded state in the accessibility tree with no
+    ARIA in the markup**. Measured rather than assumed: the invoker exposes
+    `expanded=false` closed and `expanded=true` open, while the DOM attribute
+    stays null. Escape, light-dismiss and the top layer come free.
+  - It shipped now because `popover` reached Baseline in **January 2025**
+    (Chrome 116, Firefox 125, Safari 17). It stays a *toggle*-tip: a hover
+    version needs interest invokers, which are Chrome-only, and hover-only is
+    the failure this replaces.
+  - Anchored to its trigger where CSS anchor positioning exists, centred in the
+    viewport everywhere else — an `@supports` enhancement, because anchor
+    positioning is still Chrome-only.
+  - The convention checker caught the first draft styling a bare
+    `[popovertarget]`, which would have claimed every popover trigger on a
+    consumer's page. Scoped to `.cy-btn[popovertarget]`.
+
+### Documented
+- **Tabs stay declined, and now say what to use instead.** `<details name>`
+  makes a group exclusive — one panel open at a time, which is what most people
+  reach for tabs to get — and has been Baseline since September 2024. Real tabs
+  need `role="tablist"`, roving `tabindex` and arrow-key navigation; none of it
+  is expressible in CSS, and the CSS-only imitations announce a control as
+  something it is not.
+- **`forced-colors` has had an emulated pass**, and the result is recorded
+  along with what it does not prove. Every component resolves to system colours
+  as intended: `LinkText` for buttons and current-nav items, `CanvasText` for
+  text and borders, `Highlight` for the progress fill, and the spinner keeps
+  two distinct border colours so its rotation stays visible.
+  - Two findings that pass but are worth knowing: translucent tints survive as
+    system colours at low alpha (a card's 3% wash becomes 3% of Canvas over
+    Canvas — invisible rather than wrong), and the four alert variants become
+    indistinguishable, which is inherent to the mode and why the docs require
+    `role="alert"`.
+  - **This does not close the item.** Emulation approximates one theme; real
+    Windows High Contrast ships several, and Firefox and Edge map them
+    differently.
+
 ## [0.8.0] — 2026-09-10
 
 ### Removed

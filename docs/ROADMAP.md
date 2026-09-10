@@ -326,18 +326,26 @@ loop had been absorbing since the check was built.
 
 ## Waiting on a decision
 
-**Tabs.** No JavaScript means the radio-input hack or `:target`. Both produce a
-control that a screen reader announces as something it is not. This is exactly
-the collision the second constraint exists to settle: tabs wait until there is
-an approach that survives a screen-reader pass, or until the kit is willing to
-ship the pattern as markup-plus-your-own-JS and say so plainly.
+**Tooltips — resolved in 0.9.0, as a toggle-tip.** The objection was never
+effort: a CSS-only tooltip is hover-only, so keyboard users, touch users and
+screen readers are all excluded, and no amount of CSS fixes that.
 
-**Tooltip.** Same shape of problem. A CSS-only tooltip is hover-only, which
-means keyboard users and touch users never see it. Usable as decoration for
-non-essential text, not as the carrier of anything a user needs.
+The Popover API removed the objection rather than working around it. The
+trigger is a real button, so it is focusable and activatable, and the browser
+reports `expanded` on it in the accessibility tree without any ARIA in the
+markup — measured, not assumed. Escape, light-dismiss and the top layer come
+free. It shipped as `.cy-popover` once `popover` reached Baseline in January
+2025.
 
-Neither is blocked on effort. Both are blocked on being willing to ship
-something worse than the rest of the kit.
+It is a *toggle*-tip and stays one. A hover-triggered version needs interest
+invokers, which are Chrome-only, and hover-only is the failure this replaced.
+
+**Tabs — still declined, and for the original reason.** Real tabs need
+`role="tablist"`, roving `tabindex` and arrow-key navigation. None of it is
+expressible in CSS, and the CSS-only imitations announce a control as something
+it is not. `<details name>` is documented as the substitute: a shared name
+makes a group exclusive, which is what most people want tabs for, and it has
+been Baseline since September 2024.
 
 ## Parked — type of our own
 
