@@ -74,18 +74,31 @@ function checkToken(label, name, tokens, bg, floor, role, failures) {
   );
 }
 
+// Both backgrounds a consumer can put text on, because the kit puts text on
+// both. --cy-bg is the page; --cy-surface is every card, terminal, toast,
+// modal, sidebar and input. Checking only the page was checking the easier
+// half: --cy-surface is lighter than --cy-bg in the dark theme and white in
+// the light one, so every ratio against it is the tighter of the two.
+//
+// This was found by hand rather than by the script. When .cy-sidebar landed
+// its current-item cyan had to be measured manually against --cy-surface,
+// and the number lived in a commit message where nothing could re-check it.
+const BACKGROUNDS = ['--cy-bg', '--cy-surface'];
+
 function checkTheme(label, tokens, failures) {
-  const bg = tokens['--cy-bg'];
-  if (!bg?.startsWith('#')) throw new Error(label + ': --cy-bg missing or not a hex value');
+  for (const bgToken of BACKGROUNDS) {
+    const bg = tokens[bgToken];
+    if (!bg?.startsWith('#')) throw new Error(label + ': ' + bgToken + ' missing or not a hex value');
 
-  console.log('\n' + label + '  (background ' + bg + ')');
+    console.log('\n' + label + '  (on ' + bgToken + ' ' + bg + ')');
 
-  for (const [list, floor, role] of [
-    [TEXT_TOKENS, TEXT_FLOOR, 'text'],
-    [UI_TOKENS, UI_FLOOR, 'ui'],
-  ]) {
-    for (const name of list) {
-      checkToken(label, name, tokens, bg, floor, role, failures);
+    for (const [list, floor, role] of [
+      [TEXT_TOKENS, TEXT_FLOOR, 'text'],
+      [UI_TOKENS, UI_FLOOR, 'ui'],
+    ]) {
+      for (const name of list) {
+        checkToken(label + ' on ' + bgToken, name, tokens, bg, floor, role, failures);
+      }
     }
   }
 }
