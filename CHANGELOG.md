@@ -5,6 +5,44 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-09-10
+
+### Added
+- **`@layer cyberpunk-ui`.** Every rule now ships inside a cascade layer, so a
+  consumer's unlayered rule beats the kit at any specificity — overriding needs
+  no `!important` and no longer selector than the one you would write anyway.
+  Verified in a browser: a plain `.cy-btn { color: … }` in a consumer stylesheet
+  wins against the kit's own `.cy-btn`.
+  - The wrapper goes in each file rather than around the bundle, so anyone
+    cherry-picking `@import ".../forms"` gets the same cascade as anyone
+    loading the whole kit.
+- **`data-theme="auto"`** follows `prefers-color-scheme`. The full matrix, all
+  eight cases measured in a browser: no attribute is always dark, `auto`
+  follows the OS, and `light`/`dark` win over whatever the OS says.
+  - **It is opt-in on purpose.** `prefers-color-scheme: light` matches when a
+    visitor has expressed *no* preference, not only when they have chosen
+    light. The first version keyed off the absence of `data-theme`, which the
+    probe showed would flip the kit to light for `no-preference` users too —
+    silently restyling every site already using it. `auto` is static markup, so
+    it still costs no JavaScript.
+  - The light palette is declared twice, because a media query cannot join a
+    selector list. `check-conventions.js` now compares the two blocks
+    declaration by declaration; proven by mutation.
+
+### Changed
+- **Directional properties are logical**, so the kit mirrors under `dir="rtl"`
+  with no second stylesheet: alert and toast accent bars, the sidebar frame and
+  its current-item marker, the nav brand spacer, the accordion chevron's
+  position, and table alignment. Measured under `dir="rtl"`: the alert's 3px
+  accent moves from the left edge to the right.
+  - Two things stay physical deliberately. The `<select>` arrow, because
+    `background-position` has no inline-axis keyword — it gets a `[dir="rtl"]`
+    rule instead. And the rotated-border glyphs for the checkbox tick and the
+    accordion chevron, which are shapes rather than layout: mirroring those
+    would flip the drawing.
+  - No visual change in left-to-right: all seven visual-regression regions
+    match baselines recorded before any of this landed.
+
 ### Changed
 - **`cyberpunk-ui.css` is one concatenated stylesheet instead of eight
   `@import` lines.** The barrel was the right shape for a bundler and the wrong

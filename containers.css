@@ -1,5 +1,12 @@
 /*! @laddtnov/cyberpunk-ui — containers.css | MIT */
 
+/* Everything below is in the `cyberpunk-ui` cascade layer. Any rule you write
+   outside a layer beats it regardless of specificity, so overriding the kit
+   never needs !important and never needs a longer selector than the one you
+   would write anyway. The body is not re-indented: a layer wrapper is not a
+   nesting level worth 1,600 lines of churn. */
+@layer cyberpunk-ui {
+
 /* Opt-in classes only. Styling bare `details {}` or `dialog {}` would hijack
    every disclosure and modal on a consumer's page the moment they import the
    kit.
@@ -68,7 +75,7 @@
   width: 0.4rem;
   height: 0.4rem;
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   rotate: 45deg;
@@ -195,4 +202,6 @@
     backdrop-filter: none;
     opacity: 0.85;
   }
+}
+
 }

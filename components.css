@@ -1,5 +1,12 @@
 /*! @laddtnov/cyberpunk-ui — components.css | MIT */
 
+/* Everything below is in the `cyberpunk-ui` cascade layer. Any rule you write
+   outside a layer beats it regardless of specificity, so overriding the kit
+   never needs !important and never needs a longer selector than the one you
+   would write anyway. The body is not re-indented: a layer wrapper is not a
+   nesting level worth 1,600 lines of churn. */
+@layer cyberpunk-ui {
+
 /* ── Neon button ──────────────────────────────────────────────── */
 .cy-btn {
   display: inline-block;
@@ -156,4 +163,6 @@
     border-color: GrayText;
     opacity: 1;
   }
+}
+
 }

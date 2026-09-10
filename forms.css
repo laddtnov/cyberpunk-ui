@@ -1,5 +1,12 @@
 /*! @laddtnov/cyberpunk-ui — forms.css | MIT */
 
+/* Everything below is in the `cyberpunk-ui` cascade layer. Any rule you write
+   outside a layer beats it regardless of specificity, so overriding the kit
+   never needs !important and never needs a longer selector than the one you
+   would write anyway. The body is not re-indented: a layer wrapper is not a
+   nesting level worth 1,600 lines of churn. */
+@layer cyberpunk-ui {
+
 /* Opt-in classes only. Styling bare `input {}` would hijack every input on a
    consumer's page the moment they import the kit. */
 
@@ -67,7 +74,19 @@ select.cy-input {
   background-repeat: no-repeat;
   background-position: right var(--cy-space-md) center;
   background-size: 10px;
-  padding-right: var(--cy-space-xl);
+  padding-inline-end: var(--cy-space-xl);
+}
+
+/* The one place in the kit that still needs a physical direction. Everything
+   else mirrors on its own through logical properties, but `background-position`
+   has no inline-axis keyword — there is no `inset-inline-end` for a background
+   image — so a right-to-left page needs the arrow moved explicitly. Matching on
+   [dir="rtl"] rather than :dir(rtl) because the attribute is what RTL pages
+   already set, and it works in every engine rather than Chrome 120 and up. */
+[dir="rtl"] select.cy-input {
+  background-position: left var(--cy-space-md) center;
+  padding-inline-end: var(--cy-space-md);
+  padding-inline-start: var(--cy-space-xl);
 }
 
 /* Keep in sync with --cy-neon-cyan's light-theme value in tokens.css. */
@@ -293,4 +312,6 @@ textarea.cy-input {
     border-color: GrayText;
     opacity: 1;
   }
+}
+
 }
