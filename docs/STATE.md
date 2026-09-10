@@ -26,7 +26,8 @@ Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both validation paths, and it is the OG image
 source), `demo/playground.js` (the live token editor; demo-only, and never
 published — `files` ships `*.css`, `README.md` and `LICENSE` only),
-`scripts/build-bundle.js`, `scripts/check-contrast.js`,
+`scripts/build-bundle.js`, `scripts/check-contrast.js` (every text token
+against **both** `--cy-bg` and `--cy-surface`, in both themes — 36 pairings),
 `scripts/check-conventions.js`,
 `scripts/check-visual.js` and its browser half `scripts/visual-agent.mjs`
 (dev-only, not published), `.github/workflows/`.

@@ -5,6 +5,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **The contrast check only tested the easier background.** Every text token was
+  measured against `--cy-bg` and nothing was measured against `--cy-surface` —
+  which is what every card, terminal, toast, modal, sidebar and input actually
+  puts text on, and which is the tighter of the two in both themes (lighter
+  than the page in dark, white in light). It now checks both: 36 pairings
+  instead of 18.
+  - Nothing failed. The gap was in coverage, not in the palette; the worst
+    pairing on surface is `--cy-neon-purple` at 3.36 against a 3.0 UI floor.
+  - This was found the hard way once already: when `.cy-sidebar` landed, its
+    current-item cyan had to be measured against `--cy-surface` by hand, and
+    the number ended up in a commit message where nothing could re-check it.
+  - Proven by mutation — darkening `--cy-surface` to `#6b1a1a` fails three
+    tokens on surface while every one of them still passes against the page.
+
 ## [0.7.0] — 2026-09-10
 
 ### Added
