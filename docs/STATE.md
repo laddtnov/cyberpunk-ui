@@ -48,7 +48,13 @@ build tools and linters routinely read. It is mapped explicitly so they can.
 ## Package managers
 
 Verified against the **published** package, not a local tarball, on
-2026-07-31:
+2026-07-31, when the kit was 0.2.1 and shipped **six** stylesheets. The "6"
+in the rows below is what was measured that day, not a current count — there
+are eight now, listed under Layout above. The table is left as measured
+rather than updated, because a re-worded record of a test nobody re-ran would
+claim evidence that does not exist. Re-run the matrix if the `exports` map
+ever changes shape; adding a subpath to it does not, on its own, invalidate
+what these five managers were shown to do.
 
 | Manager | Version | Result |
 | --- | --- | --- |

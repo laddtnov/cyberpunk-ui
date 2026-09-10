@@ -22,6 +22,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **STATE.md listed three of the four dev scripts**, omitting
   `scripts/visual-agent.mjs` — the browser half of the visual check, and half
   its code.
+- **The package-manager matrix now says which era it measured.** Its rows read
+  "all 6 stylesheet subpaths" where there are eight today. The numbers are left
+  as measured — the run happened on 2026-07-31 against 0.2.1, which shipped
+  exactly six, confirmed against the `exports` map at that commit. Re-wording a
+  record of a test nobody re-ran would claim evidence that does not exist, so
+  the table gained a note about when it was taken and when to re-run it.
 
 ## [0.6.2] — 2026-08-13
 
