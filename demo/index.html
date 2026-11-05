@@ -453,9 +453,18 @@ $ _</pre>
       </div>
       <div class="row" style="margin-bottom: var(--cy-space-lg)">
         <label class="demo-check-label"><input class="cy-checkbox" type="checkbox" checked> Encrypt</label>
-        <label class="demo-check-label"><input class="cy-radio" type="radio" name="r" checked> Primary</label>
-        <label class="demo-check-label"><input class="cy-radio" type="radio" name="r"> Backup</label>
       </div>
+
+      <!-- The radios live in a fieldset because a radio group without a legend
+           announces each option and never says what is being chosen. A div and
+           a heading do not carry that association; only legend does. -->
+      <fieldset class="cy-fieldset">
+        <legend>Uplink route</legend>
+        <div class="row">
+          <label class="demo-check-label"><input class="cy-radio" type="radio" name="r" checked> Primary</label>
+          <label class="demo-check-label"><input class="cy-radio" type="radio" name="r"> Backup</label>
+        </div>
+      </fieldset>
       <div class="cy-field">
         <label class="cy-label" for="d-clearance">Clearance level</label>
         <input class="cy-input" id="d-clearance" disabled value="Restricted — contact your handler">
@@ -487,6 +496,14 @@ $ _</pre>
            the kit could enforce, so it was retired rather than kept as a way
            to build a bar that looks finished and announces nothing. -->
       <progress class="cy-progress" style="margin-top:1rem" value="66" max="100"></progress>
+
+      <!-- <meter> is the gauge to <progress>'s task bar. low/high/optimum tell
+           the browser which of three states the value is in, and each state is
+           its own pseudo-element — the colour follows the number, with no
+           class and no script. -->
+      <meter class="cy-meter" style="margin-top:1rem" value="0.9" low="0.3" high="0.7" optimum="1">90% — nominal</meter>
+      <meter class="cy-meter" style="margin-top:0.5rem" value="0.5" low="0.3" high="0.7" optimum="1">50% — degraded</meter>
+      <meter class="cy-meter" style="margin-top:0.5rem" value="0.1" low="0.3" high="0.7" optimum="1">10% — critical</meter>
     </section>
   </div>
 

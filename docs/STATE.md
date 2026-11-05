@@ -159,7 +159,8 @@ plus disabled styling
 
 **Card** — `.cy-card`
 
-**Forms** — `.cy-field` `.cy-label` `.cy-input` (`--sm` `--lg`; also styles
+**Forms** — `.cy-fieldset` (on `<fieldset>`; styles a scoped `<legend>`)
+`.cy-field` `.cy-label` `.cy-input` (`--sm` `--lg`; also styles
 `select.cy-input` and `textarea.cy-input`) `.cy-checkbox` `.cy-radio`
 `.cy-hint` `.cy-error`
 
@@ -171,7 +172,8 @@ styles `summary` scoped to the wrapper), `.cy-modal` (on `<dialog>`, with
 **Feedback** — `.cy-alert` (`--success` `--warning` `--danger` `--info`),
 `.cy-toast` (`--success` `--warning` `--danger`), `.cy-toast-container`
 (`--bottom`), `.cy-badge` (`--success` `--warning` `--danger` `--outline`),
-`.cy-spinner`, `.cy-progress`, `.cy-sr-only`
+`.cy-spinner`, `.cy-progress`, `.cy-meter` (on `<meter>`; the three
+low/high/optimum states map to the status colours), `.cy-sr-only`
 
 **Navigation** — `.cy-nav` + `.cy-nav__brand` (current item styled from
 `[aria-current]`, never a modifier class), `.cy-breadcrumb`, `.cy-sidebar` +

@@ -5,6 +5,31 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`.cy-fieldset`** in `/forms`, for grouping radios and checkboxes on a
+  native `<fieldset>` with a scoped `<legend>`. The kit has shipped `.cy-radio`
+  since 0.2.0 with nothing to group it, and a radio group is the one control
+  that is broken without a group label: each option announces its own text and
+  nothing says what is being chosen. The demo had the same hole — two radios in
+  a bare `<div>` — and it is fixed here too.
+  - Sets `min-inline-size: 0`, because a `<fieldset>` has a UA
+    `min-inline-size: min-content` that stops it shrinking inside a flex or
+    grid column.
+- **`.cy-meter`** in `/feedback`, on the native `<meter>` element. The gauge to
+  `.cy-progress`'s task bar: `<progress>` is *this job is 60% done*, `<meter>`
+  is *this quantity sits here in its range*. The browser decides which of three
+  states a value is in from `low`/`high`/`optimum` and exposes each as its own
+  pseudo-element, so the kit maps them to `--cy-success`, `--cy-warning` and
+  `--cy-danger` — the colour follows the number with no class and no script.
+  - **Chromium's inner element needs `display: flex`.** With `block` the
+    coloured bar paints across exactly the top half of the track at any size —
+    measured at 24 of 48 device rows at 24px and 6 of 12 at the shipped 6px —
+    and setting a height on the bar, on the value pseudo-elements, or on the
+    inner element itself changes nothing. Only `flex` makes it stretch.
+  - Firefox exposes one bar pseudo-element for every state and cannot colour
+    them apart, so it takes the optimum colour there. `<meter>` requires
+    fallback text, which is what carries the value in that case.
+
 ### Fixed
 - **The release checks are now a gate rather than a habit.** `npm version` runs
   them through the `preversion` hook, so a failing check aborts the bump before

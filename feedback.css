@@ -187,6 +187,78 @@ progress.cy-progress::-moz-progress-bar {
   border-radius: var(--cy-radius-lg);
 }
 
+/* ── Meter ────────────────────────────────────────────────────────
+   <meter class="cy-meter" value="0.9" low="0.3" high="0.7" optimum="1">90%</meter>
+
+   The gauge to .cy-progress's task bar, and the distinction is the element's,
+   not the kit's: <progress> says "this job is 60% done", <meter> says "this
+   quantity sits here in its range" — power, integrity, disk, signal. Using a
+   progress bar for a level is the common misuse, and it tells a screen reader
+   something untrue.
+
+   What makes it worth styling is that the browser already knows which of
+   three states the value is in, from low/high/optimum, and exposes each as
+   its own pseudo-element. No class, no JavaScript, no author logic: set the
+   attributes and the colour follows the number.
+
+   Vendor pseudo-elements cannot share a selector list — an invalid one drops
+   the whole rule — so each lives on its own, exactly as .cy-progress does. */
+.cy-meter {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border: none;
+  /* Firefox paints the element itself rather than a bar pseudo-element, so
+     the track colour is set here and ::-webkit-meter-bar repeats it below. */
+  background: color-mix(in srgb, var(--cy-neon-cyan) 15%, transparent);
+  border-radius: var(--cy-radius-lg);
+  overflow: hidden;
+}
+
+/* Chromium wraps the bar in an inner element whose UA box does not stretch to
+   the element's height. `display: flex` is what makes it stretch; `block` does
+   not, and neither does setting a height on the bar or on the value
+   pseudo-elements. Measured: with `block` the coloured bar paints across
+   exactly the top half of the track at any height — 24 of 48 device rows at
+   24px, 6 of 12 at the shipped 6px — and with `flex` it fills all 48. */
+.cy-meter::-webkit-meter-inner-element {
+  display: flex;
+  height: 100%;
+}
+
+.cy-meter::-webkit-meter-bar {
+  height: 100%;
+  background: color-mix(in srgb, var(--cy-neon-cyan) 15%, transparent);
+  border-radius: var(--cy-radius-lg);
+}
+
+/* The three states, in the browser's own vocabulary: inside the good band,
+   one step out, two steps out. Mapped to the kit's status colours so a meter
+   reads the same way as an alert does. */
+.cy-meter::-webkit-meter-optimum-value {
+  background: var(--cy-success);
+  border-radius: var(--cy-radius-lg);
+}
+
+.cy-meter::-webkit-meter-suboptimum-value {
+  background: var(--cy-warning);
+  border-radius: var(--cy-radius-lg);
+}
+
+.cy-meter::-webkit-meter-even-less-good-value {
+  background: var(--cy-danger);
+  border-radius: var(--cy-radius-lg);
+}
+
+/* Firefox exposes one bar pseudo-element for every state, so it cannot colour
+   them apart. It gets the optimum colour, and the value stays readable
+   because <meter> requires fallback text anyway. */
+.cy-meter::-moz-meter-bar {
+  background: var(--cy-success);
+  border-radius: var(--cy-radius-lg);
+}
+
 /* ── Reduced motion ───────────────────────────────────────────────
    The spinner KEEPS rotating: a frozen spinner reads as broken and it
    is essential feedback, not decoration. Slow it and drop the
@@ -246,10 +318,19 @@ progress.cy-progress::-moz-progress-bar {
 
   .cy-badge { border: var(--cy-border-width) solid CanvasText; }
 
-  .cy-progress {
+  .cy-progress,
+  .cy-meter {
     background: Canvas;
     border: var(--cy-border-width) solid CanvasText;
   }
+
+  /* Forced colours leaves all three meter states one colour, so the number
+     is carried by the bar's length and by the element's own fallback text. */
+  .cy-meter::-webkit-meter-bar { background: Canvas; }
+  .cy-meter::-webkit-meter-optimum-value,
+  .cy-meter::-webkit-meter-suboptimum-value,
+  .cy-meter::-webkit-meter-even-less-good-value,
+  .cy-meter::-moz-meter-bar { background: Highlight; }
 
   progress.cy-progress::-webkit-progress-value,
   progress.cy-progress::-moz-progress-bar {
