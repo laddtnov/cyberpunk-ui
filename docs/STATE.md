@@ -1,14 +1,14 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.9.0**.
+Current as of **0.10.0**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1787 lines of CSS across the parts.
+Zero dependencies, zero JavaScript, no build step. 1910 lines of CSS across the parts.
 
 | File | Lines | Contains |
 | --- | --- | --- |
@@ -18,8 +18,8 @@ Zero dependencies, zero JavaScript, no build step. 1787 lines of CSS across the 
 | `containers.css` | 282 | accordion, modal, terminal — all on native elements |
 | `navigation.css` | 277 | nav bar, breadcrumb, sidebar |
 | `table.css` | 148 | data table, scroll container |
-| `forms.css` | 317 | field, label, input, select, textarea, checkbox, radio, hint, error |
-| `feedback.css` | 263 | alert, toast, badge, spinner, progress, sr-only |
+| `forms.css` | 359 | field, label, input, select, textarea, checkbox, radio, hint, error |
+| `feedback.css` | 344 | alert, toast, badge, spinner, progress, sr-only |
 | `cyberpunk-ui.css` | generated | all of the above concatenated, in that order |
 
 Supporting files: `demo/index.html` (the live demo — every component is

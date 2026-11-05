@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-11-05
+
 ### Added
 - **`.cy-fieldset`** in `/forms`, for grouping radios and checkboxes on a
   native `<fieldset>` with a scoped `<legend>`. The kit has shipped `.cy-radio`

@@ -128,7 +128,7 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > exact version skips the gate, so use whichever one you are actually after:
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.9.0
+> pnpm add @laddtnov/cyberpunk-ui@0.10.0
 > ```
 
 `cyberpunk-ui.css` is one concatenated stylesheet, so a `<link>` to it is a
