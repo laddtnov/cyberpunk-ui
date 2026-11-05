@@ -26,6 +26,44 @@
   color: var(--cy-neon-cyan);
 }
 
+/* ── Fieldset ─────────────────────────────────────────────────────
+   <fieldset class="cy-fieldset">
+     <legend>Uplink mode</legend>
+     <label><input class="cy-radio" type="radio" name="mode"> Primary</label>
+     <label><input class="cy-radio" type="radio" name="mode"> Backup</label>
+   </fieldset>
+
+   The kit has shipped .cy-radio since 0.2.0 with nothing to group it, and a
+   radio group is the one control that is broken without a group label: each
+   button announces its own text and nothing says what is being chosen. A
+   <div> wrapper and a heading do not fix it, because the association is what
+   carries — only <fieldset> + <legend> makes a screen reader read the legend
+   before the first option.
+
+   <legend> is styled scoped to the wrapper, the same contract .cy-accordion
+   uses for <summary>: one class on the container, native markup inside. The
+   legend is deliberately the same mono-uppercase treatment as .cy-label, so a
+   group label and a field label read as the same rank of thing. */
+.cy-fieldset {
+  min-inline-size: 0;
+  margin: 0 0 var(--cy-space-lg);
+  padding: var(--cy-space-md) var(--cy-space-lg) var(--cy-space-lg);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 35%, transparent);
+  border-radius: var(--cy-radius);
+}
+
+/* min-inline-size above is not decoration. A <fieldset> has a UA
+   `min-inline-size: min-content`, which stops it shrinking inside a flex or
+   grid column and makes long legends blow out the layout. */
+.cy-fieldset > legend {
+  padding: 0 var(--cy-space-sm);
+  font-family: var(--cy-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cy-neon-cyan);
+}
+
 /* ── Text-like controls ───────────────────────────────────────── */
 .cy-input {
   font-family: var(--cy-font-mono);
@@ -262,6 +300,8 @@ textarea.cy-input {
    minimum, not the goal, so when more contrast is asked for they go to
    full strength and stop being the quietest text on the page. */
 @media (prefers-contrast: more) {
+  .cy-fieldset { border-color: var(--cy-neon-cyan); }
+
   .cy-input,
   .cy-checkbox,
   .cy-radio { border-color: var(--cy-neon-cyan); }
@@ -286,6 +326,8 @@ textarea.cy-input {
   .cy-input,
   .cy-checkbox,
   .cy-radio { box-shadow: none; }
+
+  .cy-fieldset { border-color: CanvasText; }
 
   .cy-checkbox:checked,
   .cy-radio:checked {

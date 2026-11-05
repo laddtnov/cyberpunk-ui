@@ -140,6 +140,43 @@ Announced, keyboard-inspectable, and it needs nothing else from you. Drop
 
 ---
 
+## `.cy-meter`
+
+```html
+<meter class="cy-meter" value="0.92" low="0.3" high="0.7" optimum="1">92% — nominal</meter>
+```
+
+**A gauge, not a progress bar**, and the distinction is the element's rather
+than the kit's. `<progress>` says *this job is 60% done*; `<meter>` says *this
+quantity sits here in its range* — power, integrity, disk, signal. Using a
+progress bar for a level tells a screen reader something untrue.
+
+The browser works out which of three states the value is in from
+`low`/`high`/`optimum`, and exposes each as its own pseudo-element. Set the
+attributes and the colour follows the number — no class, no script:
+
+| State | Colour |
+| --- | --- |
+| inside the good band | `--cy-success` |
+| one step out | `--cy-warning` |
+| two steps out | `--cy-danger` |
+
+**Tokens** — `--cy-neon-cyan` `--cy-success` `--cy-warning` `--cy-danger`
+`--cy-radius-lg`
+
+**Accessibility**
+
+- **Always give it text content.** `<meter>` requires fallback text, and that
+  text is what a browser without support shows. It is also the plainest way to
+  state the value for anyone the colour does not reach.
+- **Firefox cannot colour the states apart.** It exposes one bar
+  pseudo-element for every state, so all three take the optimum colour there.
+  The fallback text carries the meaning; the colour is an enhancement.
+- Under `forced-colors` all three states collapse to `Highlight`. The bar's
+  length and the fallback text carry the value.
+
+---
+
 ## `.cy-sr-only`
 
 Visually hidden, still announced. For text that a screen reader needs and the

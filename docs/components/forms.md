@@ -12,6 +12,39 @@ default rather than something you have to rebuild.
 
 ---
 
+## `.cy-fieldset`
+
+```html
+<fieldset class="cy-fieldset">
+  <legend>Uplink route</legend>
+  <label><input class="cy-radio" type="radio" name="route" checked> Primary</label>
+  <label><input class="cy-radio" type="radio" name="route"> Backup</label>
+</fieldset>
+```
+
+**A radio group needs this.** Without `<fieldset>` and `<legend>`, a screen
+reader announces each option and never says what is being chosen — "Primary,
+radio button, 1 of 2" with no question attached. A `<div>` and a heading look
+identical and do not carry the association; only `<legend>` does.
+
+`<legend>` is styled scoped to the wrapper, the same contract `.cy-accordion`
+uses for `<summary>`: one class on the container, native markup inside. It gets
+the same mono-uppercase treatment as `.cy-label`, so a group label and a field
+label read as the same rank of thing.
+
+**Tokens** — `--cy-neon-cyan` `--cy-font-mono` `--cy-radius` `--cy-border-width`
+`--cy-space-*`
+
+**Accessibility**
+
+- Use it for any group of radios, and for checkbox groups that answer one
+  question. A single checkbox with its own label does not need it.
+- The kit sets `min-inline-size: 0`. A `<fieldset>` has a UA
+  `min-inline-size: min-content`, which stops it shrinking inside a flex or
+  grid column and lets a long legend blow out the layout.
+
+---
+
 ## `.cy-field`, `.cy-label`, `.cy-hint`, `.cy-error`
 
 The wrapper and its text. `.cy-field` is a column with consistent spacing;

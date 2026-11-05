@@ -230,6 +230,7 @@ A form and a status message:
 | `.cy-label` | field label |
 | `.cy-input` | `<input>`, `<textarea>`, `<select>` (+ `--sm`, `--lg`) |
 | `.cy-checkbox` · `.cy-radio` | applied to the real input |
+| `.cy-fieldset` | groups radios or checkboxes on `<fieldset>`; styles a scoped `<legend>` |
 | `.cy-hint` · `.cy-error` | helper and error text |
 
 ```html
@@ -275,6 +276,7 @@ non-modal box with none of it, and nothing for the kit to paint.
 | `.cy-badge` | status pill (+ variants, `--outline`) |
 | `.cy-spinner` | indeterminate loader |
 | `.cy-progress` | determinate bar, on the native `<progress>` element |
+| `.cy-meter` | gauge on `<meter>`; `low`/`high`/`optimum` pick the status colour |
 | `.cy-sr-only` | visually-hidden text |
 
 Prefer native elements over ARIA roles where one exists — the browser gets
