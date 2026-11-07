@@ -3,7 +3,12 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.11.1] — 2026-11-07
+
+**No consumer-facing change.** `files` ships `*.css`, `README.md` and
+`LICENSE`, and none of them differ from 0.11.0 — the tarball is identical
+apart from the version. This release exists so the tooling work below sits
+behind a tag rather than drifting as unreleased work on `main`.
 
 ### Fixed
 - **The visual check no longer needs a retry to pass.** An unchanged region
