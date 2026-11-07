@@ -1,7 +1,7 @@
 # Project state
 
 What is already built, and the conventions any addition has to follow.
-Current as of **0.10.0**.
+Current as of **0.11.0**.
 
 `CHANGELOG.md` records what changed and when. This file records what *is* —
 read it before adding a component, so nothing gets rebuilt or invented twice.
@@ -539,8 +539,25 @@ version`. A bare `pnpm add` or `yarn add` will report the *previous* version
 for the first 24 hours because of the release cooldown described above, which
 looks exactly like a failed publish and is not one.
 
-`main` is protected, so feature work goes through a PR. The version-bump
-commit lands on `main` directly.
+`main` is protected, and that includes the release. The version-bump commit
+cannot be pushed to `main` directly — the push is rejected with `Changes must
+be made through a pull request` — so a release goes:
+
+```sh
+git checkout -b release/0.11.0
+npm version minor          # runs the preversion gate, commits, annotated tag
+git push -u origin release/0.11.0      # branch only, not the tag yet
+# merge the PR with a merge commit, then
+git push origin v0.11.0                # this is what triggers release.yml
+```
+
+The tag is pushed **after** the merge, not with the branch. Pushing it first
+would publish to npm before anyone had merged the thing being published, and
+the tag would name a commit that might never reach `main`.
+
+Merge it with a merge commit rather than a squash: a squash rewrites the
+commit, and the tag would then point at an object that is not in `main`'s
+history.
 
 ## Verifying in a browser
 

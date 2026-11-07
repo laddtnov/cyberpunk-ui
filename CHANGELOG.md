@@ -3,7 +3,7 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.11.0] — 2026-11-07
 
 ### Added
 - **`npm run check:forced-colors` — forced colours audited in a real engine,
