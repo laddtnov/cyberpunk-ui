@@ -57,23 +57,29 @@ hardware, and that claim is still unverified. The package-manager half was
 closed on 2026-11-07 — see the matrix in `docs/STATE.md` — and the visual
 check was made deterministic the same day.
 
-### 3. Make the glow halos rasterise one way
+### 3. Fewer phases, if it can be done
 
-What is left of the visual check's nondeterminism, and the only item here that
-is a known defect rather than a decision.
+Closed as a defect, open as a question.
 
-The `.cy-glow` and `.cy-glow--pink` halos in the `buttons` region alternate
-between two rasterisations, and a dozen pixels in `feedback` and `content` do
-the same less often. Runs pass — the second attempt catches it — but the spare
-attempt is being spent rather than held in reserve, which is how the old
-six-attempt version hid a real bug for two releases.
+An unchanged region can produce more than one byte-identical picture and the
+DOM cannot see which one is coming — identical `scrollY`, document height,
+bounding rect and pixel ratio, different pixels. The check now records every
+phase a region produces and passes on any of them, which removed the last
+false failures; `docs/STATE.md` has the measurements and the suspects that
+were ruled out.
 
-Two causes of exactly this shape have already been found and removed, both by
-hashing captures rather than reasoning about them: offscreen tile
-rasterisation, and a sticky element owning a compositing layer once the page
-scrolls. A third is likely findable the same way. Blurred box-shadows are
-GPU-rasterised, and the kit is not going to stop testing its glows, so the
-answer is to find what flips the layer — not to widen the tolerance.
+What is left is cosmetic rather than a bug: `feedback` records three phases
+and hits the cap, so it may have a fourth nobody has seen. If the underlying
+cause is ever found — it is below the DOM, somewhere in Chromium's
+rasteriser — the phase machinery can go. Until then it is honest: the page
+has several correct renderings and the baselines say which.
+
+Anyone picking this up should know the two traps already hit here. A blank
+frame is perfectly stable and compares equal to another blank frame, so a
+broken capture looks exactly like a passing check — that one survived a full
+re-record and six green runs. And retries hide the evidence: at six attempts
+the loop printed the same pixel count six times for two releases without
+anyone reading it as determinism.
 
 ## Shipped, for the record
 
