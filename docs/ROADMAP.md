@@ -1,7 +1,7 @@
 # Roadmap
 
 Where the kit goes next, and why in that order.
-Written against **0.9.0**.
+Written against **0.10.0**.
 
 `docs/STATE.md` records what *is*. This file records what is **not yet**, what
 was considered and rejected, and what the constraints rule out entirely. Read
@@ -21,331 +21,104 @@ collide — and they do, on tabs and tooltips — the component waits.
 
 Everything below is ordered by those two, not by what is easiest to demo.
 
-## Done, for the record
-
-So nobody plans it twice:
-
-| Area | State |
-| --- | --- |
-| Publishing | npm with `--provenance`, GitHub Releases, SemVer, MIT, CHANGELOG |
-| CI | contrast check + `npm pack --dry-run` on every PR; tag-triggered publish |
-| Design tokens | `tokens.css`, 104 lines, every value a custom property |
-| Accessibility | contrast enforced in CI, shared focus rings, reduced-motion, `:user-invalid`, `.cy-sr-only`, WCAG-aware light theme |
-| Components | button, card, input, select, textarea, checkbox, radio, alert, toast, badge, spinner, progress, accordion, modal, terminal |
-
-Two notes on that table, because both get proposed again:
-
-**The token prefix stays `--cy-`.** A rename to anything else is a breaking
-change for every consumer, and the author's own portfolio pins an exact version
-over CDN. The cost is a coordinated update for a cosmetic gain.
-
-**A new colour token needs nothing but itself.** Every translucent glow is
-`color-mix(in srgb, var(--cy-token) α%, transparent)`, mixed from the colour
-token directly.
-
-This constraint used to read the other way: glows were
-`rgba(var(--cy-*-rgb), α)`, so every colour needed a hand-maintained `-rgb`
-twin, and `color-mix()` was ruled out for reach. It became Baseline in 2023 and
-the twins were retired in 0.8.0.
-
 ## Next
 
-### Closed: the Firefox check
+Nothing here is a component. Everything the original roadmap proposed has
+shipped, and what is left is the work that decides whether this becomes 1.0.
 
-This was the first item on the list, on the grounds that nothing should be
-built on an unverified base. It has been done — Firefox on macOS, against the
-demo at 0.2.1 — and it is recorded here rather than deleted, because how it
-resolved is the useful part.
+### 1. `forced-colors` on real Windows High Contrast
 
-Everything renders: `appearance: none` on input / select / textarea, the custom
-select arrow, the checkbox tick, the radio dot, the native `<progress>` with
-`::-moz-progress-bar`, `[aria-invalid="true"]`, `:user-invalid` (quiet on load,
-red after blur — exactly the behaviour the selector is chosen for), and the
-feedback components. Nothing had to be fixed.
+The only feature in the kit that has never been seen on the hardware it is for.
+An emulated pass in Chromium found nothing broken — every component resolves to
+system colours, the spinner keeps two distinct border colours so its rotation
+survives, glows and the scanline wash are dropped. But emulation approximates
+one theme, and real High Contrast ships several, with Firefox and Edge mapping
+them differently.
 
-Two things came out of it that were worth more than the pass itself.
+Five minutes on a Windows machine. Nobody has had one.
 
-**A wrong assumption was retired.** The kit believed Gecko could not generate
-pseudo-elements on `<input>`, and had flagged the checkbox tick as likely
-broken. It renders — `appearance: none` makes the input non-replaced, so the
-rule never applied to these controls. That belief had already driven a code
-change in 0.2.1 and would have driven more.
+### 2. Re-run the package-manager matrix
 
-**The demo was hiding two paths.** `:user-invalid` could not be tested from the
-page at all: the only validation example hardcoded `aria-invalid="true"`, which
-renders red on load and never matches the selector. The div + `.cy-progress__fill`
-path was not present either. Both are in the demo now.
+`docs/STATE.md` carries a five-manager table verified against **0.2.1**, when
+the kit was six stylesheets wired together with `@import`. It is now one
+concatenated file inside a cascade layer, published over eight subpaths, with
+`color-mix()` in every glow.
 
-A second pass at 0.2.2 closed the remainder: the **light theme** and the
-**glitch / scanline / grid** effects, neither of which had been in frame the
-first time. Both correct. The one item there with real risk was the `select`
-arrow, whose colour is baked into a per-theme data-URI and would show as a cyan
-arrow on a light background if the two SVGs ever drifted. It renders teal.
+STATE itself names the trigger: re-run when the shape of the `exports` map
+changes. It changed. The table is still true about the day it was taken, which
+is why it has not been edited — but it is no longer evidence about today.
 
-So **all three engines are now verified**, and nothing about the kit is
-unknown in Gecko. A regression from here would be new work rather than an
-unknown, which is an argument for item 1 and not for another manual sweep.
+### 3. Make the visual check trustworthy, or stop trusting it
 
-The lesson generalises past Firefox. Two of the kit's engine assumptions were
-written from reasoning rather than observation; one was wrong, and the demo
-could not have caught it. That is the argument for item 1, not for more
-reasoning.
+During 0.10.0 it failed **5 runs out of 5**, including regions the change never
+touched, with byte-identical failures across runs. Two captures inside one run
+agree; captures in separate browser sessions do not, so the existing retry
+cannot help. Baselines for 0.10.0 are recorded but unverified.
 
-### Closed: package managers and badges
+A check that cries wolf gets skipped, and `CY_SKIP_VISUAL=1` already exists to
+skip it. That is a bad equilibrium: either the harness becomes reliable, or the
+honest move is to delete it and say the kit has no visual regression testing.
 
-The prediction was that pnpm, Yarn and Bun already worked and only needed
-writing down. That held — nothing had to change for any manager — but the
-smoke installs were still worth running, because two things turned up that no
-amount of reasoning would have.
+### 4. Decide on 1.0.0
 
-All five configurations install and resolve all six subpaths, **including Yarn
-Plug'n'Play with no `node_modules` on disk**, which was the one genuine risk in
-an `exports`-only package. The matrix is in STATE.md.
+Pre-1.0 is what allows a breaking change in a minor release, and 0.8.0 used
+that licence to delete seven public tokens. The API has been stable since. The
+question is whether to keep that freedom or promise stability.
 
-**`package.json` was unreachable.** Once a package declares `exports`, anything
-absent from the map cannot be imported — and `package.json` was absent, so
-tools that read it were locked out. It is mapped now.
+Items 1 and 2 are the ones worth closing first: 1.0 is a claim about behaviour
+on hardware and in package managers, and both claims are currently unverified.
 
-**pnpm 11 and Yarn 4 refuse versions younger than 24 hours.** Both default to a
-supply-chain cooldown, and neither errors: they quietly install the previous
-release instead. A bare `pnpm add` right after publishing therefore looks like
-a failed release. This is documented in the README and, more importantly, in
-STATE.md's release section, where the mistake would actually be made.
+### 5. Four native elements are still unstyled
 
-Badges added: downloads, CI status, unpacked size. No TypeScript badge — there
-is no TypeScript — and no hand-drawn "Bun compatible" or "Accessible" shield,
-since a badge nobody computes is decoration.
+`<kbd>`, `<dl>/<dt>/<dd>`, `<figure>`, `<blockquote>`. The first two fit a HUD
+readout — keycaps and term/value pairs — and follow the same native-element
+pattern as `.cy-meter` and `.cy-fieldset`. The last two are ordinary content
+styling with no cyberpunk angle, and are listed for completeness rather than as
+a proposal.
 
-### Closed: v0.3 containers
+## Shipped, for the record
 
-All three shipped, in `containers.css`, each on the native element that already
-owns the behaviour:
+What each release settled, so nothing gets planned twice. `CHANGELOG.md` holds
+the detail and the measurements; this is the index.
 
-Accordion
-: `<details>` / `<summary>`. Keyboard and open state are the browser's.
+| Release | Settled |
+| --- | --- |
+| 0.2.x | Firefox verified; the Gecko pseudo-element belief that drove a workaround was wrong and was retired |
+| 0.2.2 | npm, pnpm, Yarn Classic, Yarn Berry (incl. PnP), Bun all resolve every subpath; badges added |
+| 0.3.0 | containers on native elements: `<details>` accordion, `<dialog>` modal, terminal |
+| 0.4.0 | `prefers-contrast: more` and `forced-colors: active` across every component |
+| 0.4.x | per-component reference under `docs/components/` |
+| 0.5.0 | `.cy-progress__fill` removed; the native `<progress>` is the only progress bar |
+| 0.5.x | live token playground in the demo |
+| 0.6.0 | `.cy-sidebar`, `--cy-neon-gold`, `--cy-font-terminal` |
+| 0.6.x | convention checker and region-based visual regression; **stylelint rejected on evidence** — 123 problems, zero bugs |
+| 0.6.3 | the barrel became one concatenated file: a `<link>` cost 9 serialised round trips, now 1 |
+| 0.7.0 | `@layer cyberpunk-ui`, logical properties for RTL, `data-theme="auto"` |
+| 0.8.0 | the seven `-rgb` twins retired for `color-mix()` |
+| 0.9.0 | `.cy-popover` toggle-tip on the Popover API; contrast checked against `--cy-surface` too |
+| 0.10.0 | `.cy-fieldset` and `.cy-meter`; releases moved to npm trusted publishing (OIDC) |
 
-Modal
-: `<dialog>`, with a blurred `::backdrop`. Focus trapping, `Esc` and the top
-  layer come from `showModal()` — which is the consumer's call to make; the kit
-  only paints the result.
+Decisions in that history that get re-proposed, and should not be:
 
-Terminal / code window
-: The differentiator. Composes with `.cy-scanlines` and `.cy-cursor` rather
-  than reimplementing them.
+**The token prefix stays `--cy-`.** A rename is a breaking change for every
+consumer, and the author's portfolio pins an exact version over CDN.
 
-Two things came out of building them.
+**A new colour token needs nothing but itself.** Glows are
+`color-mix(in srgb, var(--cy-token) α%, transparent)`, mixed from the colour
+token. This read the other way until 0.8.0, when `color-mix()` being Baseline
+2023 removed the reason for the `-rgb` twins.
 
-**A scrim must not follow the theme.** The backdrop was first derived from
-`--cy-bg`, which meant the light theme painted a near-white wash over a
-near-white page and separated nothing. `--cy-backdrop` is now a finished
-`rgba()` that stays dark in both themes. Only measuring it in light mode caught
-that; it looks perfectly fine in the dark theme everything gets built in.
+**The current item in a nav is styled from `aria-current`, never a modifier
+class.** A class lets you build a nav whose current item looks current and
+announces as ordinary.
 
-**`::backdrop` may not inherit custom properties**, so `var(--cy-backdrop)`
-carries a literal fallback. Without one, a failure there is not a wrong colour
-but *no* backdrop at all, leaving the page fully legible behind an open modal.
+**`package.json` is in the `exports` map on purpose.** Once a package declares
+`exports`, anything absent is unreachable — including `package.json`, which
+tools routinely read.
 
-The rest of the original v0.3 scope — **navigation and data** — followed in
-`navigation.css` and `table.css`. The prediction that none of them would get a
-native element to stand on was right, and it changed what the batch was: a
-`<nav>` is a landmark and a `<table>` is a structure, so neither hands over
-behaviour the way `<details>` and `<dialog>` did. There was nothing to trap
-focus or toggle. What there was instead is markup that carries meaning CSS
-cannot supply, and the work went there.
-
-Two things worth keeping.
-
-**The current item is styled from `aria-current`, not from a modifier class.**
-A `--active` class would let someone build a nav whose current item looks
-current and announces as ordinary — the failure mode the whole component
-reference exists to warn about. Styling the attribute makes the appearance and
-the announcement the same declaration, so they cannot drift.
-
-**A table looks identical whether or not it is accessible.** `scope` on the
-headers, a `<caption>`, a real `<thead>` — all three are invisible when absent
-and all three are the difference between "Output: 982 TW" and a wall of
-numbers. The same is true of the scroll wrapper: a box that scrolls only under
-a mouse fails WCAG 2.1.1, and the `tabindex` that fixes it then requires a name
-because it is focusable. Documented rather than assumed.
-
-### Closed: per-component documentation
-
-`docs/components/`, one page per subpath rather than per component — the
-subpath is the boundary a consumer actually imports, so `/forms` and
-`forms.md` describe the same thing, and fifteen fragments do not have to be
-navigated.
-
-Each component carries what it is, the markup the kit expects, its modifier
-classes, the tokens that restyle it, and its accessibility contract.
-
-That last section turned out to be most of the value, and it is worth saying
-why: **everything in it is a way to build something that looks completely
-finished and is not.** A `.cy-error` with no `aria-describedby` styles
-perfectly and is invisible to a screen reader. A `.cy-spinner` with no
-`.cy-sr-only` label spins beautifully and announces nothing. A `<div>` in
-place of `<output>` for a toast is pixel-identical and silent. A modal opened
-with `show()` instead of `showModal()` renders without its backdrop and traps
-nothing. None of these produce a visual symptom, so none of them get caught by
-looking — which is exactly why they had to be written down.
-
-Writing the pages also surfaced that the `<select>` arrow's baked-in colour is
-a consumer-facing limitation and not only internal debt: override
-`--cy-neon-cyan` and the arrow does not follow. Documented where someone
-retheming will hit it.
-
-### Closed: high-contrast support
-
-Both `prefers-contrast: more` and `forced-colors: active` are handled now, per
-file, following the `prefers-reduced-motion` precedent rather than adding a
-seventh stylesheet. Details in STATE.md; the shape of it is that the first is a
-lift the token substrate mostly absorbs on its own, and the second is a
-surrender where the only real work is making sure nothing was signalling with
-colour alone.
-
-The prediction was that this would mean "losing the glow deliberately rather
-than by accident", and that part held. What it missed is that **removing the
-glow was the easy half**. Three components were signalling state through colour
-that forced colours would have flattened without appearing broken — the
-spinner's arc, the checked checkbox and radio, and the progress fill. A static
-ring that used to spin still looks like a perfectly fine ring. That is the
-failure mode worth remembering: in forced colours, things do not break
-visibly, they stop meaning what they meant.
-
-One caveat carried forward: **`forced-colors` has not been seen on a real
-display.** It needs Windows High Contrast Mode. What was verified is that both
-blocks parse and are live, that every selector matches a real element, and that
-every system colour used is supported — which is a long way from having looked
-at it. Written down in STATE.md rather than quietly assumed, and a good
-candidate for whoever next has a Windows machine in reach.
-
-### Closed: playground
-
-This item used to say the demo was not hosted. It is — GitHub Pages serves it
-at **https://laddtnov.github.io/cyberpunk-ui/demo/**, deploying from `main`, and
-the live copy tracks merges without anyone doing anything. The OG tags have
-pointed there all along.
-
-What was actually missing was a link to it: the README never mentioned the demo
-at all, so the page existed and nothing led anyone to it. Fixed.
-
-**Live token editing** is now in, as `demo/playground.js` — five colours, a
-radius slider and a border-width slider, plus a COPY CSS button that emits only
-what was actually changed, so a visitor leaves with a `:root` block they can
-paste. The script lives in `demo/`, which `files` has never published, so the
-package still ships no JavaScript.
-
-Three things it forced into the open, all of them arguments the kit already
-makes but could not previously *show*:
-
-**A colour and its `-rgb` twin have to move together.** The editor writes both
-on every change. Writing only the hue recolours borders and text and leaves
-every glow on the old colour — the rule is documented, and this is the first
-place it is demonstrable in one drag.
-
-*(Superseded in 0.8.0: `color-mix()` reads the colour token directly, the twins
-are gone, and the editor writes one property per colour. The demonstration
-outlived the problem it demonstrated.)*
-
-**Inline styles on `:root` outrank the theme.** An override set in dark mode
-survives into `:root[data-theme="light"]` and pins, say, a near-black
-background over the light theme. Switching themes therefore clears the
-overrides and re-reads that theme's own values, which is the only behaviour
-that is not confusing.
-
-**The kit does not style every input.** `type="color"` and `type="range"` are
-not `.cy-input` — the kit covers text inputs, `<select>` and `<textarea>`, and
-putting its class on controls it does not support would advertise support that
-is not there. The playground styles those two locally and says why.
-
-Still open here: nothing blocking. Persisting a theme across reloads and
-sharing one by URL are both obvious next steps and neither is needed for the
-page to make its point.
-
-### Closed: linting and visual regression
-
-Both halves landed, and neither is what the item described.
-
-**Stylelint was rejected on evidence** — 123 problems, zero bugs, almost all of
-it house style contradicting deliberate choices. `scripts/check-conventions.js`
-enforces what only this project knows instead, dependency-free, and found real
-README drift on its first run.
-
-**Visual regression is region-based and local**, driven by ego-browser:
-`scripts/check-visual.js`, one PNG per demo section, compared through a canvas
-in the page so nothing on the Node side decodes an image. It catches the
-square-edge progress defect that motivated the item — 1154 px at delta 150,
-located to the fill.
-
-The part the roadmap got wrong was assuming this could be a CI gate. ego-browser
-is a desktop browser and GitHub's runners cannot start it, so it is a release-time
-check documented in STATE.md rather than an automated one. That is a real
-limitation and worth stating plainly: it runs when someone runs it.
-
-Two findings worth keeping. Reproducibility needs three things together —
-frozen animations, a pinned `deviceScaleFactor`, and fonts confirmed applied —
-and missing any one produces a diff that has nothing to do with the CSS. And
-captures have to **settle**: 27 of 28 region-runs were pixel-identical, while
-the odd one out repeated the *same* 1181 pixels later. That is a second
-discrete state, not noise, so the answer was shooting each region twice rather
-than widening the tolerance and going blind to a real 1181-pixel change.
-
-### Closed: sidebar, gold, and a terminal font
-
-The last component from the original Phase 6 list worth building, plus two
-things that came out of the same pass.
-
-**`.cy-sidebar`** completes navigation. It requires a `<ul>` and takes its
-current item from `[aria-current]`, both for reasons the rest of
-`/navigation` already establishes. What it deliberately does *not* do is more
-interesting: it sets no width, no sticky position and no scrolling. Each of
-those is a page decision, and the scrolling one carries an accessibility bill —
-a scroll container owes the keyboard a `tabindex` and a label, which is not a
-cost to impose on every sidebar for the sake of the tall ones.
-
-**`--cy-neon-gold`** adds the Deus Ex register to a kit that only had the
-*Blade Runner* one. The halo is not the neon one recoloured — 6px at higher
-opacity rather than 10px, because a warm low-saturation hue smears at the
-radius that makes cyan look lit. It is kept away from `--cy-warning`, which is
-a caution colour with a meaning attached; decoration painted in a status hue
-looks like a problem and announces nothing.
-
-**`--cy-font-terminal`** names Nerd Fonts for `.cy-terminal` only, and ships
-none of them. The patched builds are tens of megabytes against a kit measured
-in kilobytes, so the token asks for what a machine may already have and falls
-through to `--cy-font-mono`. It is kept out of the shared mono stack because
-Hack is widely installed and would otherwise repaint half the kit on a
-developer's machine without being asked.
-
-Two things this taught the visual check, both about machine variance rather
-than about CSS: locally installed fonts have to be pinned during capture or a
-baseline is only comparable on the machine that recorded it, and text
-rasterisation has to be forced to grayscale, because whether a box gets its own
-compositing layer decides its antialiasing and layer promotion is not stable
-between captures. That second one was the ~1180-pixel "second state" the settle
-loop had been absorbing since the check was built.
-
-## Waiting on a decision
-
-**Tooltips — resolved in 0.9.0, as a toggle-tip.** The objection was never
-effort: a CSS-only tooltip is hover-only, so keyboard users, touch users and
-screen readers are all excluded, and no amount of CSS fixes that.
-
-The Popover API removed the objection rather than working around it. The
-trigger is a real button, so it is focusable and activatable, and the browser
-reports `expanded` on it in the accessibility tree without any ARIA in the
-markup — measured, not assumed. Escape, light-dismiss and the top layer come
-free. It shipped as `.cy-popover` once `popover` reached Baseline in January
-2025.
-
-It is a *toggle*-tip and stays one. A hover-triggered version needs interest
-invokers, which are Chrome-only, and hover-only is the failure this replaced.
-
-**Tabs — still declined, and for the original reason.** Real tabs need
-`role="tablist"`, roving `tabindex` and arrow-key navigation. None of it is
-expressible in CSS, and the CSS-only imitations announce a control as something
-it is not. `<details name>` is documented as the substitute: a shared name
-makes a group exclusive, which is what most people want tabs for, and it has
-been Baseline since September 2024.
+**The release workflow filename is part of the release contract.** npm's
+trusted-publisher configuration names `release.yml`; renaming it breaks
+publishing until npmjs.com is updated to match.
 
 ## Parked — type of our own
 
@@ -357,7 +130,7 @@ down because the shape of the problem is already clear.
 `--cy-font-display`, `--cy-font-body`, `--cy-font-mono` — each with a system
 fallback, and the file already says the consumer loads the fonts. **No font
 file ships**: `files` is `["*.css", "README.md", "LICENSE"]`, and the whole
-package is 40.8 kB. Only the demo pulls Orbitron / Rajdhani / Share Tech Mono,
+package is 42.0 kB packed. Only the demo pulls Orbitron / Rajdhani / Share Tech Mono,
 through one `<link>` to Google Fonts. Swapping in a different face is three
 token values and nothing else.
 
@@ -427,9 +200,11 @@ thing:
 
 **Nerd Fonts** are real font files, patched to add developer and powerline
 glyphs. That makes them a poor fit for display or body text and a *good* one
-for exactly one component — the **terminal / code window**, which now exists
-and is the place a kit would legitimately want box-drawing and prompt glyphs.
-Worth trying there first, at demo scale, before anything is packaged.
+for exactly one component — the **terminal / code window**. That was tried and
+shipped in 0.6.0: `--cy-font-terminal` names Nerd Fonts first and falls through
+to `--cy-font-mono`, so a machine that has one gets the glyphs and nothing is
+packaged. The open half is unchanged — no font file ships, and none should
+without the licence work below.
 
 **Tegaki** (`gkurt/tegaki`, MIT) is not a typeface at all. It is a JavaScript
 library that animates handwriting stroke by stroke and emits SVG, PNG, GIF or
@@ -441,11 +216,25 @@ dependency. That is the only version of this worth pursuing.
 
 ## Deliberately not doing
 
+**Tabs.** Real tabs need `role="tablist"`, roving `tabindex` and arrow-key
+navigation between tabs. None of that is expressible in CSS, and the CSS-only
+imitations — hidden radio inputs, `:target` — produce a control that announces
+itself as something it is not. `<details name>` is documented in
+`docs/components/containers.md` as the substitute: a shared name makes a group
+exclusive, which is what most people reach for tabs to get.
+
+**Hover tooltips.** `.cy-popover` is a toggle-tip and stays one. A
+hover-triggered version needs interest invokers, which are Chrome-only, and a
+hover-only affordance is the failure the toggle-tip was built to avoid.
+
+
 **Framework packages** (`-react`, `-svelte`, `-vue`). A CSS kit needs no
 wrapper to be used in React — `@import` works there today. A wrapper's only
 real payload is JS behaviour: modal open state, a toast queue, tab selection.
 That is worth building when those components exist and consumers ask for the
-state management, not before. Revisit after v0.3.
+state management, not before. The original note said "revisit after v0.3";
+v0.3 came and went, the components it was waiting for now exist, and nobody
+has asked. Revisit when someone does.
 
 **Unit tests.** There is no unit. The equivalents that do carry weight are
 already listed above — Firefox verification, visual regression, and pairing
@@ -454,8 +243,11 @@ contrast.
 **Avatar.** It is `border-radius: 50%` on an `<img>`. A class that wraps one
 declaration earns nothing and adds a name to remember.
 
-**Performance testing.** 1,592 lines of CSS, zero dependencies, zero JavaScript.
-There is nothing to measure that the bundle-size badge does not already say.
+**Performance testing.** 1910 lines of CSS, zero dependencies, zero JavaScript.
+There is nothing to measure that the bundle-size badge does not already say —
+and the one real performance defect the kit had was found by reading the CDN
+request waterfall, not by a benchmark: eight `@import`s costing nine
+serialised round trips, fixed in 0.6.3.
 
 ## How to use this file
 
