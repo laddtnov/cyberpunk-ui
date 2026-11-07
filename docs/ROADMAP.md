@@ -1,7 +1,7 @@
 # Roadmap
 
 Where the kit goes next, and why in that order.
-Written against **0.10.0**, plus unreleased work on `main`.
+Written against **0.11.0**.
 
 `docs/STATE.md` records what *is*. This file records what is **not yet**, what
 was considered and rejected, and what the constraints rule out entirely. Read
@@ -96,7 +96,7 @@ the detail and the measurements; this is the index.
 | 0.8.0 | the seven `-rgb` twins retired for `color-mix()` |
 | 0.9.0 | `.cy-popover` toggle-tip on the Popover API; contrast checked against `--cy-surface` too |
 | 0.10.0 | `.cy-fieldset` and `.cy-meter`; releases moved to npm trusted publishing (OIDC) |
-| unreleased | the visual check made to capture on-screen content; `.cy-kbd`, `.cy-dl`, `.cy-figure`, `.cy-quote`; forced colours checked in real Gecko against four Windows palettes |
+| 0.11.0 | `.cy-kbd`, `.cy-dl`, `.cy-figure`, `.cy-quote`; the visual check made to capture on-screen content; forced colours checked in real Gecko against four Windows palettes |
 | 0.10.x | package-manager matrix re-verified against 0.10.0: all five managers resolve all ten `exports` entries, Yarn Berry under PnP included |
 
 Decisions in that history that get re-proposed, and should not be:
