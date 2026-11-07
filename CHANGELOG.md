@@ -5,6 +5,29 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- **Releases authenticate with npm trusted publishing (OIDC) instead of a
+  token.** `NPM_TOKEN` is gone from the publish step; npm trusts the
+  short-lived identity GitHub mints for this workflow, named by the package's
+  trusted-publisher configuration on npmjs.com.
+  - This replaced the token path after it failed four times running. The token
+    expired first — `E404` on `PUT`, which is how npm reports an auth failure
+    without confirming a package exists. Replacing it produced `EOTP` on every
+    subsequent attempt: a 2FA setting demanding a one-time password, which no
+    CI job can ever supply. Neither failure is fixable by rotating a token
+    again, which is why the token is gone rather than refreshed.
+  - `--provenance` is dropped from the publish command. Trusted publishing
+    generates and publishes the attestation on its own for a public repository
+    and package.
+  - Node moves 20 → 24, because trusted publishing requires npm 11.5.1 or
+    later and Node 22.14 or later. Node 24 bundles npm 11.19.1 and has bundled
+    at least 11.5.1 since 24.5.0, so nothing is installed — the workflow only
+    asserts the version, because a CLI older than 11.5.1 does not fail loudly:
+    it falls back to token auth and dies with the same `EOTP`.
+  - **The workflow filename is now part of the release contract.** Renaming
+    `release.yml`, or moving the publish step into another workflow, breaks
+    publishing until the npmjs.com configuration is updated to match.
+
 ## [0.10.0] — 2026-11-05
 
 ### Added
