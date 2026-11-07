@@ -390,7 +390,8 @@ display, and should be treated that way until someone looks.
 - `ci.yml` on PRs: contrast check, then `npm pack --dry-run`. Deliberately
   **not** `npm publish --dry-run` — that contacts the registry and fails on
   any already-published version, which would break every PR.
-- `release.yml` on a `v*` tag: `npm publish --provenance` (SLSA attestation),
+- `release.yml` on a `v*` tag: `npm publish` over **trusted publishing**
+  (OIDC — no `NPM_TOKEN`; the attestation is generated automatically),
   mirror to GitHub Packages (`continue-on-error`), cut a GitHub Release.
 
   It also takes a **manual run** — Actions → Release → Run workflow — with the

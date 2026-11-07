@@ -8,6 +8,17 @@ name: Release
 #      and the exact commit + workflow that produced it, shown on the npm page.
 #   2. No local publish friction: no 2FA prompt, no CloudStorage path issues.
 #
+# Authentication is npm trusted publishing (OIDC), not a token. The package's
+# trusted-publisher configuration on npmjs.com names this repository and this
+# workflow filename, and npm trusts the short-lived identity GitHub mints for
+# the run. Renaming this file, or moving the publish into a different
+# workflow, breaks publishing until the configuration is updated to match.
+#
+# It replaced NPM_TOKEN in 0.10.0 after the token path failed four times in a
+# row: the token expired (E404 on PUT, which is npm reporting auth failure as
+# "not found"), and once replaced, every attempt hit EOTP — a 2FA setting
+# demanding a one-time password that no CI job can produce.
+#
 # It can also be run by hand against an existing tag, from Actions → Release →
 # Run workflow. That exists because a tag push is a single event: if Actions is
 # down or degraded when the tag lands, the run is simply never created, and the
@@ -94,21 +105,43 @@ jobs:
             exit 1
           fi
 
+      # Node 22.14 is the floor for trusted publishing; 24 is what npm's own
+      # example uses. The npm upgrade is deliberate rather than trusting
+      # whatever the image ships: trusted publishing needs npm 11.5.1 or
+      # later, and a too-old CLI falls back to token auth and fails with the
+      # same EOTP this change exists to remove.
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Ensure npm supports trusted publishing
+        run: |
+          npm install -g npm@latest
+          echo "npm $(npm -v)"
+          node -e '
+            const v = require("child_process").execSync("npm -v").toString().trim();
+            const [maj, min, pat] = v.split(".").map(Number);
+            const ok = maj > 11 || (maj === 11 && (min > 5 || (min === 5 && pat >= 1)));
+            if (!ok) { console.error("::error::npm " + v + " is older than 11.5.1, which trusted publishing requires."); process.exit(1); }
+          '
 
       # The package is dependency-free CSS, so there is nothing to install or
       # build — but confirm the tarball contains exactly what we expect.
       - name: Inspect the tarball contents
         run: npm publish --dry-run
 
-      - name: Publish to npm with provenance
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # No token. npm authenticates with the OIDC identity GitHub mints for
+      # this workflow, which the package's trusted-publisher configuration
+      # names. That is the whole point of the change: a token could expire
+      # (it did), and an account or package 2FA setting could demand a
+      # one-time password that CI can never supply (it did, four times).
+      #
+      # --provenance is gone because trusted publishing generates and
+      # publishes the attestation on its own for a public repo and package.
+      - name: Publish to npm
+        run: npm publish --access public
 
       # Mirror to GitHub Packages purely so the package shows up in the repo's
       # and profile's Packages section. This is NOT a usable install channel:
