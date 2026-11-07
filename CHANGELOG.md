@@ -6,6 +6,36 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **`npm run check:forced-colors` — forced colours audited in a real engine,
+  against the palettes Windows ships.** `scripts/check-forced-colors.js`
+  drives Gecko's own forced-colors code path rather than an emulation of it,
+  with the colour values of the four Windows 11 contrast themes (Night Sky,
+  Aquatic, Desert, Dusk). All four pass. Local-only, like the visual check:
+  it needs a desktop Firefox, which GitHub's runners cannot start.
+  - Firefox enters that path when `ui.useAccessibilityTheme` is 1, and every
+    system colour then comes from a `ui.*` pref. Measured with Night Sky:
+    `Canvas` → `#000000`, `ButtonFace` → `#FFEE32`, `Highlight` → `#D6B4FD`,
+    and a `#00f2ff` border → `#FFFFFF`. Gecko reports `prefers-contrast: more`
+    as matching at the same time, so both of the kit's media blocks apply
+    together — which is the real condition on Windows.
+  - **It also narrowed what the kit's forced-colors rules are worth.** In
+    Gecko the engine overrides author colours and strips both `box-shadow` and
+    `background-image` on its own, so most of those rules are inert there.
+    Proved by mutation, not argued: a transparent `.cy-card` border, a `cite`
+    coloured `Canvas`, and deleting the grid and scanline `background-image:
+    none` rules each changed nothing observable. They stay as a backstop for
+    engines that force less.
+  - The two properties forced colours leaves under author control are
+    `opacity` and `forced-color-adjust`, and those assertions are live:
+    dimming `.cy-card` to `opacity: 0.45` and giving `.cy-terminal`
+    `forced-color-adjust: none` are both caught.
+  - Reported every run and not fixable in CSS: the four alert variants render
+    identically, because forced colours collapses their accent borders to one
+    value. Inherent to the mode, and why the docs require `role="alert"` and
+    real words rather than letting colour carry the meaning.
+  - **Still not Windows.** A second engine and four palettes is not the
+    hardware, where the OS supplies the colours and Edge may force less than
+    Gecko. That check stays open.
 - **Four native content elements, the last unstyled ones the roadmap listed.**
   All four follow the kit's native-element-first pattern — the element already
   carries the meaning, the class only paints it — and all four live in
