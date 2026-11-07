@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **The visual check no longer needs a retry to pass.** An unchanged region
+  can produce more than one byte-identical picture, and nothing in the DOM
+  says which one is coming: measured at the moment of capture, the content
+  region alternated between exactly two rasterisations on a strict period of
+  two with identical `scrollY` (2808), `document.scrollHeight` (3708),
+  bounding rect (top 384.6796875, height 451.15625) and device pixel ratio.
+  `--update` now records every distinct phase a region produces, and a capture
+  matching any of them passes. Four of the eight regions have two phases,
+  `feedback` has three, three have one.
+  - `captureBeyondViewport` is off. It was photographing offscreen tiles and
+    was a real cause of a *different* instability, but the alternation
+    outlives it. Ruled out by measurement, alongside the in-page canvas
+    `diff()`, region order and the web-font probe.
+  - Verified by mutation: `.cy-meter` reverted to the half-height-bar bug is
+    caught as `9701 px differ from every one of 3 phase(s)`, and removing
+    `.cy-kbd`'s inset rim as `316 px differ from every one of 2 phase(s)` —
+    the latter in the same two rows where the 6-pixel noise lives.
+  - `ATTEMPTS` stays at 2 and is documented as not being a retry budget.
+
+### Added
+- **`--update` rejects a blank capture.** A black frame is perfectly stable
+  and compares equal to another black frame, so a broken capture looks exactly
+  like a passing check. Converting the clip to viewport coordinates (CDP wants
+  document coordinates) produced exactly that: every baseline re-recorded
+  blank, six consecutive runs passed comparing blank against blank, and only a
+  mutation probe that failed to fail revealed it. A recorded baseline holding
+  fewer than eight distinct colours is now an error.
+
 ## [0.11.0] — 2026-11-07
 
 ### Added

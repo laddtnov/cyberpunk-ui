@@ -301,44 +301,94 @@ The 32 pixels were all antialiasing: one row of each of the four alerts' left
 accent borders, where the border went from `19,28,28` to `72,137,117`, plus the
 rounded corners of `<progress>` and `<meter>` at deltas of 3 to 17.
 
-Scrolling the region into view first makes it live viewport content, which
-rasterises the same way every time, and `ATTEMPTS` went from 6 down to 2.
+Scrolling the region into view first makes it live viewport content, and
+`captureBeyondViewport` is now **off** — it was the thing photographing
+offscreen tiles, and with the region on screen it is not needed. The clip
+stays in **document** coordinates either way; CDP wants it that way, and
+converting it to viewport coordinates silently produced black frames (see
+below).
 
-Scrolling brought two consequences of its own, both found the same way and
-both worth knowing before touching this script again.
+Two consequences of scrolling, both found the same way and both worth knowing
+before touching this script again.
 
 **The offset has to be a whole number.** A scroll aimed at a region near the
 end of the document is clamped to `scrollHeight - innerHeight`, which is
 fractional whenever the document height is. The last section landed on 2316.5
 instead of its own 2764, and a half-pixel offset rasterises a whole region
-differently from an integer one — so every baseline for the final section
-quietly depended on the total height of the page. Appending an unrelated
-section below it moved the clamp and `feedback` reported 22850 changed pixels
-for a change that added no CSS to it. `capture()` now floors the offset.
+differently. That made every baseline for the final section depend on the
+total height of the page: appending an unrelated section moved the clamp and
+`feedback` reported 22850 changed pixels for a change that added no CSS to it.
+`capture()` floors the offset.
 
 **Anything that owns a compositing layer has to be de-promoted, not just
 hidden.** The demo's topbar is `position: sticky`, and a sticky element gets
-its own layer the moment the page is actually scrolled. That changed how the
-glow halos in the section beside it rasterised: `buttons` had been stable to
-the byte for weeks at scroll 0, then began alternating between two states —
-10124 pixels, diffuse, deltas of 3 to 6 across 108 rows — as soon as captures
-started scrolling. `FREEZE` now gives it `position: static`, which keeps its
-box in normal flow so no layout moves, and removes the layer. The toast
-container is `position: fixed`, already out of flow, so it is removed outright.
+its own layer the moment the page is actually scrolled. `buttons` had been
+stable to the byte for weeks, then began alternating as soon as captures
+started scrolling. `FREEZE` gives it `position: static`, which keeps its box
+in normal flow so no layout moves, and removes the layer. The toast container
+is `position: fixed`, already out of flow, so it is removed outright.
 
-**What is still not deterministic.** With all of that, the `.cy-glow` and
-`.cy-glow--pink` halos in the `buttons` region still occasionally alternate
-between two rasterisations, and so, more rarely, do a dozen pixels in
-`feedback` and `content`. Four consecutive runs all passed, but the spare
-attempt is doing real work rather than sitting unused — blurred box-shadows are
-GPU-rasterised and the kit is not going to stop testing its glows. Two attempts
-is enough because the states alternate rather than landing at random. Raising
-the number again would be going back to treating the symptom; the thing to do
-is find what flips the layer, as the two notes above did.
+### Phases
 
-Keep the emulated viewport height above the tallest section (`forms`, 690px).
-A region taller than the viewport hangs off the bottom and reintroduces exactly
-this problem.
+What is left after all of that is not noise and is not fixable from the DOM:
+**an unchanged region can produce more than one byte-identical picture, and
+the page cannot tell you which one it will give.**
+
+The content region alternates between exactly two rasterisations on a strict
+period of two — capture, capture, capture gives A, B, A, B. At the moment of
+each capture everything observable is identical: `scrollY` 2808,
+`document.scrollHeight` 3708, the section's `getBoundingClientRect()` at top
+384.6796875 and height 451.15625, device pixel ratio 1. The six pixels that
+move are antialiasing on two rows of keycap edges, at a maximum channel delta
+of 7.
+
+Measured and ruled out, so nobody pays for them twice:
+
+| Suspect | Verdict |
+| --- | --- |
+| `captureBeyondViewport` | a real cause of a *different* instability; off now, but the alternation outlives it |
+| the canvas `diff()` running in the page under test | captures alternate identically with no diff between them |
+| region order | reversing it changed nothing |
+| the web-font probe | adding it to a clean probe changed nothing |
+| fractional scroll offset, sticky layer | real causes, both fixed above |
+
+So the rasteriser has more than one correct answer. The check records them
+all. `--update` captures each region four times and writes the distinct
+results as `<slug>.png`, `<slug>.phase2.png`, `<slug>.phase3.png`; a capture
+matching **any** phase is a pass, because every phase is a legitimate picture
+of an unchanged page. Today: `text-glow`, `cards` and `navigation` have one
+phase, `buttons`, `containers`, `forms` and `content` have two, `feedback`
+has three.
+
+Phases are capped at three. Without a cap an genuinely unstable region would
+record a new "phase" every run and the check would pass against anything,
+which is worse than one that cries wolf.
+
+That this still catches real changes is verified by mutation, not asserted.
+Reverting `.cy-meter`'s `::-webkit-meter-inner-element` from `display: flex`
+to `block` — the half-height-bar bug 0.10.0 fixed — reports
+`feedback: 9701 px differ from every one of 3 phase(s) (max delta 221)`.
+Removing `.cy-kbd`'s inset rim reports `content: 316 px differ from every one
+of 2 phase(s) (max delta 42)` — in the same two rows where the 6-pixel noise
+lives, which is the case that matters: the phases absorb the rasteriser's
+ambiguity without swallowing a real change in the same place.
+
+`ATTEMPTS` is 2, and it is not a retry budget. It exists because a region may
+have more phases than were recorded; it is not the answer to a failure.
+
+### A blank frame is stable too
+
+Every recorded baseline is now checked for content before it is written, and
+that guard exists because of a real mistake rather than a hypothetical one.
+Converting the clip to viewport coordinates pointed it at the top of the
+document, far above the scrolled viewport, and with `captureBeyondViewport`
+off that returns a black frame. Every baseline was re-recorded blank, six
+consecutive runs passed comparing blank against blank, and the error surfaced
+only because a mutation probe failed to fail.
+
+A region of this kit is a styled component on a dark background, never one
+flat colour, so `--update` rejects any capture holding fewer than eight
+distinct colours.
 
 Comparing each capture against the baseline is still strictly stronger than the
 original design, which captured until two agreed — that proves the page is

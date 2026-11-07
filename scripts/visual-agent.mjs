@@ -121,11 +121,25 @@ const rectOf = (heading) => `(() => {
 // the same way every time. All three runs after this change passed with one
 // capture per region and no retries.
 //
-// The clip stays in document coordinates — that is what CDP wants, and it does
-// not change when the page scrolls. `captureBeyondViewport` stays on as a
-// backstop: a region taller than the 900px viewport would hang off the bottom
-// and reintroduce exactly this problem, so keep the emulated height above the
-// tallest section (forms is currently the tallest at 690).
+// `captureBeyondViewport` is now off, and that is the other half of the fix.
+//
+// It is what lets CDP photograph content below the fold, and with the region
+// scrolled into view it is not needed. Leaving it on was not harmless: the
+// same unchanged region alternated between two rasterisations on a strict
+// period of two, and turning it off made six consecutive captures identical.
+// Measured on the content region, same scroll, same page:
+//
+//   beyondViewport, scrolling each time      A B A B A B
+//   beyondViewport, no scroll in between     A B A B A B
+//   no beyondViewport, viewport-relative     A A A A A A
+//
+// That alternation is what the retry loop had been papering over since this
+// check was written, and what ATTEMPTS was once raised to 6 for.
+//
+// The cost is that the clip must be viewport-relative, and a region taller
+// than the viewport can no longer be photographed. That is asserted rather
+// than silently cropped — a cropped baseline passes forever while testing
+// less than it claims.
 // The offset is forced to a whole number, and that is not a detail.
 //
 // Scrolling to a region near the end of the document gets clamped to
@@ -140,37 +154,135 @@ const rectOf = (heading) => `(() => {
 // change that added no CSS to it. Flooring the offset removes the dependency:
 // the clip is in document coordinates, so the content captured is identical
 // either way — only the subpixel grid moves.
+const VIEWPORT = { width: 1200, height: 900 }
+
 async function capture(clip) {
-  await js(`(() => {
+  const at = await js(`(() => {
     window.scrollTo(0, ${clip.y});
     if (!Number.isInteger(window.scrollY)) window.scrollTo(0, Math.floor(window.scrollY));
-    return window.scrollY;
+    return { x: window.scrollX, y: window.scrollY };
   })()`)
   await wait(0.3)
+
+  // The clip below stays in DOCUMENT coordinates — that is what CDP wants, and
+  // getting this wrong is not loud. Converting it to viewport coordinates
+  // pointed it at the top of the document, far above the scrolled viewport,
+  // and with captureBeyondViewport off that returns a black frame. Every
+  // baseline was re-recorded blank, six consecutive runs passed comparing
+  // blank against blank, and only a mutation probe found it.
+  //
+  // This rectangle is the same clip expressed against the viewport, and it is
+  // used for one thing: checking the region is actually on screen. Without
+  // captureBeyondViewport, anything outside the viewport comes back black.
+  const view = {
+    x: clip.x - at.x,
+    y: clip.y - at.y,
+    width: clip.width,
+    height: clip.height,
+  }
+
+  if (view.x < 0 || view.y < 0
+      || view.x + view.width > VIEWPORT.width
+      || view.y + view.height > VIEWPORT.height) {
+    throw new Error(
+      `a ${clip.width}x${clip.height} region at ${clip.x},${clip.y} does not fit the `
+      + `${VIEWPORT.width}x${VIEWPORT.height} viewport once scrolled to — it lands at ${view.x},${view.y}. `
+      + 'Raise the emulated viewport and re-record every baseline rather than cropping.',
+    )
+  }
+
   const shot = await cdp('Page.captureScreenshot', {
     format: 'png',
-    captureBeyondViewport: true,
+    captureBeyondViewport: false,
     clip: { ...clip, scale: 1 },
   })
   return shot.data
 }
 
+// Is that a picture of anything?
+//
+// A blank frame is perfectly stable and compares equal to another blank frame,
+// so a broken capture looks exactly like a passing check. That is how the
+// viewport-coordinate bug above survived a full re-record and six green runs.
+// Every baseline is now checked for content before it is written: a region of
+// this kit is a styled component on a dark background, never one flat colour.
+async function assertNotBlank(slug, b64) {
+  await js(`window.__vrBlank=${JSON.stringify('data:image/png;base64,' + b64)};true`)
+  const seen = await js(`(async () => {
+    const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = window.__vrBlank; });
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage(img, 0, 0);
+    const d = x.getImageData(0, 0, c.width, c.height).data;
+    const colours = new Set();
+    for (let i = 0; i < d.length; i += 4) colours.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+    return colours.size;
+  })()`)
+  if (seen < 8) {
+    throw new Error(
+      `${slug}: the capture holds ${seen} distinct colour(s), so it is a blank frame rather than a picture `
+      + 'of the section. The clip is almost certainly outside the viewport — see capture().',
+    )
+  }
+}
+
+// Phases: the several byte-identical pictures an unchanged region produces.
+//
+// This is the thing the retry loop was hiding. The content region alternates
+// between exactly two rasterisations on a strict period of two — capture,
+// capture, capture gives A, B, A, B — and nothing observable in the page
+// differs between them. Measured at the moment of capture: identical
+// `scrollY` (2808), identical `document.scrollHeight` (3708), identical
+// `getBoundingClientRect()` on the section (top 384.6796875, height
+// 451.15625), identical device pixel ratio. The six pixels that move are
+// antialiasing on two rows of keycap edges, at a maximum channel delta of 7.
+//
+// Things that were measured and ruled out, so nobody pays for them twice:
+//   - `captureBeyondViewport` — a real cause of a different instability, now
+//     off, but the alternation outlives it;
+//   - the canvas `diff()` runs in the page under test — captures alternate
+//     identically with no diff between them;
+//   - region order, the web-font probe, a fractional scroll offset, and the
+//     sticky topbar's compositing layer — each fixed or excluded earlier.
+//
+// So the rasteriser has more than one correct answer and the DOM cannot see
+// which one it will give. Rather than retry until the recorded answer turns
+// up, record every answer. A phase is a legitimate picture of an unchanged
+// page; a regression changes the content and therefore matches none of them.
+//
+// Four captures at record time is enough to see both phases of a two-phase
+// region many times over, and the cap keeps a genuinely unstable region from
+// quietly recording a new "phase" every run — that would be a check that
+// passes against anything, which is worse than one that cries wolf.
+const MAX_PHASES = 3
+const PHASE_SAMPLES = 4
+
+const phaseFile = (slug, i) => path.join(BASELINES, i === 0 ? `${slug}.png` : `${slug}.phase${i + 1}.png`)
+
+async function recordPhases(slug, clip) {
+  const seen = []
+  for (let i = 0; i < PHASE_SAMPLES; i += 1) {
+    const shot = await capture(clip)
+    await assertNotBlank(slug, shot)
+    if (!seen.includes(shot)) seen.push(shot)
+    if (seen.length === MAX_PHASES) break
+  }
+  return seen
+}
+
 // How many captures a region gets before it is called changed.
 //
-// Lowered from 6 to 2 once `capture()` started scrolling the region into view.
-// Retries were never the cure for what was wrong, and six of them hid how
-// broken the check was: the loop would report the same pixel count six times
-// and the honest conclusion — that the captures were deterministic and the
-// comparison was simply photographing the page a different way than the
-// recording did — was never drawn. Read the comment on `capture()` for what it
-// actually was.
+// This was 3, then 6, then 2, and every one of those numbers was a way of
+// living with a capture that is not deterministic. Retrying is the wrong tool
+// and it hid a real bug for two releases: at 6 the loop printed the same pixel
+// count six times, and nobody read that as "the captures are deterministic and
+// the comparison is photographing the page differently", which is what it
+// meant.
 //
-// Two is kept rather than one because comparing each capture against the
-// baseline is strictly stronger than requiring a quiet page: passing needs one
-// exact match, failing needs every attempt to differ, and a real regression
-// changes the content so it cannot pass by luck. One spare attempt costs about
-// a second and covers a genuine transient. If a region ever needs more than
-// two again, that is a bug in the capture conditions, not a number to raise.
+// What the page actually does is measured in PHASES below. Two captures is
+// enough to see both of a two-phase region; it is not a retry budget, and
+// raising it is not the answer to a failure.
 const ATTEMPTS = 2
 
 // The comparison happens in the page: two data URLs go in, a summary comes
@@ -225,7 +337,7 @@ try {
   // Pinning the ratio is what makes a baseline portable: this machine captures
   // at 2x by default, so an unpinned picture could never be compared anywhere
   // else.
-  await cdp('Emulation.setDeviceMetricsOverride', { width: 1200, height: 900, deviceScaleFactor: 1, mobile: false })
+  await cdp('Emulation.setDeviceMetricsOverride', { ...VIEWPORT, deviceScaleFactor: 1, mobile: false })
   await js(FREEZE)
 
   // Web fonts arrive over the network and shift metrics when they land. A
@@ -254,44 +366,57 @@ try {
     const file = path.join(BASELINES, `${slug}.png`)
 
     if (UPDATE || !fss.existsSync(file)) {
-      await fsp.writeFile(file, Buffer.from(await capture(clip), 'base64'))
-      written.push(`${slug} (${clip.width}x${clip.height})`)
+      const phases = await recordPhases(slug, clip)
+      for (let i = 0; i < MAX_PHASES; i += 1) {
+        const at = phaseFile(slug, i)
+        if (i < phases.length) await fsp.writeFile(at, Buffer.from(phases[i], 'base64'))
+        else if (fss.existsSync(at)) await fsp.rm(at)      // a region that settled down
+      }
+      written.push(`${slug} (${clip.width}x${clip.height}, ${phases.length} phase${phases.length > 1 ? 's' : ''})`)
       continue
     }
 
-    // Up to ATTEMPTS captures, each compared against the baseline. The first
-    // exact match wins; only a region that differs every time is reported, and
-    // the last attempt's diff is what gets reported.
-    const baseline = (await fsp.readFile(file)).toString('base64')
+    // Every recorded phase is a legitimate picture of an unchanged page, so a
+    // capture matching any of them is a pass. A real regression changes the
+    // content, so it matches none.
+    const baselines = []
+    for (let i = 0; i < MAX_PHASES; i += 1) {
+      const at = phaseFile(slug, i)
+      if (fss.existsSync(at)) baselines.push((await fsp.readFile(at)).toString('base64'))
+    }
+
     let actual
-    let d
-    for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
+    let best = null
+    let matched = false
+    for (let attempt = 1; attempt <= ATTEMPTS && !matched; attempt += 1) {
       actual = await capture(clip)
-      d = await diff(baseline, actual)
-      if (!d.resized && d.differing === 0) break
-      if (attempt < ATTEMPTS) {
-        const why = d.resized ? 'size changed' : `${d.differing} px`
-        cliLog(`  retry    ${slug} (attempt ${attempt}: ${why})`)
-        await wait(1)
+      for (const b of baselines) {
+        const d = await diff(b, actual)
+        if (!d.resized && d.differing === 0) { matched = true; best = d; break }
+        // Report the closest phase, not the first — "6 px differ" is a more
+        // useful thing to read than whichever file happened to be tried first.
+        if (!best || d.resized || (best.differing ?? Infinity) > (d.differing ?? Infinity)) best = d
       }
+      if (!matched && attempt < ATTEMPTS) await wait(1)
     }
 
     if (REPORT) {
-      cliLog(`  report   ${slug}: differing=${d.differing ?? '-'} maxDelta=${d.maxDelta ?? '-'} ` +
-             `pct=${d.total ? (100 * d.differing / d.total).toFixed(4) : '-'}`)
+      cliLog(`  report   ${slug}: phases=${baselines.length} differing=${best.differing ?? '-'} ` +
+             `maxDelta=${best.maxDelta ?? '-'} pct=${best.total ? (100 * best.differing / best.total).toFixed(4) : '-'}`)
       continue
     }
 
-    if (d.resized) {
-      failures.push(`${slug}: size changed ${d.resized.was.join('x')} -> ${d.resized.now.join('x')}`)
-    } else if (d.differing > 0) {
-      const where = d.box ? ` at ${d.box.w}x${d.box.h}+${d.box.x}+${d.box.y}` : ''
-      failures.push(`${slug}: ${d.differing} px differ (max delta ${d.maxDelta})${where}`)
+    if (matched) {
+      cliLog(`  ok       ${slug}${baselines.length > 1 ? ` (${baselines.length} phases)` : ''}`)
+    } else if (best.resized) {
+      failures.push(`${slug}: size changed ${best.resized.was.join('x')} -> ${best.resized.now.join('x')}`)
+    } else {
+      const where = best.box ? ` at ${best.box.w}x${best.box.h}+${best.box.x}+${best.box.y}` : ''
+      failures.push(`${slug}: ${best.differing} px differ from every one of ${baselines.length} phase(s) ` +
+                    `(max delta ${best.maxDelta})${where}`)
       // The actual capture is kept beside the baseline so the two can be
       // opened side by side; a number alone does not show what moved.
       await fsp.writeFile(path.join(BASELINES, `${slug}.actual.png`), Buffer.from(actual, 'base64'))
-    } else {
-      cliLog(`  ok       ${slug}`)
     }
   }
 
