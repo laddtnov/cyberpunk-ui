@@ -78,7 +78,38 @@ const rectOf = (heading) => `(() => {
            width: Math.round(r.width), height: Math.round(r.height) };
 })()`
 
+// Scroll the region into view before photographing it.
+//
+// This one line is what made the check trustworthy, and it took hashing the
+// captures to find. `captureBeyondViewport` will happily photograph content far
+// below the viewport, but it rasterises those tiles off the fast path, and that
+// path is not deterministic. The symptom was that only the two deepest regions
+// ever failed — forms at document y=2034 and feedback at y=2764, against a
+// 900px viewport — while the five regions above them were stable to the byte
+// across sessions and days.
+//
+// The giveaway was that `--update` and the comparison run disagreed about the
+// same unchanged page: re-recording produced bytes identical to a baseline
+// taken two days earlier, yet the comparison captured something 32 pixels
+// different, every attempt, with the clip rectangle and scroll offset
+// identical in both. Hashing each capture showed three distinct rasterisations
+// of those two regions, with the comparison loop alternating between two of
+// them on a period of two. The differing pixels were all antialiasing: one row
+// of each alert's left accent border, and the rounded corners of <progress> and
+// <meter>.
+//
+// Scrolling first means the region is live viewport content, which rasterises
+// the same way every time. All three runs after this change passed with one
+// capture per region and no retries.
+//
+// The clip stays in document coordinates — that is what CDP wants, and it does
+// not change when the page scrolls. `captureBeyondViewport` stays on as a
+// backstop: a region taller than the 900px viewport would hang off the bottom
+// and reintroduce exactly this problem, so keep the emulated height above the
+// tallest section (forms is currently the tallest at 690).
 async function capture(clip) {
+  await js(`window.scrollTo(0, ${clip.y}); true`)
+  await wait(0.3)
   const shot = await cdp('Page.captureScreenshot', {
     format: 'png',
     captureBeyondViewport: true,
@@ -89,33 +120,21 @@ async function capture(clip) {
 
 // How many captures a region gets before it is called changed.
 //
-// The page has **two rasterisations of identical content**, and they were
-// finally pinned down by diffing the two states rather than counting them:
-//   - rows 315 and 321, 575 pixels each — the top and bottom edge of the
-//     progress fill (575 ≈ 66% of 880, which is its value), differing in edge
-//     antialiasing;
-//   - a handful of pixels on the alert accent borders, success green landing
-//     on 82,254,153 in one state and 80,246,149 in the other.
-// Both are the signature of the same content rasterised down two different
-// paths, and which one a capture gets is not under this script's control.
+// Lowered from 6 to 2 once `capture()` started scrolling the region into view.
+// Retries were never the cure for what was wrong, and six of them hid how
+// broken the check was: the loop would report the same pixel count six times
+// and the honest conclusion — that the captures were deterministic and the
+// comparison was simply photographing the page a different way than the
+// recording did — was never drawn. Read the comment on `capture()` for what it
+// actually was.
 //
-// The earlier answer was to capture until two agreed. That was wrong in a way
-// worth recording: it proves the page is *quiet*, not that it matches, so a
-// pair could settle onto the second state and report a change that was not
-// one. Twice it did, both times at exactly 1179 pixels.
-//
-// Comparing each capture against the baseline instead is strictly stronger.
-// Passing needs one exact match; failing needs every attempt to differ. A real
-// regression changes the content, so it differs in both rasterisations and
-// cannot pass by luck — which is precisely what the tolerance-widening
-// alternative would have given up.
-// Raised from 3 to 6 in 0.8.0. Moving glows from rgba() to color-mix() changed
-// how the browser reports and composites them — computed values come back as
-// `color(srgb …)` rather than `rgba(…)`, the same colour by a different path —
-// and the page gained a second stable rasterisation. Both states repeat
-// exactly, so matching the baseline is a question of how many tries it takes to
-// see the right one, not of loosening what counts as a match.
-const ATTEMPTS = 6
+// Two is kept rather than one because comparing each capture against the
+// baseline is strictly stronger than requiring a quiet page: passing needs one
+// exact match, failing needs every attempt to differ, and a real regression
+// changes the content so it cannot pass by luck. One spare attempt costs about
+// a second and covers a genuine transient. If a region ever needs more than
+// two again, that is a bug in the capture conditions, not a number to raise.
+const ATTEMPTS = 2
 
 // The comparison happens in the page: two data URLs go in, a summary comes
 // back. A bounding box is included because "something changed" is a worse

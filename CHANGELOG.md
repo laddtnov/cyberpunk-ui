@@ -6,6 +6,34 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **The visual regression check was photographing offscreen tiles, and that is
+  why it cried wolf.** `Page.captureScreenshot` with `captureBeyondViewport`
+  rasterises content below the viewport off the fast path, and that path is not
+  deterministic. Only the two deepest regions ever failed — `forms` at document
+  y=2034 and `feedback` at y=2764, against a 900px viewport — while the five
+  above them were stable to the byte across sessions and days.
+  `scripts/visual-agent.mjs` now scrolls each region into view before capturing
+  it, which makes it live viewport content.
+  - Found by measurement after two releases of guessing. `--update` re-recorded
+    `feedback` and produced bytes *identical to the baseline taken two days
+    earlier*, while the comparison run captured something 32 px different on
+    every attempt, with the clip rectangle and scroll offset identical in both.
+    Hashing each capture showed three rasterisations of that one region, the
+    comparison loop alternating between two of them on a period of two. Region
+    order made no difference, ruling out the canvas the diff builds in the page.
+  - The 32 px were all antialiasing: one row of each of the four alerts' left
+    accent borders (`19,28,28` → `72,137,117`) and the rounded corners of
+    `<progress>` and `<meter>` at deltas of 3 to 17.
+  - Three consecutive runs now pass with one capture per region and no retries,
+    so `ATTEMPTS` drops from 6 to 2. The retries were never the cure, and six of
+    them hid the evidence by printing the same pixel count six times.
+  - Verified by mutation: reverting `.cy-meter`'s
+    `::-webkit-meter-inner-element` from `display: flex` to `block` — the real
+    half-height-bar bug 0.10.0 fixed — is reported as
+    `9702 px (max delta 221) at 880x48+0+338`, the meter's exact box, with the
+    other six regions still passing.
+  - `docs/baselines/containers.png`, `forms.png` and `feedback.png` re-recorded
+    under the new capture conditions. No CSS changed.
 - **The 24-hour cooldown advice was wrong for Yarn.** README and
   `docs/STATE.md` both said naming an exact version skips pnpm's and Yarn's
   supply-chain gate. That is true of pnpm and false of Yarn 4, which refuses a
