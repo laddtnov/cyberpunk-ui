@@ -177,7 +177,7 @@ A code or console window. The bar is optional.
 <div class="cy-terminal">
   <div class="cy-terminal__bar">~/night-city — ssh</div>
   <pre>$ npm i @laddtnov/cyberpunk-ui
-+ @laddtnov/cyberpunk-ui@0.9.0</pre>
+added 1 package in 1s</pre>
 </div>
 ```
 
