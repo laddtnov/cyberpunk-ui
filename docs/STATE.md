@@ -8,13 +8,13 @@ read it before adding a component, so nothing gets rebuilt or invented twice.
 
 ## Layout
 
-Zero dependencies, zero JavaScript, no build step. 1910 lines of CSS across the parts.
+Zero dependencies, zero JavaScript, no build step. 2060 lines of CSS across the parts.
 
 | File | Lines | Contains |
 | --- | --- | --- |
 | `tokens.css` | 199 | every custom property, plus the `[data-theme="light"]` overrides |
 | `effects.css` | 133 | glow, glitch, scanlines, grid, cursor |
-| `components.css` | 168 | `.cy-btn`, `.cy-card` |
+| `components.css` | 318 | `.cy-btn`, `.cy-card`, and the four content elements: `.cy-kbd`, `.cy-dl`, `.cy-figure`, `.cy-quote` |
 | `containers.css` | 282 | accordion, modal, terminal — all on native elements |
 | `navigation.css` | 277 | nav bar, breadcrumb, sidebar |
 | `table.css` | 148 | data table, scroll container |
@@ -167,6 +167,11 @@ plus disabled styling
 
 **Card** — `.cy-card`
 
+**Content** — `.cy-kbd` (on `<kbd>`), `.cy-dl` (on `<dl>`; styles scoped
+`<dt>`/`<dd>`), `.cy-figure` (on `<figure>`; styles a scoped `<figcaption>`
+and a scoped `<img>`/`<svg>`/`<video>`), `.cy-quote` (on `<blockquote>`;
+styles a scoped `<cite>`)
+
 **Forms** — `.cy-fieldset` (on `<fieldset>`; styles a scoped `<legend>`)
 `.cy-field` `.cy-label` `.cy-input` (`--sm` `--lg`; also styles
 `select.cy-input` and `textarea.cy-input`) `.cy-checkbox` `.cy-radio`
@@ -297,10 +302,39 @@ accent borders, where the border went from `19,28,28` to `72,137,117`, plus the
 rounded corners of `<progress>` and `<meter>` at deltas of 3 to 17.
 
 Scrolling the region into view first makes it live viewport content, which
-rasterises the same way every time. Three consecutive runs then passed with one
-capture per region and no retries, so `ATTEMPTS` went from 6 down to 2 — one
-spare for a genuine transient. If a region ever needs more than two again, that
-is a bug in the capture conditions, not a number to raise.
+rasterises the same way every time, and `ATTEMPTS` went from 6 down to 2.
+
+Scrolling brought two consequences of its own, both found the same way and
+both worth knowing before touching this script again.
+
+**The offset has to be a whole number.** A scroll aimed at a region near the
+end of the document is clamped to `scrollHeight - innerHeight`, which is
+fractional whenever the document height is. The last section landed on 2316.5
+instead of its own 2764, and a half-pixel offset rasterises a whole region
+differently from an integer one — so every baseline for the final section
+quietly depended on the total height of the page. Appending an unrelated
+section below it moved the clamp and `feedback` reported 22850 changed pixels
+for a change that added no CSS to it. `capture()` now floors the offset.
+
+**Anything that owns a compositing layer has to be de-promoted, not just
+hidden.** The demo's topbar is `position: sticky`, and a sticky element gets
+its own layer the moment the page is actually scrolled. That changed how the
+glow halos in the section beside it rasterised: `buttons` had been stable to
+the byte for weeks at scroll 0, then began alternating between two states —
+10124 pixels, diffuse, deltas of 3 to 6 across 108 rows — as soon as captures
+started scrolling. `FREEZE` now gives it `position: static`, which keeps its
+box in normal flow so no layout moves, and removes the layer. The toast
+container is `position: fixed`, already out of flow, so it is removed outright.
+
+**What is still not deterministic.** With all of that, the `.cy-glow` and
+`.cy-glow--pink` halos in the `buttons` region still occasionally alternate
+between two rasterisations, and so, more rarely, do a dozen pixels in
+`feedback` and `content`. Four consecutive runs all passed, but the spare
+attempt is doing real work rather than sitting unused — blurred box-shadows are
+GPU-rasterised and the kit is not going to stop testing its glows. Two attempts
+is enough because the states alternate rather than landing at random. Raising
+the number again would be going back to treating the symptom; the thing to do
+is find what flips the layer, as the two notes above did.
 
 Keep the emulated viewport height above the tallest section (`forms`, 690px).
 A region taller than the viewport hangs off the bottom and reintroduces exactly

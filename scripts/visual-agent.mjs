@@ -29,6 +29,7 @@ const REGIONS = [
   ['containers', 'Containers'],
   ['forms', 'Forms'],
   ['feedback', 'Feedback'],
+  ['content', 'Content'],
 ]
 
 // Measured, not guessed. With animations frozen and the device pixel ratio
@@ -41,6 +42,20 @@ const CHANNEL_TOLERANCE = 2
 // the fixed toast container both render over whatever section is beneath them,
 // which would make a region's picture depend on scroll position.
 //
+// The sticky topbar and the fixed toast container are also taken out of the
+// compositing path, not merely hidden, and that part is not cosmetic. A sticky
+// element gets its own layer the moment the page is actually scrolled, and
+// that changed how the glow halos in the neighbouring section rasterised: the
+// buttons region was stable to the byte for weeks at scroll 0, then began
+// alternating between two states — 10124 pixels, diffuse, deltas of 3 to 6
+// spread across 108 rows — as soon as capture() started scrolling. Giving the
+// topbar `position: static` keeps its box in normal flow, so no layout moves,
+// and takes the layer away. The toast container is `position: fixed` and
+// therefore out of flow already, so it can simply be removed.
+//
+// Nothing inside the template below may contain a backtick: it is a template
+// literal, and a stray one in a comment silently truncates the page source.
+//
 // This is the one template here that needs String.raw, and it needs it: the
 // `\n` below has to reach the page as two characters. Untagged, the template
 // would interpolate a real newline inside a single-quoted string literal and
@@ -51,7 +66,11 @@ const FREEZE = String.raw`(() => {
   if (!s) { s = document.createElement('style'); s.id = 'vr-freeze'; document.head.appendChild(s); }
   s.textContent = [
     '*, *::before, *::after { animation: none !important; transition: none !important; }',
-    '.topbar, .cy-toast-container { visibility: hidden !important; }',
+    // Hidden because both render over whatever section is beneath them, and
+    // de-promoted because both would otherwise own a compositing layer once
+    // the page is scrolled. See the note above this template.
+    '.topbar { visibility: hidden !important; position: static !important; }',
+    '.cy-toast-container { display: none !important; }',
     // --cy-font-terminal names Nerd Fonts, which are installed on some
     // machines and not others. Left alone, a baseline recorded on a machine
     // with Hack cannot be compared on one without it. The web fonts are
@@ -107,8 +126,26 @@ const rectOf = (heading) => `(() => {
 // backstop: a region taller than the 900px viewport would hang off the bottom
 // and reintroduce exactly this problem, so keep the emulated height above the
 // tallest section (forms is currently the tallest at 690).
+// The offset is forced to a whole number, and that is not a detail.
+//
+// Scrolling to a region near the end of the document gets clamped to
+// `scrollHeight - innerHeight`, which is fractional whenever the document
+// height is. The last section used to land on 2316.5 instead of its own 2764,
+// and a half-pixel offset rasterises the whole region differently from an
+// integer one.
+//
+// That made every baseline for the final section depend on the total height of
+// the page. Appending an unrelated section below it moved the clamp, the
+// offset became integral, and `feedback` reported 22850 changed pixels for a
+// change that added no CSS to it. Flooring the offset removes the dependency:
+// the clip is in document coordinates, so the content captured is identical
+// either way — only the subpixel grid moves.
 async function capture(clip) {
-  await js(`window.scrollTo(0, ${clip.y}); true`)
+  await js(`(() => {
+    window.scrollTo(0, ${clip.y});
+    if (!Number.isInteger(window.scrollY)) window.scrollTo(0, Math.floor(window.scrollY));
+    return window.scrollY;
+  })()`)
   await wait(0.3)
   const shot = await cdp('Page.captureScreenshot', {
     format: 'png',

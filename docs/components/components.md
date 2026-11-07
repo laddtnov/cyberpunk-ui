@@ -1,4 +1,4 @@
-# Button and card
+# Button, card, and content
 
 ```css
 @import "@laddtnov/cyberpunk-ui/components";
@@ -84,3 +84,126 @@ Takes glow classes the same way the button does:
 - **A whole card is not a link.** Wrapping the entire card in an `<a>` gives
   screen-reader users one enormous link whose accessible name is every word
   inside it. Link the heading instead.
+
+---
+
+## `.cy-kbd`
+
+A keycap, on `<kbd>`. The element already means "the user presses this"; the
+class only makes it look pressable.
+
+```html
+<p>Press <kbd class="cy-kbd">⌘</kbd><kbd class="cy-kbd">K</kbd> for the console,
+   <kbd class="cy-kbd">Esc</kbd> to drop out.</p>
+```
+
+Sized in `em`, not from the spacing scale, so a keycap tracks the type around
+it instead of standing at one fixed size inside a heading and inside body text
+alike. `min-inline-size: 1.6em` stops a single letter collapsing to a sliver
+while `Esc` keeps its own width.
+
+**Tokens** — `--cy-neon-cyan` `--cy-surface` `--cy-font-mono`
+`--cy-radius-sm` `--cy-border-width`
+
+**Accessibility**
+
+- One `<kbd>` per key. `<kbd class="cy-kbd">⌘K</kbd>` is one cap with two
+  glyphs on it; two elements are two caps, which is what a reader expects and
+  what the styling is built for.
+- Spell the key the way the user's keyboard does. `Esc` and `⌘` are legible;
+  `U+001B` is not.
+
+---
+
+## `.cy-dl`
+
+A term/value readout, on `<dl>`. Gold monospace labels in a column that sizes
+itself to the longest one, values aligned against them — a HUD stat block.
+
+```html
+<dl class="cy-dl">
+  <dt>Callsign</dt>
+  <dd>NIGHTJAR</dd>
+  <dt>Clearance</dt>
+  <dd>Tier 2 — district</dd>
+  <dd>Tier 4 — arcology, revoked</dd>
+</dl>
+```
+
+The two columns are assigned explicitly rather than left to auto-placement, so
+a term with several `<dd>` values stacks them in the value column instead of
+pushing the second one under the label.
+
+**Tokens** — `--cy-neon-gold` `--cy-text` `--cy-heading` `--cy-font-mono`
+`--cy-space-sm` `--cy-space-lg`
+
+**Accessibility**
+
+- A `<dl>` is for name/value pairs, not for layout. If the left column is not
+  naming the right one, a two-column grid is the honest markup.
+- The kit styles `.cy-dl > dt` and `.cy-dl > dd` — direct children. Wrapping
+  pairs in `<div>`, which the HTML spec allows, opts out of the grid; style
+  the wrapper yourself if you need it.
+
+---
+
+## `.cy-figure`
+
+A framed figure, on `<figure>`. The UA margin is `1em 40px`, which indents a
+figure out of alignment with everything around it; the frame replaces it.
+
+```html
+<figure class="cy-figure">
+  <img src="uplink.png" alt="Signal strength rising over 24 hours">
+  <figcaption>FIG. 01 — District uplink, 24h</figcaption>
+</figure>
+```
+
+`<svg>` and `<video>` are styled beside `<img>`, because a diagram and a clip
+are the same kind of content here — leaving them out would mean a figure that
+frames a picture but lets a video overflow it.
+
+**Tokens** — `--cy-neon-cyan` `--cy-text` `--cy-font-mono` `--cy-radius`
+`--cy-radius-sm` `--cy-border-width` `--cy-space-xs` `--cy-space-sm`
+`--cy-space-lg`
+
+**Accessibility**
+
+- **A `<figcaption>` is not an `alt`.** The caption is read to everyone; the
+  alt text describes the image to someone who cannot see it. An image whose
+  only description is its caption is an image with no description.
+- A caption is dimmed below body text at rest, and
+  `prefers-contrast: more` brings it back to full `--cy-text`.
+
+---
+
+## `.cy-quote`
+
+A pull quote, on `<blockquote>`.
+
+```html
+<blockquote class="cy-quote">
+  <p>The grid remembers every door you ever opened. Walk quietly.</p>
+  <cite>Netrunner's almanac</cite>
+</blockquote>
+```
+
+No decorative `"` from `::before`: generated content is announced by some
+screen readers and not others, and a quotation already announces itself. The
+accent rule is `calc(var(--cy-border-width) * 3)` rather than a flat `3px`, so
+`prefers-contrast: more` thickens it along with every other border in the kit.
+
+`<cite>` is reset to upright — monospace and italic together read as a mistake
+rather than as an attribution.
+
+**Tokens** — `--cy-neon-pink` `--cy-text` `--cy-font-mono`
+`--cy-border-width` `--cy-space-sm` `--cy-space-md` `--cy-space-lg`
+
+**Accessibility**
+
+- `<cite>` names a *work*, not a person. For a quoted speaker the spec wants
+  the name in plain text; the kit styles `<cite>` because that is what most
+  pull quotes use, and the distinction is yours to make.
+- Use `cite="https://…"` on the `<blockquote>` for the source URL. It is
+  machine-readable and invisible, so give the reader a real link too if the
+  source matters to them.

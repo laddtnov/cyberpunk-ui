@@ -5,7 +5,56 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Four native content elements, the last unstyled ones the roadmap listed.**
+  All four follow the kit's native-element-first pattern — the element already
+  carries the meaning, the class only paints it — and all four live in
+  `components.css` rather than a new part, so the `exports` map keeps its
+  shape and the package-manager matrix verified on 2026-11-07 stays valid.
+  - `.cy-kbd` on `<kbd>`: a keycap, sized in `em` so it tracks the type around
+    it rather than standing at one fixed size in a heading and in body text
+    alike.
+  - `.cy-dl` on `<dl>`: a HUD readout, gold monospace labels in a column that
+    sizes itself to the longest one. Columns are assigned explicitly rather
+    than left to auto-placement, so a term with several `<dd>` values stacks
+    them in the value column instead of pushing the second under the label.
+  - `.cy-figure` on `<figure>`: a frame replacing the UA's `1em 40px` margin,
+    which indents a figure out of alignment with everything around it.
+    `<svg>` and `<video>` are styled beside `<img>`.
+  - `.cy-quote` on `<blockquote>`: an accent rule on the inline start, with no
+    decorative `"` from `::before` — generated content is announced by some
+    screen readers and not others, and a quotation already announces itself.
+  - All four are covered by `prefers-contrast: more` and
+    `forced-colors: active`, and the demo gains a `Content` section with its
+    own visual-regression baseline.
+
 ### Fixed
+- **README's headline figures were stale, one of them since 0.8.0.** It
+  claimed 38 design tokens; 0.8.0 deleted the seven `-rgb` twins, so the real
+  count is 31. The CSS size was given as 63 kB against an actual 87 kB
+  (21 kB gzipped). Both measured rather than adjusted.
+- **A baseline could depend on the total height of the demo page.** A scroll
+  aimed at a region near the end of the document is clamped to
+  `scrollHeight - innerHeight`, which is fractional whenever the document
+  height is — the last section landed on 2316.5 rather than its own 2764, and
+  a half-pixel offset rasterises a whole region differently from an integer
+  one. Appending the `Content` section moved the clamp and `feedback` reported
+  22850 changed pixels for a change that added no CSS to it. `capture()` now
+  floors the offset.
+- **The visual check's `FREEZE` now de-promotes layers rather than only
+  hiding them.** The demo's topbar is `position: sticky`, and a sticky element
+  gets its own compositing layer once the page is actually scrolled. That
+  changed how the glow halos beside it rasterised: `buttons` had been stable
+  to the byte for weeks, then began alternating between two states — 10124
+  pixels, diffuse, deltas of 3 to 6 across 108 rows — as soon as captures
+  started scrolling. It is given `position: static`, which keeps its box in
+  normal flow so no layout moves; the fixed toast container is removed.
+  - Honest remainder: the `.cy-glow` halos in `buttons` still occasionally
+    alternate, as do a dozen pixels in `feedback` and `content`. Four
+    consecutive runs passed, but the spare attempt is doing real work rather
+    than sitting unused. `ATTEMPTS` stays at 2 — the states alternate rather
+    than landing at random, and raising it again would be treating the
+    symptom.
 - **The visual regression check was photographing offscreen tiles, and that is
   why it cried wolf.** `Page.captureScreenshot` with `captureBeyondViewport`
   rasterises content below the viewport off the fast path, and that path is not

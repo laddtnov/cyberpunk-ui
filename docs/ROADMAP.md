@@ -1,7 +1,7 @@
 # Roadmap
 
 Where the kit goes next, and why in that order.
-Written against **0.10.0**.
+Written against **0.10.0**, plus unreleased work on `main`.
 
 `docs/STATE.md` records what *is*. This file records what is **not yet**, what
 was considered and rejected, and what the constraints rule out entirely. Read
@@ -48,13 +48,23 @@ hardware, and that claim is still unverified. The package-manager half was
 closed on 2026-11-07 — see the matrix in `docs/STATE.md` — and the visual
 check was made deterministic the same day.
 
-### 3. Four native elements are still unstyled
+### 3. Make the glow halos rasterise one way
 
-`<kbd>`, `<dl>/<dt>/<dd>`, `<figure>`, `<blockquote>`. The first two fit a HUD
-readout — keycaps and term/value pairs — and follow the same native-element
-pattern as `.cy-meter` and `.cy-fieldset`. The last two are ordinary content
-styling with no cyberpunk angle, and are listed for completeness rather than as
-a proposal.
+What is left of the visual check's nondeterminism, and the only item here that
+is a known defect rather than a decision.
+
+The `.cy-glow` and `.cy-glow--pink` halos in the `buttons` region alternate
+between two rasterisations, and a dozen pixels in `feedback` and `content` do
+the same less often. Runs pass — the second attempt catches it — but the spare
+attempt is being spent rather than held in reserve, which is how the old
+six-attempt version hid a real bug for two releases.
+
+Two causes of exactly this shape have already been found and removed, both by
+hashing captures rather than reasoning about them: offscreen tile
+rasterisation, and a sticky element owning a compositing layer once the page
+scrolls. A third is likely findable the same way. Blurred box-shadows are
+GPU-rasterised, and the kit is not going to stop testing its glows, so the
+answer is to find what flips the layer — not to widen the tolerance.
 
 ## Shipped, for the record
 
@@ -77,6 +87,7 @@ the detail and the measurements; this is the index.
 | 0.8.0 | the seven `-rgb` twins retired for `color-mix()` |
 | 0.9.0 | `.cy-popover` toggle-tip on the Popover API; contrast checked against `--cy-surface` too |
 | 0.10.0 | `.cy-fieldset` and `.cy-meter`; releases moved to npm trusted publishing (OIDC) |
+| unreleased | the visual check made to capture on-screen content; `.cy-kbd`, `.cy-dl`, `.cy-figure`, `.cy-quote` |
 | 0.10.x | package-manager matrix re-verified against 0.10.0: all five managers resolve all ten `exports` entries, Yarn Berry under PnP included |
 
 Decisions in that history that get re-proposed, and should not be:

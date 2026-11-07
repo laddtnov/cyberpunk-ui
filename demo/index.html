@@ -505,6 +505,49 @@ $ _</pre>
       <meter class="cy-meter" style="margin-top:0.5rem" value="0.5" low="0.3" high="0.7" optimum="1">50% — degraded</meter>
       <meter class="cy-meter" style="margin-top:0.5rem" value="0.1" low="0.3" high="0.7" optimum="1">10% — critical</meter>
     </section>
+
+    <section>
+      <h2>Content</h2>
+      <p style="margin:0 0 1rem">
+        Press <kbd class="cy-kbd">⌘</kbd><kbd class="cy-kbd">K</kbd> for the console,
+        <kbd class="cy-kbd">Esc</kbd> to drop out.
+      </p>
+
+      <dl class="cy-dl" style="margin-bottom:1rem">
+        <dt>Callsign</dt>
+        <dd>NIGHTJAR</dd>
+        <dt>Implant</dt>
+        <dd>Kiroshi optics, mk. III</dd>
+        <dt>Clearance</dt>
+        <dd>Tier 2 — district</dd>
+        <dd>Tier 4 — arcology, revoked</dd>
+      </dl>
+
+      <figure class="cy-figure">
+        <!-- Inline, fixed coordinates, no script: the visual check photographs
+             this section, so a generated or animated chart would differ on
+             every run. -->
+        <!-- Wide viewBox rather than a narrow one stretched to fit: a
+             non-uniform scale distorts stroke-width, so the line comes out
+             heavier on its vertical runs than on its horizontal ones. -->
+        <svg viewBox="0 0 880 120" width="100%" role="img"
+             aria-label="Signal strength over 24 hours, rising from weak to strong">
+          <!-- var() in a `style` attribute rather than in `stroke=""`: a
+               presentation attribute resolving custom properties is patchy
+               across engines, an inline style is not. -->
+          <polyline fill="none" stroke-width="2" style="stroke: var(--cy-neon-cyan)"
+                    points="11,96 121,84 231,102 341,60 451,72 561,36 671,48 781,18 869,24" />
+        </svg>
+        <figcaption>FIG. 01 — District uplink, 24h</figcaption>
+      </figure>
+
+      <blockquote class="cy-quote">
+        <p style="margin:0">
+          The grid remembers every door you ever opened. Walk quietly.
+        </p>
+        <cite>Netrunner's almanac</cite>
+      </blockquote>
+    </section>
   </div>
 
   <div class="cy-toast-container cy-toast-container--bottom">
