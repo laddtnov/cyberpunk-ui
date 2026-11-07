@@ -26,16 +26,25 @@ Everything below is ordered by those two, not by what is easiest to demo.
 Nothing here is a component. Everything the original roadmap proposed has
 shipped, and what is left is the work that decides whether this becomes 1.0.
 
-### 1. `forced-colors` on real Windows High Contrast
+### 1. `forced-colors` on real Windows hardware
 
-The only feature in the kit that has never been seen on the hardware it is for.
-An emulated pass in Chromium found nothing broken — every component resolves to
-system colours, the spinner keeps two distinct border colours so its rotation
-survives, glows and the scanline wash are dropped. But emulation approximates
-one theme, and real High Contrast ships several, with Firefox and Edge mapping
-them differently.
+Narrowed, not closed. `npm run check:forced-colors` now drives **Gecko's own**
+forced-colors path — not an emulation — against the colour values of the four
+contrast themes Windows 11 ships, and all four pass. That answers the part of
+this item that was about a second engine and more than one palette.
 
-Five minutes on a Windows machine. Nobody has had one.
+What is left is the hardware itself: on Windows the OS supplies the colours
+rather than a pref, and Edge and Firefox map the themes differently. Nobody has
+run the kit there.
+
+The check also narrowed what the question even means. In Gecko the engine
+strips shadows and background-images and overrides author colours itself, so
+most of the kit's `forced-colors` rules are inert there — proved by mutation,
+see `docs/STATE.md`. The properties that stay under author control are
+`opacity` and `forced-color-adjust`, and those are what the check actually
+asserts. On Windows the interesting question is whether Edge forces as much.
+
+Five minutes on a Windows machine, still. Nobody has had one.
 
 ### 2. Decide on 1.0.0
 
@@ -87,7 +96,7 @@ the detail and the measurements; this is the index.
 | 0.8.0 | the seven `-rgb` twins retired for `color-mix()` |
 | 0.9.0 | `.cy-popover` toggle-tip on the Popover API; contrast checked against `--cy-surface` too |
 | 0.10.0 | `.cy-fieldset` and `.cy-meter`; releases moved to npm trusted publishing (OIDC) |
-| unreleased | the visual check made to capture on-screen content; `.cy-kbd`, `.cy-dl`, `.cy-figure`, `.cy-quote` |
+| unreleased | the visual check made to capture on-screen content; `.cy-kbd`, `.cy-dl`, `.cy-figure`, `.cy-quote`; forced colours checked in real Gecko against four Windows palettes |
 | 0.10.x | package-manager matrix re-verified against 0.10.0: all five managers resolve all ten `exports` entries, Yarn Berry under PnP included |
 
 Decisions in that history that get re-proposed, and should not be:

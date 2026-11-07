@@ -26,7 +26,7 @@ Supporting files: `demo/index.html` (the live demo — every component is
 exercised there, including both validation paths, and it is the OG image
 source), `demo/playground.js` (the live token editor; demo-only, and never
 published — `files` ships `*.css`, `README.md` and `LICENSE` only),
-`scripts/build-bundle.js`, `scripts/check-contrast.js` (every text token
+`scripts/build-bundle.js`, `scripts/check-forced-colors.js`, `scripts/check-contrast.js` (every text token
 against **both** `--cy-bg` and `--cy-surface`, in both themes — 36 pairings),
 `scripts/check-conventions.js`,
 `scripts/check-visual.js` and its browser half `scripts/visual-agent.mjs`
@@ -432,30 +432,65 @@ inset shadow.
 
 **Verification status, stated plainly:** `prefers-contrast` was verified by
 applying the same declarations unwrapped and measuring the computed result.
-`forced-colors` has had an **emulated** pass and still has no real-hardware
-check. Under Chrome's `forced-colors: active` emulation every component
-resolves to system colours as intended: buttons and current-nav items take
-`LinkText`, text and borders `CanvasText`, the progress fill `Highlight`, and
-the spinner keeps two distinct border colours so its rotation stays visible.
-Glows, text-shadows and the scanline wash are all dropped.
+`forced-colors` is now checked by `scripts/check-forced-colors.js` against a
+**real** forced-colors implementation, and separately had an earlier emulated
+pass in Chromium.
 
-Two things that pass emulation are worth knowing anyway. Translucent tints
-survive as system colours at low alpha — a card's 3% wash becomes 3% of Canvas
-over Canvas, which is invisible rather than wrong. And the four alert variants
-become indistinguishable from one another, because forced colours collapses
-their accent borders to one value; that is inherent to the mode, and the reason
-the docs require `role="alert"` rather than leaving colour to carry the
-meaning.
+```sh
+npm run check:forced-colors
+```
 
-Emulation is not the hardware check. It approximates one theme, and real
-Windows High Contrast ships several, with Firefox and Edge mapping them
-differently. Verification on a real display remains open. The original note
-read: `forced-colors` was **not** verified visually — it needs Windows High Contrast
-Mode, which is not available here. What was confirmed is that both media
-blocks parse and are live in the CSSOM, that every selector in them matches a
-real element in the demo, and that every system colour keyword used is
-supported. The reasoning above is sound but unproven on a real forced-colors
-display, and should be treated that way until someone looks.
+It drives Gecko's own forced-colors code path rather than an emulation of it.
+Firefox enters that path when `ui.useAccessibilityTheme` is 1, and every system
+colour then comes from a `ui.*` pref — so the four contrast themes Windows 11
+ships (Night Sky, Aquatic, Desert, Dusk) can be set as real palettes. Measured
+with the Night Sky values: `Canvas` resolves to `#000000`, `ButtonFace` to
+`#FFEE32`, `Highlight` to `#D6B4FD`, and a `#00f2ff` border comes back
+`#FFFFFF`. Gecko reports `prefers-contrast: more` as matching at the same time,
+so both of the kit's media blocks apply together — which is the real condition
+on Windows, and the reason this checks the combination.
+
+All four palettes pass. **What that is worth is narrower than it sounds**, and
+the narrowing is the useful part:
+
+| Property | Under Gecko's forced colours |
+| --- | --- |
+| author `color` / `border-color` / `background-color` | overridden by the engine |
+| `box-shadow` | stripped by the engine |
+| `background-image` | stripped by the engine |
+| `opacity` | **left exactly as authored** |
+| `forced-color-adjust` | **left exactly as authored** |
+
+So most of the kit's `forced-colors` rules are inert *in Gecko* — the engine
+would have done it anyway. Proved by mutation rather than argued: giving
+`.cy-card` a transparent border, giving `cite` the `Canvas` colour, and
+deleting the grid and scanline `background-image: none` rules each changed
+nothing the DOM could observe. The rules stay because other engines force
+less, but they are a backstop there, not the working part.
+
+The two assertions with something to catch are opacity and
+`forced-color-adjust`, and those are live: dimming `.cy-card` to `opacity: 0.45`
+and giving `.cy-terminal` `forced-color-adjust: none` are both reported.
+
+One finding the check reports every run, and cannot fix: **the four alert
+variants render identically.** Forced colours collapses their accent borders to
+one value, so info, success, warning and danger are visually the same message.
+That is inherent to the mode, not a defect — and it is why the docs require
+`role="alert"` and real words rather than letting colour carry the meaning.
+
+Two further things worth knowing. Translucent tints survive as system colours
+at low alpha — a card's 3% wash becomes 3% of Canvas over Canvas, which is
+invisible rather than wrong. And a `<button class="cy-btn">` keeps
+`appearance: auto`, so the platform paints it: it takes `ButtonText` on a
+`ButtonFace` the DOM cannot see, while an `<a class="cy-btn">` takes `LinkText`
+on the page background. The check compares each themed control against a bare
+one of the same kind inserted into the same document, because a walked-up
+background is the wrong pair for a control whose fill the widget draws.
+
+**Still not Windows.** This is a second engine and four palettes, not the
+hardware. Nobody has run the kit on Windows High Contrast, where Edge and
+Firefox map themes differently and the OS supplies the colours rather than a
+pref. That check remains open and this paragraph stays until someone looks.
 
 ## CI and releasing
 

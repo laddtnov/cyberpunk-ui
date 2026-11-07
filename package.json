@@ -37,7 +37,8 @@
     "check:bundle": "node scripts/build-bundle.js --check",
     "check": "npm run check:bundle && npm run check:contrast && npm run check:conventions",
     "check:visual": "node scripts/check-visual.js",
-    "preversion": "npm run check && npm run check:visual"
+    "preversion": "npm run check && npm run check:visual",
+    "check:forced-colors": "node scripts/check-forced-colors.js"
   },
   "files": [
     "*.css",
