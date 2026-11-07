@@ -548,8 +548,17 @@ pref. That check remains open and this paragraph stays until someone looks.
   **not** `npm publish --dry-run` — that contacts the registry and fails on
   any already-published version, which would break every PR.
 - `release.yml` on a `v*` tag: `npm publish` over **trusted publishing**
-  (OIDC — no `NPM_TOKEN`; the attestation is generated automatically),
-  mirror to GitHub Packages (`continue-on-error`), cut a GitHub Release.
+  (OIDC — no `NPM_TOKEN`; the attestation is generated automatically), then
+  cut a GitHub Release.
+
+  There used to be a third step mirroring the tarball to GitHub Packages. It
+  was deleted after 0.11.1, because it had been failing with
+  `npm error code ENEEDAUTH` and nobody had noticed: it was
+  `continue-on-error`, so the job stayed green and the only trace was an
+  annotation. Its own comment already conceded it was "NOT a usable install
+  channel" — GitHub Packages demands authentication even for public packages —
+  so it was decoration that could only ever produce a false annotation or a
+  false sense of a second channel.
 
   It also takes a **manual run** — Actions → Release → Run workflow — with the
   tag typed into a form. That exists because a tag push is a *single event*:
