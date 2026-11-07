@@ -475,10 +475,149 @@
   outline: none;
 }
 
+/* ── Keycap ───────────────────────────────────────────────────────
+   On <kbd>, which already means "the user presses this". All this adds is
+   looking pressable.
+
+   Sized in `em` rather than from the spacing scale, because a keycap belongs
+   to the sentence it sits in: at 0.85em it tracks the surrounding type instead
+   of standing at a fixed size inside a heading and inside body text alike.
+   `min-inline-size` is what keeps a single letter from collapsing to a sliver
+   while `⌘` and `Esc` stay their own width. */
+.cy-kbd {
+  display: inline-block;
+  min-inline-size: 1.6em;
+  padding: 0.1em 0.45em;
+  font-family: var(--cy-font-mono);
+  font-size: 0.85em;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--cy-neon-cyan);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 8%, var(--cy-surface));
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 40%, transparent);
+  border-radius: var(--cy-radius-sm);
+  /* The only shadow here is the cap's depth, not a glow: a hard inset rim on
+     the block end reads as a physical edge. Logical, so it stays at the bottom
+     in vertical writing modes rather than flipping to a side. */
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--cy-neon-cyan) 20%, transparent);
+}
+
+/* ── Readout (term / value pairs) ─────────────────────────────────
+   On <dl>. A HUD stat block: gold mono labels in a column that sizes itself
+   to the longest one, values aligned against them.
+
+   Two columns assigned explicitly rather than left to auto-placement, so a
+   term with several <dd> values stacks them in the value column instead of
+   pushing the second one under the label. */
+.cy-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--cy-space-sm) var(--cy-space-lg);
+  /* The label is smaller than the value, so the default stretch leaves the
+     two sitting at different heights in the same row. Baseline alignment is
+     what makes a term read as belonging to its value. */
+  align-items: baseline;
+  margin: 0;
+  color: var(--cy-text);
+}
+
+.cy-dl > dt {
+  grid-column: 1;
+  font-family: var(--cy-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cy-neon-gold);
+}
+
+.cy-dl > dd {
+  grid-column: 2;
+  /* The UA puts 40px on the inline start of every <dd>, and the grid column
+     is doing that job here. Logical, so RTL is not a special case. */
+  margin-inline-start: 0;
+  margin-block: 0;
+}
+
+/* ── Figure ───────────────────────────────────────────────────────
+   On <figure>. The UA margin is `1em 40px`, which indents a figure out of
+   alignment with everything around it; the frame replaces it.
+
+   <svg> and <video> are listed beside <img> because a diagram and a clip are
+   the same kind of content here, and leaving them out would mean a figure that
+   frames a picture but lets a video overflow it. */
+.cy-figure {
+  margin: 0 0 var(--cy-space-lg);
+  padding: var(--cy-space-sm);
+  background: color-mix(in srgb, var(--cy-neon-cyan) 3%, transparent);
+  border: var(--cy-border-width) solid color-mix(in srgb, var(--cy-neon-cyan) 25%, transparent);
+  border-radius: var(--cy-radius);
+}
+
+.cy-figure > img,
+.cy-figure > svg,
+.cy-figure > video {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--cy-radius-sm);
+}
+
+.cy-figure > figcaption {
+  padding: var(--cy-space-sm) var(--cy-space-xs) 0;
+  font-family: var(--cy-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--cy-text) 75%, transparent);
+}
+
+/* ── Quote ────────────────────────────────────────────────────────
+   On <blockquote>. An accent rule on the inline start, no decorative glyph:
+   a `"` from ::before is content a screen reader may or may not announce, and
+   a quotation already announces itself.
+
+   The rule is a multiple of --cy-border-width rather than a flat 3px, so
+   `prefers-contrast: more` thickens it along with every other border in the
+   kit instead of leaving this one behind. */
+.cy-quote {
+  margin: 0 0 var(--cy-space-lg);
+  padding: var(--cy-space-md) var(--cy-space-lg);
+  border-inline-start: calc(var(--cy-border-width) * 3) solid var(--cy-neon-pink);
+  background: color-mix(in srgb, var(--cy-neon-pink) 5%, transparent);
+  color: var(--cy-text);
+  font-size: 1.05rem;
+}
+
+/* A <blockquote> wraps block content, so its last paragraph carries a bottom
+   margin that would otherwise show as uneven padding. */
+.cy-quote > :last-child {
+  margin-block-end: 0;
+}
+
+.cy-quote cite {
+  display: block;
+  margin-block-start: var(--cy-space-sm);
+  font-family: var(--cy-font-mono);
+  font-size: 0.75rem;
+  /* <cite> is italic by default. Mono and italic together read as a mistake
+     rather than as an attribution. */
+  font-style: normal;
+  letter-spacing: 0.1em;
+  color: var(--cy-neon-pink);
+}
+
 /* ── Increased contrast ───────────────────────────────────────── */
 @media (prefers-contrast: more) {
   .cy-btn,
-  .cy-card { border-color: var(--cy-neon-cyan); }
+  .cy-card,
+  .cy-kbd,
+  .cy-figure { border-color: var(--cy-neon-cyan); }
+
+  /* Both are deliberately dimmed below body text at rest — a caption and a
+     label are secondary. `prefers-contrast: more` is the request that says
+     stop doing that. */
+  .cy-figure > figcaption { color: var(--cy-text); }
+  .cy-dl > dt { color: var(--cy-heading); }
 }
 
 /* ── Forced colours ───────────────────────────────────────────────
@@ -490,13 +629,28 @@
    point: in forced colours the user's conventions win, not ours. */
 @media (forced-colors: active) {
   .cy-btn,
-  .cy-card { box-shadow: none; }
+  .cy-card,
+  .cy-kbd { box-shadow: none; }
 
   .cy-btn:disabled {
     color: GrayText;
     border-color: GrayText;
     opacity: 1;
   }
+
+  /* The keycap and the figure both carry a real border, so the UA forces it to
+     the user's text colour and the shape survives on its own. The quote's
+     accent rule is forced the same way, which is the whole of its shape.
+     What does not survive is a tinted fill: forced colours replaces the
+     background with the user's, and these mixes would otherwise fight it. */
+  .cy-figure,
+  .cy-quote { background: none; }
+
+  /* Two places the kit dims text with a mix or an accent hue. Forced colours
+     has one text colour and the user picked it. */
+  .cy-figure > figcaption,
+  .cy-dl > dt,
+  .cy-quote cite { color: CanvasText; }
 }
 
 }

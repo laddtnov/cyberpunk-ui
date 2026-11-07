@@ -25,7 +25,7 @@ Every component on one page — themes, forms, feedback, effects.
 ---
 
 Neon glow, CRT scanlines, glitching headlines, a terminal window that looks
-like it belongs in a Netrunner's rig. 63 kB of CSS, 38 design tokens, zero
+like it belongs in a Netrunner's rig. 87 kB of CSS (21 kB gzipped), 31 design tokens, zero
 dependencies, and nothing to build. Drop in one stylesheet and start writing
 class names. Extracted from the [laddtnov.xyz](https://laddtnov.xyz) portfolio.
 
@@ -162,7 +162,7 @@ that restyle each component, and the accessibility contract the kit cannot
 enforce for you:
 
 **[docs/components/](docs/components/)** — [effects](docs/components/effects.md)
-· [button and card](docs/components/components.md)
+· [button, card and content](docs/components/components.md)
 · [containers](docs/components/containers.md)
 · [navigation](docs/components/navigation.md)
 · [table](docs/components/table.md)
@@ -227,6 +227,10 @@ A form and a status message:
 |-------|-----------|
 | `.cy-btn` · `.cy-btn--pink` · `.cy-btn--secondary` · `.cy-btn--danger` (+ `--sm`, `--lg`) | neon outline button with hover-glow |
 | `.cy-card` | glassmorphism holo card with edge glow |
+| `.cy-kbd` | keycap, on `<kbd>` |
+| `.cy-dl` | term/value readout, on `<dl>`; styles scoped `<dt>`/`<dd>` |
+| `.cy-figure` | framed figure, on `<figure>`; styles a scoped `<figcaption>` |
+| `.cy-quote` | pull quote, on `<blockquote>`; styles a scoped `<cite>` |
 
 ### Forms (`forms.css`)
 
