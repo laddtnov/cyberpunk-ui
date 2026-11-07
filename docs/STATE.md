@@ -262,36 +262,66 @@ npm run check:visual -- --update  # re-record, after an intended change
 npm run check:visual -- --report  # print every region's diff without failing
 ```
 
-Three things make a capture reproducible, and all three are required: every
+Four things make a capture reproducible, and all four are required: every
 animation and transition frozen, `deviceScaleFactor` pinned to 1 (this machine
-captures at 2x, so an unpinned baseline is not portable), and web fonts
-confirmed applied before shooting — the run aborts rather than baseline a page
-rendered in fallback fonts.
+captures at 2x, so an unpinned baseline is not portable), web fonts confirmed
+applied before shooting — the run aborts rather than baseline a page rendered
+in fallback fonts — and **the region scrolled into view before it is
+photographed**.
 
-Even so, a region gets up to **three captures, each compared against the
-baseline**, and the first exact match wins. Only a region that differs on every
-attempt is reported.
+The fourth is the one that took two releases to find, and it is worth the space
+because everything built on top of it was a workaround for it.
 
-That is the second design for this, and the first one was wrong in an
-instructive way. It captured until two agreed — which proves the page is
-*quiet*, not that it matches. The page turns out to have two rasterisations of
-identical content, so a pair could settle onto the wrong one and report a
-change that was not one. Twice it did, both times at exactly 1179 pixels.
+`captureBeyondViewport` will photograph content far below the viewport, but it
+rasterises those tiles off the fast path, and that path is not deterministic.
+The symptom was that only the two deepest regions ever failed — `forms` at
+document y=2034 and `feedback` at y=2764, against a 900px viewport — while the
+five regions above them were stable to the byte across sessions and days. That
+read as flakiness in the harness, and it was answered with retries: three
+attempts, then six.
 
-The two states were pinned down by diffing them rather than counting them:
-rows 315 and 321 at 575 pixels each — the top and bottom edge of the progress
-fill, 575 being 66% of 880, its value — plus a few pixels on the alert accent
-borders where success green lands on `82,254,153` in one state and
-`80,246,149` in the other. Edge antialiasing and colour rounding: the same
-content down two rasterisation paths.
+Retries were the wrong answer, and six of them hid the evidence. The loop would
+print the same pixel count six times, which should have been read as *the
+captures are deterministic* rather than as noise. The decisive measurement was
+cheap and came late: `--update` re-recorded `feedback` and produced bytes
+**identical to the baseline taken two days earlier**, while the comparison run
+captured something 32 pixels different on every attempt, with the clip
+rectangle and scroll offset identical in both paths. Hashing each capture
+showed three distinct rasterisations of that one region, with the comparison
+loop alternating between two of them on a period of two. Region order made no
+difference, which ruled out the other obvious suspect — the canvas the diff
+builds in the page under test.
 
-Comparing against the baseline is strictly stronger than settling. Passing
+The 32 pixels were all antialiasing: one row of each of the four alerts' left
+accent borders, where the border went from `19,28,28` to `72,137,117`, plus the
+rounded corners of `<progress>` and `<meter>` at deltas of 3 to 17.
+
+Scrolling the region into view first makes it live viewport content, which
+rasterises the same way every time. Three consecutive runs then passed with one
+capture per region and no retries, so `ATTEMPTS` went from 6 down to 2 — one
+spare for a genuine transient. If a region ever needs more than two again, that
+is a bug in the capture conditions, not a number to raise.
+
+Keep the emulated viewport height above the tallest section (`forms`, 690px).
+A region taller than the viewport hangs off the bottom and reintroduces exactly
+this problem.
+
+Comparing each capture against the baseline is still strictly stronger than the
+original design, which captured until two agreed — that proves the page is
+*quiet*, not that it matches, and twice it settled onto the wrong state and
+reported a change that was not one, both times at exactly 1179 pixels. Passing
 needs one exact match, failing needs every attempt to differ, and a real
-regression differs in *both* states so it cannot pass by luck. Verified by
-reintroducing the square progress edge: three attempts, all differing, reported
-as `1156 px (max delta 150) at 581x7+0+315`. Widening the tolerance instead
-would have had to swallow a max delta of 59 to absorb the noise, and the real
-regression sits at 150 — too close to be safe.
+regression changes the content so it cannot pass by luck.
+
+Verified by mutation, not by assertion. Reverting `.cy-meter`'s
+`::-webkit-meter-inner-element` from `display: flex` back to `block` — the real
+half-height-bar bug 0.10.0 fixed — was reported as
+`9702 px (max delta 221) at 880x48+0+338`, the meter's exact box, with the other
+six regions still passing. An earlier probe, reintroducing the square progress
+edge, reported `1156 px (max delta 150) at 581x7+0+315`. Widening the tolerance
+instead of fixing the capture would have had to swallow a max delta of 109 to
+absorb the noise, and the small real regression sits at 150 — too close to be
+safe.
 
 If a run ever hangs in `Page.captureScreenshot`, the cause is almost certainly
 a browser task space left over from an earlier aborted run: the space is looked

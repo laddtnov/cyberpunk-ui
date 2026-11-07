@@ -37,18 +37,7 @@ them differently.
 
 Five minutes on a Windows machine. Nobody has had one.
 
-### 2. Make the visual check trustworthy, or stop trusting it
-
-During 0.10.0 it failed **5 runs out of 5**, including regions the change never
-touched, with byte-identical failures across runs. Two captures inside one run
-agree; captures in separate browser sessions do not, so the existing retry
-cannot help. Baselines for 0.10.0 are recorded but unverified.
-
-A check that cries wolf gets skipped, and `CY_SKIP_VISUAL=1` already exists to
-skip it. That is a bad equilibrium: either the harness becomes reliable, or the
-honest move is to delete it and say the kit has no visual regression testing.
-
-### 3. Decide on 1.0.0
+### 2. Decide on 1.0.0
 
 Pre-1.0 is what allows a breaking change in a minor release, and 0.8.0 used
 that licence to delete seven public tokens. The API has been stable since. The
@@ -56,9 +45,10 @@ question is whether to keep that freedom or promise stability.
 
 Item 1 is the one worth closing first: 1.0 is a claim about behaviour on
 hardware, and that claim is still unverified. The package-manager half was
-closed on 2026-11-07 — see the matrix in `docs/STATE.md`.
+closed on 2026-11-07 — see the matrix in `docs/STATE.md` — and the visual
+check was made deterministic the same day.
 
-### 4. Four native elements are still unstyled
+### 3. Four native elements are still unstyled
 
 `<kbd>`, `<dl>/<dt>/<dd>`, `<figure>`, `<blockquote>`. The first two fit a HUD
 readout — keycaps and term/value pairs — and follow the same native-element
