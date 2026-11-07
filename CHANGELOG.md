@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Removed
+- **The GitHub Packages mirror step.** It had been failing with
+  `npm error code ENEEDAUTH` and nobody noticed, because it was
+  `continue-on-error` — the job stayed green and the only trace was an
+  annotation on the run. Its own comment already conceded it was "NOT a
+  usable install channel", since GitHub Packages demands authentication even
+  for public packages, so it could only ever produce a false annotation or a
+  false sense of a second channel. npmjs.org was always the canonical
+  registry and the only one carrying the provenance attestation.
+  - The `packages: write` permission went with it.
+  - No consumer-facing change; nothing about installing the package differs.
+
 ## [0.11.1] — 2026-11-07
 
 **No consumer-facing change.** `files` ships `*.css`, `README.md` and
