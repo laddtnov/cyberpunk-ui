@@ -57,39 +57,47 @@ build tools and linters routinely read. It is mapped explicitly so they can.
 ## Package managers
 
 Verified against the **published** package, not a local tarball, on
-2026-07-31, when the kit was 0.2.1 and shipped **six** stylesheets. The "6"
-in the rows below is what was measured that day, not a current count — there
-are eight now, listed under Layout above. The table is left as measured
-rather than updated, because a re-worded record of a test nobody re-ran would
-claim evidence that does not exist. Re-run the matrix if the `exports` map
-ever changes shape; adding a subpath to it does not, on its own, invalidate
-what these five managers were shown to do.
+**2026-11-07**, against **0.10.0** — one concatenated stylesheet inside a
+cascade layer, published over eight subpaths. Each row installs the pinned
+version and then resolves all ten `exports` entries from that project:
 
 | Manager | Version | Result |
 | --- | --- | --- |
-| npm | 10.9.8 | installs, all 6 stylesheet subpaths resolved at the time |
-| pnpm | 11.18.0 | installs, all 6 resolved — **24h cooldown**, see below |
-| Yarn Classic | 1.22.22 | installs, all 6 resolved |
-| Yarn Berry | 4.18.0 | installs, all 6 resolved — under **Plug'n'Play too**, with no `node_modules` on disk. **24h cooldown** |
-| Bun | 1.3.14 | installs, all 6 resolved |
+| npm | 10.9.8 | installs, **10/10** entries resolved |
+| pnpm | 11.18.0 | installs, 10/10 — **24h cooldown**, pinning clears it |
+| Yarn Classic | 1.22.22 | installs, 10/10 |
+| Yarn Berry | 4.18.1 | installs, 10/10 — under **Plug'n'Play**, no `node_modules` on disk. **24h cooldown**, pinning does *not* clear it |
+| Bun | 1.3.14 | installs, 10/10 |
 
-Nothing had to change for any of them. The kit is plain CSS with no
-dependencies, no postinstall and no build step, so there is very little for a
-manager to disagree about — the only real risk was the `exports` map, and it
-resolves everywhere, PnP included.
+Ten rather than eight because the map carries `.` and `./package.json`
+alongside the eight stylesheets, and both have to resolve too.
 
-**pnpm 11 and Yarn 4 will not install a version younger than 24 hours.** Both
-ship a supply-chain cooldown on by default — pnpm's `minimumReleaseAge` and
-Yarn's `npmMinimalAgeGate`, each 1440 minutes. They do not error; they quietly
-resolve to the newest release older than the gate, so a fresh `pnpm add` lands
-on the *previous* version and prints `(x.y.z is available)` next to it. This
-was confirmed both ways: with the gate at its default the install produced
-0.2.0, and with `--config.minimumReleaseAge=0` (pnpm) or `npmMinimalAgeGate: 0`
-(Yarn) it produced 0.2.1.
+The previous run was against 0.2.1, when the kit was six stylesheets wired
+with `@import`. Everything that changed since — the concatenated bundle, the
+cascade layer, `color-mix()`, two more subpaths — changed nothing here. The
+kit is still plain CSS with no dependencies, no postinstall and no build step,
+so the only real risk was the `exports` map, and it resolves everywhere.
+
+**pnpm 11 and Yarn 4 will not install a version younger than 24 hours**, and
+they do not behave the same way about it. Both ship a supply-chain cooldown on
+by default — pnpm's `minimumReleaseAge` and Yarn's `npmMinimalAgeGate`, each
+1440 minutes — but:
+
+- **pnpm** resolves to the newest release older than the gate and prints
+  `(x.y.z is available)` next to it. Asking for an exact version gets you that
+  version. Measured on 0.10.0's release day: unpinned gave 0.9.0, pinned gave
+  0.10.0.
+- **Yarn 4** refuses outright, pinned or not:
+  `YN0016: All versions satisfying "0.10.0" are quarantined`. The escape is
+  `--npmMinimalAgeGate 0` on the command, or `npmMinimalAgeGate: 0` in
+  `.yarnrc.yml`.
+
+That difference was documented backwards until this run — README and this file
+both said naming an exact version skips the gate, which is true of pnpm only.
 
 The practical consequence is for **releasing**: after publishing, do not verify
 with a bare `pnpm add` or `yarn add` and conclude the release failed. Pin the
-version explicitly, or wait a day.
+version, or wait a day.
 
 ## Tokens
 
