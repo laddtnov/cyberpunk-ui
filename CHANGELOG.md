@@ -19,10 +19,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   - `--provenance` is dropped from the publish command. Trusted publishing
     generates and publishes the attestation on its own for a public repository
     and package.
-  - Node moves 20 → 24 and the workflow upgrades npm before publishing, because
-    trusted publishing requires npm 11.5.1 or later and Node 22.14 or later. A
-    too-old CLI silently falls back to token auth, which is the failure this
-    change removes — so the version is asserted rather than assumed.
+  - Node moves 20 → 24, because trusted publishing requires npm 11.5.1 or
+    later and Node 22.14 or later. Node 24 bundles npm 11.19.1 and has bundled
+    at least 11.5.1 since 24.5.0, so nothing is installed — the workflow only
+    asserts the version, because a CLI older than 11.5.1 does not fail loudly:
+    it falls back to token auth and dies with the same `EOTP`.
   - **The workflow filename is now part of the release contract.** Renaming
     `release.yml`, or moving the publish step into another workflow, breaks
     publishing until the npmjs.com configuration is updated to match.

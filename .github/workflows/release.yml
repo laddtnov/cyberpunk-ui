@@ -116,9 +116,18 @@ jobs:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Ensure npm supports trusted publishing
+      # Node 24 bundles npm 11.19.1 (and has bundled >= 11.5.1 since 24.5.0),
+      # so nothing is installed here — this only asserts it, because a CLI
+      # older than 11.5.1 does not fail loudly: it falls back to token auth
+      # and dies with the same EOTP this change removes.
+      #
+      # An earlier version of this step ran `npm install -g npm@latest`, which
+      # Sonar flagged twice and was right to: an unpinned install with
+      # lifecycle scripts enabled, inside the job that publishes the package,
+      # is exactly the supply-chain shape to avoid. Not installing beats
+      # installing carefully.
+      - name: Verify npm supports trusted publishing
         run: |
-          npm install -g npm@latest
           echo "npm $(npm -v)"
           node -e '
             const v = require("child_process").execSync("npm -v").toString().trim();
