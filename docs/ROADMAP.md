@@ -37,18 +37,7 @@ them differently.
 
 Five minutes on a Windows machine. Nobody has had one.
 
-### 2. Re-run the package-manager matrix
-
-`docs/STATE.md` carries a five-manager table verified against **0.2.1**, when
-the kit was six stylesheets wired together with `@import`. It is now one
-concatenated file inside a cascade layer, published over eight subpaths, with
-`color-mix()` in every glow.
-
-STATE itself names the trigger: re-run when the shape of the `exports` map
-changes. It changed. The table is still true about the day it was taken, which
-is why it has not been edited — but it is no longer evidence about today.
-
-### 3. Make the visual check trustworthy, or stop trusting it
+### 2. Make the visual check trustworthy, or stop trusting it
 
 During 0.10.0 it failed **5 runs out of 5**, including regions the change never
 touched, with byte-identical failures across runs. Two captures inside one run
@@ -59,16 +48,17 @@ A check that cries wolf gets skipped, and `CY_SKIP_VISUAL=1` already exists to
 skip it. That is a bad equilibrium: either the harness becomes reliable, or the
 honest move is to delete it and say the kit has no visual regression testing.
 
-### 4. Decide on 1.0.0
+### 3. Decide on 1.0.0
 
 Pre-1.0 is what allows a breaking change in a minor release, and 0.8.0 used
 that licence to delete seven public tokens. The API has been stable since. The
 question is whether to keep that freedom or promise stability.
 
-Items 1 and 2 are the ones worth closing first: 1.0 is a claim about behaviour
-on hardware and in package managers, and both claims are currently unverified.
+Item 1 is the one worth closing first: 1.0 is a claim about behaviour on
+hardware, and that claim is still unverified. The package-manager half was
+closed on 2026-11-07 — see the matrix in `docs/STATE.md`.
 
-### 5. Four native elements are still unstyled
+### 4. Four native elements are still unstyled
 
 `<kbd>`, `<dl>/<dt>/<dd>`, `<figure>`, `<blockquote>`. The first two fit a HUD
 readout — keycaps and term/value pairs — and follow the same native-element
@@ -97,6 +87,7 @@ the detail and the measurements; this is the index.
 | 0.8.0 | the seven `-rgb` twins retired for `color-mix()` |
 | 0.9.0 | `.cy-popover` toggle-tip on the Popover API; contrast checked against `--cy-surface` too |
 | 0.10.0 | `.cy-fieldset` and `.cy-meter`; releases moved to npm trusted publishing (OIDC) |
+| 0.10.x | package-manager matrix re-verified against 0.10.0: all five managers resolve all ten `exports` entries, Yarn Berry under PnP included |
 
 Decisions in that history that get re-proposed, and should not be:
 

@@ -124,11 +124,17 @@ package — see [docs/STATE.md](docs/STATE.md) for the version matrix.
 > cooldown (`minimumReleaseAge` / `npmMinimalAgeGate`, both 1440 minutes). They
 > silently resolve to the newest release older than that, and pnpm prints
 > `(x.y.z is available)` while doing it. npm, Yarn Classic and Bun install
-> immediately. Ask for the version explicitly to bypass the wait — naming any
-> exact version skips the gate, so use whichever one you are actually after:
+> immediately.
+>
+> **Naming an exact version is enough for pnpm, and not enough for Yarn 4.**
+> Measured against 0.10.0 on release day: pnpm installed it when pinned and
+> fell back to 0.9.0 when not, while Yarn refused the pinned version outright
+> with `YN0016: All versions satisfying "0.10.0" are quarantined`.
 >
 > ```bash
-> pnpm add @laddtnov/cyberpunk-ui@0.10.0
+> pnpm add @laddtnov/cyberpunk-ui@0.10.0                          # installs it
+> yarn add @laddtnov/cyberpunk-ui@0.10.0                          # refused for 24h
+> yarn add @laddtnov/cyberpunk-ui@0.10.0 --npmMinimalAgeGate 0    # installs it
 > ```
 
 `cyberpunk-ui.css` is one concatenated stylesheet, so a `<link>` to it is a

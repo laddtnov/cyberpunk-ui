@@ -5,6 +5,28 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **The 24-hour cooldown advice was wrong for Yarn.** README and
+  `docs/STATE.md` both said naming an exact version skips pnpm's and Yarn's
+  supply-chain gate. That is true of pnpm and false of Yarn 4, which refuses a
+  quarantined version however it is asked for:
+  `YN0016: All versions satisfying "0.10.0" are quarantined`. The escape is
+  `--npmMinimalAgeGate 0`, or `npmMinimalAgeGate: 0` in `.yarnrc.yml`.
+  - Measured on 0.10.0's release day rather than reasoned about: pnpm unpinned
+    installed 0.9.0, pnpm pinned installed 0.10.0, Yarn pinned installed
+    nothing.
+
+### Documented
+- **The package-manager matrix is re-verified against 0.10.0.** The previous
+  run was against 0.2.1, when the kit was six stylesheets wired with
+  `@import`; it is now one concatenated file inside a cascade layer published
+  over eight subpaths, which is exactly the "shape of the `exports` map
+  changed" condition STATE named as the trigger for a re-run.
+  - npm 10.9.8, pnpm 11.18.0, Yarn Classic 1.22.22, Yarn Berry 4.18.1 and Bun
+    1.3.14 each install the pinned version and resolve **all ten** `exports`
+    entries — the eight stylesheets plus `.` and `./package.json`. Yarn Berry
+    was tested under Plug'n'Play with no `node_modules` on disk.
+
 ### Changed
 - **Releases authenticate with npm trusted publishing (OIDC) instead of a
   token.** `NPM_TOKEN` is gone from the publish step; npm trusts the
