@@ -603,11 +603,12 @@ cannot be pushed to `main` directly — the push is rejected with `Changes must
 be made through a pull request` — so a release goes:
 
 ```sh
-git checkout -b release/0.11.0
+git checkout -b release/next
 npm version minor          # runs the preversion gate, commits, annotated tag
-git push -u origin release/0.11.0      # branch only, not the tag yet
+git push -u origin release/next        # branch only, not the tag yet
 # merge the PR with a merge commit, then
-git push origin v0.11.0                # this is what triggers release.yml
+git push origin "v$(node -p 'require("./package.json").version')"
+# ^ that is what triggers release.yml
 ```
 
 The tag is pushed **after** the merge, not with the branch. Pushing it first
