@@ -42,12 +42,19 @@
 
 const { spawn, execFileSync } = require('node:child_process');
 const fs = require('node:fs');
-const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 
+const { createRepoServer } = require('./repo-server.js');
+
 const ROOT = path.join(__dirname, '..');
 const FIREFOX = '/Applications/Firefox.app';
+
+// Absolute, not resolved through PATH. A developer PATH is long, mostly
+// writable and mostly forgotten, and anything on it could shadow these — the
+// same reasoning that pins the browser binary in check-visual.js.
+const OPEN = '/usr/bin/open';
+const PKILL = '/usr/bin/pkill';
 
 // The four contrast themes Windows 11 ships, as colour values.
 //
@@ -90,30 +97,6 @@ const PALETTES = {
 // would report their theme rather than this kit.
 const MIN_CONTRAST = 3;
 
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.png': 'image/png',
-};
-
-// Same closed table as check-visual.js: the URL is a key, not a path to join,
-// so a request cannot name a file this server did not already decide to serve.
-const SKIP = new Set(['.git', 'node_modules', '.github', '.claude']);
-
-function serveable(dir, prefix, table) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith('.') || SKIP.has(entry.name)) continue;
-    const abs = path.join(dir, entry.name);
-    const url = `${prefix}/${entry.name}`;
-    if (entry.isDirectory()) serveable(abs, url, table);
-    else if (MIME[path.extname(entry.name)]) table.set(url, abs);
-  }
-  return table;
-}
-
-const FILES = serveable(ROOT, '', new Map());
-
 // The audit. Runs in the browser, against the demo in a same-origin frame.
 //
 // The inventory is collected from the page rather than hand-listed, so a
@@ -121,7 +104,7 @@ const FILES = serveable(ROOT, '', new Map());
 // here. Elements are grouped by their full class list and one of each group is
 // examined — enough to cover every distinct painted thing without checking the
 // same badge forty times.
-const AUDIT = `<!doctype html>
+const AUDIT = String.raw`<!doctype html>
 <meta charset="utf-8">
 <title>forced-colors audit</title>
 <style>html,body{margin:0;background:#fff}iframe{width:1200px;height:900px;border:0}</style>
@@ -130,9 +113,9 @@ const AUDIT = `<!doctype html>
 const PALETTE = new URLSearchParams(location.search).get('palette');
 
 const parse = (c) => {
-  const m = /rgba?\\(([^)]+)\\)/.exec(c);
+  const m = /rgba?\(([^)]+)\)/.exec(c);
   if (!m) return null;
-  const p = m[1].split(/[,\\/]+/).map((v) => parseFloat(v));
+  const p = m[1].split(/[,\/]+/).map((v) => parseFloat(v));
   if (p.length > 3 && p[3] === 0) return null;   // transparent
   return [p[0], p[1], p[2]];
 };
@@ -351,8 +334,11 @@ addEventListener('load', async () => {
 
 let pending = null;
 
-const server = http.createServer((req, res) => {
-  if (req.method === 'POST' && req.url === '/result') {
+const server = createRepoServer(ROOT, {
+  '/audit': (req, res) => {
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(AUDIT);
+  },
+  '/result': (req, res) => {
     let body = '';
     req.on('data', (c) => { body += c; });
     req.on('end', () => {
@@ -361,34 +347,7 @@ const server = http.createServer((req, res) => {
       pending = null;
       resolve?.(JSON.parse(body));
     });
-    return;
-  }
-
-  let key;
-  try {
-    key = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-  } catch {
-    res.writeHead(400).end();
-    return;
-  }
-
-  if (key === '/audit') {
-    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(AUDIT);
-    return;
-  }
-
-  const file = FILES.get(key);
-  if (!file) {
-    res.writeHead(404).end();
-    return;
-  }
-  fs.readFile(file, (err, data) => {
-    if (err) {
-      res.writeHead(404).end();
-      return;
-    }
-    res.writeHead(200, { 'content-type': MIME[path.extname(file)] }).end(data);
-  });
+  },
 });
 
 function profileFor(name, palette) {
@@ -420,7 +379,7 @@ function killProfile(dir) {
   // `open` returns immediately, so the child handle is the launcher and not
   // the browser. The profile path is unique per run, which makes it the
   // handle for the process that actually needs stopping.
-  try { execFileSync('pkill', ['-f', dir], { stdio: 'ignore' }); } catch { /* none running */ }
+  try { execFileSync(PKILL, ['-f', dir], { stdio: 'ignore' }); } catch { /* none running */ }
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
@@ -432,7 +391,7 @@ async function run(name, palette, port) {
   });
 
   // `-g` keeps the window from stealing focus; four of these open in a row.
-  spawn('open', ['-n', '-g', '-a', FIREFOX, '--args',
+  spawn(OPEN, ['-n', '-g', '-a', FIREFOX, '--args',
     '-profile', dir, '-no-remote', `http://127.0.0.1:${port}/audit?palette=${name}`],
   { stdio: ['ignore', 'ignore', 'inherit'] });
 
@@ -449,54 +408,77 @@ if (!fs.existsSync(FIREFOX)) {
   process.exit(127);
 }
 
+// Reporting one palette's result, split out from the listen callback so that
+// callback is the sequence and the exit code and nothing else (Sonar S3776:
+// it was carrying the loop, three error shapes, the partition and the
+// formatting at once). Returns what the caller has to accumulate.
+function report(name, r) {
+  if (r.error) {
+    console.error(`  ERROR    ${name}: ${r.error}`);
+    return { failures: 1, notes: 0 };
+  }
+
+  // If the engine is not actually in forced colours, every pass below is
+  // meaningless. A green run that proved nothing is the failure mode this
+  // project keeps rediscovering, so it is an error, not a warning.
+  if (!r.forcedColors) {
+    console.error(`  ERROR    ${name}: Firefox did not enter forced-colors — nothing was verified`);
+    return { failures: 1, notes: 0 };
+  }
+
+  const fail = r.findings.filter((f) => f.level === 'FAIL');
+  const note = r.findings.filter((f) => f.level === 'NOTE');
+
+  const contrast = r.prefersContrast ? ' + prefers-contrast' : '';
+  const verdict = fail.length === 0 ? 'ok      ' : 'CHANGED ';
+  console.log(`  ${verdict} ${name} (forced-colors${contrast})`);
+  for (const f of fail) console.log(`    FAIL   ${f.cls}: ${f.msg}`);
+  for (const f of note) console.log(`    note   ${f.cls}: ${f.msg}`);
+
+  return { failures: fail.length, notes: note.length };
+}
+
+// One palette at a time, written as a recursion rather than a loop.
+//
+// These awaits cannot be parallelised and the sequence is the point: each step
+// launches a desktop Firefox with its own profile and waits for that page to
+// post its findings back. Four at once would fight over window focus and over
+// the single `pending` resolver, and the results would be unattributable.
+//
+// A `for` loop says that more plainly, and Sonar S9382 reads every await in
+// one as an accidental serialisation. Recursion states the dependency in the
+// shape of the code: step n + 1 cannot start until step n has resolved.
+async function runEach(entries, port, acc = { failures: 0, notes: 0 }, i = 0) {
+  if (i >= entries.length) return acc;
+  const [name, palette] = entries[i];
+  const { failures, notes } = report(name, await run(name, palette, port));
+  return runEach(entries, port, { failures: acc.failures + failures, notes: acc.notes + notes }, i + 1);
+}
+
 server.listen(0, '127.0.0.1', '', async () => {
   const { port } = server.address();
-  let failures = 0;
-  let notes = 0;
+  const only = process.env.CY_FC_ONLY;
+  const entries = Object.entries(PALETTES).filter(([n]) => !only || n === only);
 
+  let totals = { failures: 0, notes: 0 };
   try {
-    for (const [name, palette] of Object.entries(PALETTES).filter(([n]) => !process.env.CY_FC_ONLY || n === process.env.CY_FC_ONLY)) {
-      const r = await run(name, palette, port);
-
-      if (r.error) {
-        console.error(`  ERROR    ${name}: ${r.error}`);
-        failures += 1;
-        continue;
-      }
-
-      // If the engine is not actually in forced colours, every pass below is
-      // meaningless. A green run that proved nothing is the failure mode this
-      // project keeps rediscovering, so it is an error, not a warning.
-      if (!r.forcedColors) {
-        console.error(`  ERROR    ${name}: Firefox did not enter forced-colors — nothing was verified`);
-        failures += 1;
-        continue;
-      }
-
-      const fail = r.findings.filter((f) => f.level === 'FAIL');
-      const note = r.findings.filter((f) => f.level === 'NOTE');
-      notes += note.length;
-      failures += fail.length;
-
-      const contrast = r.prefersContrast ? ' + prefers-contrast' : '';
-      console.log(fail.length === 0
-        ? `  ok       ${name} (forced-colors${contrast})`
-        : `  CHANGED  ${name} (forced-colors${contrast})`);
-      for (const f of fail) console.log(`    FAIL   ${f.cls}: ${f.msg}`);
-      for (const f of note) console.log(`    note   ${f.cls}: ${f.msg}`);
-    }
+    totals = await runEach(entries, port);
   } catch (err) {
     console.error(`  ERROR    ${err.message}`);
-    failures += 1;
+    totals.failures += 1;
   }
 
   server.close();
 
-  if (failures) {
-    console.error(`\n${failures} forced-colors problem(s) across ${Object.keys(PALETTES).length} palettes.`);
+  if (totals.failures) {
+    console.error(`\n${totals.failures} forced-colors problem(s) across ${entries.length} palettes.`);
     process.exit(1);
   }
-  console.log(`\nForced colours OK — ${Object.keys(PALETTES).length} Windows palettes, real Gecko${notes ? `, ${notes} note(s)` : ''}.`);
+
+  // Built as one flat template; the note count used to be a template nested
+  // inside this one (Sonar S4624).
+  const noted = totals.notes ? `, ${totals.notes} note(s)` : '';
+  console.log(`\nForced colours OK — ${entries.length} Windows palettes, real Gecko${noted}.`);
   console.log('Live assertions here are opacity and forced-color-adjust. Gecko strips shadows,');
   console.log('background-images and author colours itself, so those are backstops for other engines.');
   process.exit(0);

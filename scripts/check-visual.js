@@ -18,9 +18,10 @@
 
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
-const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
+
+const { createRepoServer } = require('./repo-server.js');
 
 // The one way past this check, and it is deliberately loud.
 //
@@ -63,59 +64,11 @@ const BIN_DIRS = [
   '/usr/bin',
 ];
 
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.png': 'image/png',
-};
-
-// The set of files this server will ever hand out, decided before it starts
-// listening.
-//
-// The obvious way to write a static server is to join the request path onto a
-// root and check the result did not escape. That works until someone edits the
-// check. This one cannot escape because it never builds a path from the
-// request at all: the URL is a key, and a key that is not in the table is a
-// 404. Directories that could never be part of a demo render are skipped, so
-// they are not reachable even by exact name.
-const SKIP = new Set(['.git', 'node_modules', '.github', '.claude']);
-
-function serveable(dir, prefix, table) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith('.') || SKIP.has(entry.name)) continue;
-    const abs = path.join(dir, entry.name);
-    const url = `${prefix}/${entry.name}`;
-    if (entry.isDirectory()) serveable(abs, url, table);
-    else if (MIME[path.extname(entry.name)]) table.set(url, abs);
-  }
-  return table;
-}
-
-const FILES = serveable(ROOT, '', new Map());
-
-const server = http.createServer((req, res) => {
-  let key;
-  try {
-    key = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-  } catch {
-    res.writeHead(400).end();
-    return;
-  }
-  const file = FILES.get(key);
-  if (!file) {
-    res.writeHead(404).end();
-    return;
-  }
-  fs.readFile(file, (err, body) => {
-    if (err) {
-      res.writeHead(404).end();
-      return;
-    }
-    res.writeHead(200, { 'content-type': MIME[path.extname(file)] });
-    res.end(body);
-  });
-});
+// The repository on localhost, so the browser loads the demo with its real
+// stylesheets. The server, and the reason it serves from a closed table
+// rather than joining paths, live in scripts/repo-server.js — check-forced-
+// colors.js needs exactly the same thing.
+const server = createRepoServer(ROOT);
 
 const binary = BIN_DIRS.map((dir) => path.join(dir, 'ego-browser')).find((candidate) => {
   try {
